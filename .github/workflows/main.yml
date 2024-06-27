@@ -21,6 +21,47 @@ steps:
      
     
      
+name: build
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    branches: [ 'main' ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+        go-version: [ '1.21' ]
+    name: Build
+    runs-on: ${{ matrix.platform }}
+steps:
+- uses: actions/checkout@v4
+- name: set up JDK
+  uses: actions/setup-java@v3.11.0
+  with:
+    java-version: '18'
+    distribution: 'temurin'
+    
+- name: Clone project
+  run: |
+    rm -rf project
+    rm -rf jar/custom_spider.jar
+    git clone --recurse-submodules https://github.com/FongMi/CatVodSpider project
+  
+- name: Customize Spider
+  working-directory: ./project
+  run: |
+     sed -i 's/gradle-7.4.2-all/gradle-7.5-bin/g' gradle/wrapper/gradle-wrapper.properties
+     
+    
+     
      
      #简体化阿里云盘
      sed -i 's/原畫/原画/g;s/普畫/普画/g;s/轉存/转存/g;s/極速/极速/g' app/src/main/java/com/github/catvod/spider/Ali.java
