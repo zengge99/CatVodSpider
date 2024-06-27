@@ -29,7 +29,7 @@ jobs:
         run: |
           rm -rf project
           rm -rf jar/custom_spider.jar
-          git clone --recurse-submodules https://github.com/FongMi/CatVodSpider project
+          git clone --recurse-submodules https://github.com/zengge99/CatVodSpider project
       - name: Customize Spider
         working-directory: ./project
         run: |
@@ -41,6 +41,8 @@ jobs:
       - name: Build the app
         working-directory: ./project
         run: |
+          sudo apt update
+          sudo apt install binutils
           chmod +x gradlew
           ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
       - name: Customize Spider Jar
