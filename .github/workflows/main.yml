@@ -41,8 +41,6 @@ jobs:
       - name: Build the app
         working-directory: ./project
         run: |
-          sudo apt update
-          sudo apt install binutils
           chmod +x gradlew
           ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
       - name: Customize Spider Jar
