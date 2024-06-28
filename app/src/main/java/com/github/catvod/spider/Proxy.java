@@ -50,7 +50,7 @@ public class Proxy extends Spider {
                 return;
             }
 
-            this.executorService = Executors.newFixedThreadPool(2);
+            this.executorService = Executors.newFixedThreadPool(5);
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
@@ -64,6 +64,9 @@ public class Proxy extends Spider {
 
                         while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
                             baos.write(buffer, 0, bytesRead);
+                        }
+                        while(this.futureQueue.size()>5){
+                            Thread.sleep(100);
                         }
                         return new ByteArrayInputStream(baos.toByteArray());
                     } catch (Exception e) {
