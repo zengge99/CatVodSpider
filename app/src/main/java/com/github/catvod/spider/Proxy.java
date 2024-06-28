@@ -34,7 +34,7 @@ public class Proxy extends Spider {
     }
 
     public static Object[] genProxy(String url) throws Exception {
-        Response response = OkHttp.newCall(url, headers);
+        Response response = OkHttp.newCall(url);
         String contentType = response.headers().get("Content-Type");
         String hContentLength = response.headers().get("Content-Length");
         String contentDisposition = response.headers().get("Content-Disposition");
