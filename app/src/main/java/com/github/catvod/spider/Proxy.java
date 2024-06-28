@@ -24,7 +24,7 @@ public class Proxy extends Spider {
         public long contentLength = 0;
         Response response;
 
-        private HttpDownloader(String[] url) {
+        private HttpDownloader(String url) {
             this.response = OkHttp.newCall(url);
             this.contentType = this.response.headers().get("Content-Type");
             String hContentLength = this.response.headers().get("Content-Length");
@@ -33,7 +33,7 @@ public class Proxy extends Spider {
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-            return this.response.body().read(buffer, off, len);
+            return this.response.body().byteStream().read(buffer, off, len);
         }
 
         @Override
@@ -76,7 +76,7 @@ public class Proxy extends Spider {
     public static Object[] genProxy1(String url) throws Exception {
         HttpDownloader httpDownloader = new HttpDownloader("https://xiaoya.1996999.xyz/my_fan.json");
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
-        for (String key : response.headers().names()) resp.addHeader(key, response.headers().get(key));
+        for (String key : httpDownloader.response.headers().names()) resp.addHeader(key, httpDownloader.response.headers().get(key));
         return new Object[]{resp};
     }
 
