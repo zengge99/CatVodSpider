@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import okhttp3.Request;
+import okhttp3.Headers;
 
 public class Proxy extends Spider {
 
@@ -48,6 +49,9 @@ public class Proxy extends Spider {
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
+            if (!this.success) {
+                return -1;
+            }
             return this.response.body().byteStream().read(buffer, off, len);
         }
 
