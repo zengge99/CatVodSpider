@@ -86,12 +86,12 @@ public class Proxy extends Spider {
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
                 {
-                    this.is == null;
+                    this.is = null;
                     return 0;
                 }
                 return ol;
             } catch (Exception e) {
-                this.is == null;
+                this.is = null;
                 return 0;
             }
         }
