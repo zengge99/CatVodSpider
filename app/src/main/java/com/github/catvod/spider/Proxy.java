@@ -31,6 +31,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
+        //ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
 
@@ -49,9 +50,10 @@ public class Proxy extends Spider {
 
             this.executorService = Executors.newFixedThreadPool(2);
             for (int i = 0; i < 10; i++) {
+                final int index = i; 
                 Future future = this.executorService.submit(() -> {
                     try {
-                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (i*10) + "-" + ((i+1)*10 - 1)).build();
+                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*10) + "-" + ((index+1)*10 - 1)).build();
                         Response response = OkHttp.newCall(request);
                     
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
