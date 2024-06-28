@@ -30,7 +30,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
-        Future<ByteArrayInputStream> future;
+        Map<int,Future<ByteArrayInputStream>> futureList;
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
@@ -46,39 +46,42 @@ public class Proxy extends Spider {
                 return;
             }
 
-            this.executorService = Executors.newFixedThreadPool(1);
-            this.future = this.executorService.submit(() -> {
-                try {
-                    Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
-                    Response response = OkHttp.newCall(request);
+            this.executorService = Executors.newFixedThreadPool(2);
+            for (int i = 0; i < 10; i++) {
+                Future future = this.executorService.submit(() -> {
+                    try {
+                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "")."bytes=" + (i*10) + "-" + ((i+1)*10 - 1)).build();
+                        Response response = OkHttp.newCall(request);
                     
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
 
-                    while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
-                        baos.write(buffer, 0, bytesRead);
+                        while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
+                            baos.write(buffer, 0, bytesRead);
+                        }
+                        return new ByteArrayInputStream(baos.toByteArray());
+                    } catch (Exception e) {
+                        return null;
                     }
-                    return new ByteArrayInputStream(baos.toByteArray());
-                } catch (Exception e) {
-                    return null;
-                }
-            });
+                });
+                futureList[i] = future;
+            }
         }
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             ByteArrayInputStream is = null;
             try {
-                is = this.future.get();
+                is = this.futureList[0].get();
             } catch (Exception e) {}
-            this.executorService.shutdown();
             return is.read(buffer, off, len);
         }
 
         @Override
         public void close() throws IOException {
             super.close();
+            this.executorService.shutdown();
         }
     }
 
