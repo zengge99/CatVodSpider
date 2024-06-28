@@ -77,24 +77,22 @@ public class Proxy extends Spider {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                /*
                 if (this.is == null ) {
+                    if(this.futureQueue.isEmpty()){
+                        return -1;
+                    }
                     this.is = this.futureQueue.remove().get();
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
                 {
-                    this.is = this.futureQueue.remove().get();
-                    ol = this.is.read(buffer, off, len);
+                    this.is == null
+                    return 0;
                 }
                 return ol;
-                */
-                this.is = this.futureQueue.remove().get();
-                return this.is.read(buffer, off, len);
             } catch (Exception e) {
-                return -1;
+                return 0;
             }
-            
         }
 
         @Override
