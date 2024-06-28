@@ -45,15 +45,6 @@ public class Proxy extends Spider {
                 this.success = false;
                 return;
             }
-            
-            /*
-            try {
-                Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
-                this.header = OkHttp.newCall(request).headers();
-            } catch (Exception e) {
-                this.success = false;
-            }
-            */
 
             this.executorService = Executors.newFixedThreadPool(1);
             this.future = this.executorService.submit(() -> {
