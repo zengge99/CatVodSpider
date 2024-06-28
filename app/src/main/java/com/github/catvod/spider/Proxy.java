@@ -33,7 +33,7 @@ public class Proxy extends Spider {
         boolean success;
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
-        Future f;
+        Future<ByteArrayInputStream> f;
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
