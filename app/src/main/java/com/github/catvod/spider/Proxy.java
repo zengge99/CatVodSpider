@@ -18,13 +18,13 @@ import java.io.PipedInputStream;
 
 public class Proxy extends Spider {
 
-    private static class ChunkedInputStream extends PipedInputStream {
+    private static class HttpDownloader extends PipedInputStream {
 
         int chunk = 0;
 
         String[] chunks;
 
-        private ChunkedInputStream(String[] chunks) {
+        private HttpDownloader(String[] chunks) {
             this.chunks = chunks;
         }
 
@@ -34,6 +34,11 @@ public class Proxy extends Spider {
                 buffer[i] = (byte) this.chunks[this.chunk].charAt(i);
             }
             return this.chunks[this.chunk++].length();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
         }
     }
 
@@ -75,7 +80,7 @@ public class Proxy extends Spider {
         String contentDisposition = response.headers().get("Content-Disposition");
         long contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
 
-        PipedInputStream pipedInputStream = new ChunkedInputStream(new String[]{
+        PipedInputStream pipedInputStream = new HttpDownloader(new String[]{
             "some",
             "thing which is longer than sixteen characters",
             "whee!",
