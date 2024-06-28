@@ -31,6 +31,7 @@ public class Proxy extends Spider {
         Response response;
         boolean success;
         Future<Response> future;
+        ExecutorService executorService;
 
         private HttpDownloader(String url) {
             this.success = true;
@@ -54,8 +55,8 @@ public class Proxy extends Spider {
             }
             */
 
-            ExecutorService executorService = Executors.newFixedThreadPool(1);
-            this.future = executorService.submit(() -> {
+            this.executorService = Executors.newFixedThreadPool(1);
+            this.future = this.executorService.submit(() -> {
                 try {
                     Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
                     return OkHttp.newCall(request);
@@ -70,7 +71,7 @@ public class Proxy extends Spider {
             try {
                 this.response = this.future.get();
             } catch (Exception e) {}
-            executorService.shutdown();
+            this.executorService.shutdown();
             return this.response.body().byteStream().read(buffer, off, len);
         }
 
