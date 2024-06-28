@@ -68,7 +68,7 @@ public class Proxy extends Spider {
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-            ByteArrayInputStream is;
+            ByteArrayInputStream is = null;
             try {
                 is = this.future.get();
             } catch (Exception e) {}
