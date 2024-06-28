@@ -1,3 +1,4 @@
+
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.Queue;
+import java.util.LinkedList;
 
 public class Proxy extends Spider {
 
@@ -37,6 +39,7 @@ public class Proxy extends Spider {
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
+            this.futureQueue = new LinkedList<>();
             this.success = true;
             try {
                 Request request = new Request.Builder().head().url(url).addHeader("Accept-Encoding", "").build();
@@ -70,15 +73,15 @@ public class Proxy extends Spider {
                     }
                 });
                 this.futureQueue.add(future);
-                this.f = future;
+                //this.f = future;
             }
         }
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                this.is = this.f.get();
-                //this.is = this.futureQueue.remove().get();
+                //this.is = this.f.get();
+                this.is = this.futureQueue.remove().get();
             } catch (Exception e) {
                 this.is = null;
             }
