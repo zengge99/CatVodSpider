@@ -34,7 +34,6 @@ public class Proxy extends Spider {
         boolean success;
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
-        Future<ByteArrayInputStream> f;
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
@@ -72,19 +71,26 @@ public class Proxy extends Spider {
                     }
                 });
                 this.futureQueue.add(future);
-                //this.f = future;
             }
         }
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                //this.is = this.f.get();
-                this.is = this.futureQueue.remove().get();
+                if (this.is == null ) {
+                    this.is = this.futureQueue.remove().get();
+                }
+                int len = this.is.read(buffer, off, len);
+                if ( len == -1 )
+                {
+                    this.is = this.futureQueue.remove().get();
+                    len = this.is.read(buffer, off, len);
+                }
+                return len;
             } catch (Exception e) {
-                this.is = null;
+                return -1;
             }
-            return this.is.read(buffer, off, len);
+            
         }
 
         @Override
