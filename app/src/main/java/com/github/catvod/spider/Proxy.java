@@ -20,20 +20,20 @@ public class Proxy extends Spider {
 
     private static class HttpDownloader extends PipedInputStream {
 
-        int chunk = 0;
+        public String contentType = "";
+        public long contentLength = 0;
+        Response response;
 
-        String[] chunks;
-
-        private HttpDownloader(String[] chunks) {
-            this.chunks = chunks;
+        private HttpDownloader(String[] url) {
+            this.response = OkHttp.newCall(url);
+            this.contentType = this.response.headers().get("Content-Type");
+            String hContentLength = this.response.headers().get("Content-Length");
+            this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
         }
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-            for (int i = 0; i < this.chunks[this.chunk].length(); ++i) {
-                buffer[i] = (byte) this.chunks[this.chunk].charAt(i);
-            }
-            return this.chunks[this.chunk++].length();
+            return this.response.body().read(buffer, off, len);
         }
 
         @Override
@@ -74,20 +74,8 @@ public class Proxy extends Spider {
     }
 
     public static Object[] genProxy1(String url) throws Exception {
-        Response response = OkHttp.newCall(url);
-        String contentType = response.headers().get("Content-Type");
-        String hContentLength = response.headers().get("Content-Length");
-        String contentDisposition = response.headers().get("Content-Disposition");
-        long contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-
-        PipedInputStream pipedInputStream = new HttpDownloader(new String[]{
-            "some",
-            "thing which is longer than sixteen characters",
-            "whee!",
-            ""
-        });
-
-        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, contentType, pipedInputStream, contentLength);
+        HttpDownloader httpDownloader = new HttpDownloader("https://xiaoya.1996999.xyz/my_fan.json");
+        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : response.headers().names()) resp.addHeader(key, response.headers().get(key));
         return new Object[]{resp};
     }
