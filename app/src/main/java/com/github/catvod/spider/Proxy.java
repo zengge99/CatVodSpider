@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import okhttp3.Request;
 import okhttp3.Headers;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Proxy extends Spider {
 
@@ -27,6 +30,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
+        Future<Response> future;
 
         private HttpDownloader(String url) {
             this.success = true;
@@ -41,16 +45,31 @@ public class Proxy extends Spider {
                 return;
             }
             
+            /*
             try {
                 Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
                 this.header = OkHttp.newCall(request).headers();
             } catch (Exception e) {
                 this.success = false;
             }
+            */
+
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+            this.future = executorService.submit(() -> {
+                try {
+                    Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
+                    this.header = OkHttp.newCall(request).headers();
+                } catch (Exception e) {
+                }
+            });
         }
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
+            try {
+                this.response = this.future.get();
+            } catch (Exception e) {}
+            executorService.shutdown();
             return this.response.body().byteStream().read(buffer, off, len);
         }
 
