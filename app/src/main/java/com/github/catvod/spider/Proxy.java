@@ -55,7 +55,7 @@ public class Proxy extends Spider {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     try {
-                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*10) + "-" + ((index+1)*10 - 1)).build();
+                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*1024*1024) + "-" + ((index+1)*1024*1024 - 1)).build();
                         Response response = OkHttp.newCall(request);
                     
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -108,7 +108,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                return genProxy1("https://pan.1996999.xyz/tmp.txt");
+                return genProxy(params.get("url"));
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
@@ -122,25 +122,13 @@ public class Proxy extends Spider {
         }
     }
 
-    public static Object[] genProxy1(String url) throws Exception {
+    public static Object[] genProxy(String url) throws Exception {
         HttpDownloader httpDownloader = new HttpDownloader(url);
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
     }
-
-
-    public static Object[] genProxy(String url) throws Exception {
-        Response response = OkHttp.newCall(url);
-        String contentType = response.headers().get("Content-Type");
-        String hContentLength = response.headers().get("Content-Length");
-        String contentDisposition = response.headers().get("Content-Disposition");
-        long contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, contentType, response.body().byteStream(), contentLength);
-        for (String key : response.headers().names()) resp.addHeader(key, response.headers().get(key));
-        return new Object[]{resp};
-    }
-
+    
     static void adjustPort() {
         if (Proxy.port > 0) return;
         int port = 9978;
