@@ -74,7 +74,7 @@ public class Proxy extends Spider {
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             ByteArrayInputStream is = null;
             try {
-                is = this.futureQueue.remove();
+                is = this.futureQueue.remove().get();
             } catch (Exception e) {}
             return is.read(buffer, off, len);
         }
