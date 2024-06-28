@@ -1,4 +1,3 @@
-
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
@@ -55,7 +54,7 @@ public class Proxy extends Spider {
             this.executorService = Executors.newFixedThreadPool(2);
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
-                Future future = this.executorService.submit(() -> {
+                Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     try {
                         Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*10) + "-" + ((index+1)*10 - 1)).build();
                         Response response = OkHttp.newCall(request);
