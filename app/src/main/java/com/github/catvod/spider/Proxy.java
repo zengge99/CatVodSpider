@@ -30,7 +30,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
-        Future<Response> future;
+        Future<ByteArrayInputStream> future;
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
@@ -50,7 +50,16 @@ public class Proxy extends Spider {
             this.future = this.executorService.submit(() -> {
                 try {
                     Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").build();
-                    return OkHttp.newCall(request);
+                    Response response = OkHttp.newCall(request);
+                    
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+
+                    while ((bytesRead = response.body().read(buffer)) != -1) {
+                        baos.write(buffer, 0, bytesRead);
+                    }
+                    return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     return null;
                 }
@@ -59,11 +68,12 @@ public class Proxy extends Spider {
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
+            ByteArrayInputStream is;
             try {
-                this.response = this.future.get();
+                is = this.future.get();
             } catch (Exception e) {}
             this.executorService.shutdown();
-            return this.response.body().byteStream().read(buffer, off, len);
+            return is.read(buffer, off, len);
         }
 
         @Override
