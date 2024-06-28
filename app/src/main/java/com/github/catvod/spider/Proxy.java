@@ -32,7 +32,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
-        int running = 0;
+        int waiting = 0;
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
@@ -66,8 +66,8 @@ public class Proxy extends Spider {
                         while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
                             baos.write(buffer, 0, bytesRead);
                         }
-                        this.running++;
-                        while(this.running>5){
+                        this.waiting++;
+                        while(this.waiting>5){
                             Thread.sleep(100);
                         }
                         return new ByteArrayInputStream(baos.toByteArray());
@@ -87,7 +87,7 @@ public class Proxy extends Spider {
                         return -1;
                     }
                     this.is = this.futureQueue.remove().get();
-                    this.running--;
+                    this.waiting--;
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
