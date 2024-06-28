@@ -33,8 +33,10 @@ public class Proxy extends Spider {
             String hContentLength = this.response.headers().get("Content-Length");
             this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
 
-            Request request = new Request.Builder().head().url(url).build();
-            this.response = OkHttp.newCall(request);
+            try {
+                Request request = new Request.Builder().head().url(url).build();
+                this.response = OkHttp.newCall(request);
+            } catch (Exception e) {}
         }
 
         @Override
