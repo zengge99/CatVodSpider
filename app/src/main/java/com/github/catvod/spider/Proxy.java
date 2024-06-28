@@ -22,7 +22,7 @@ public class Proxy extends Spider {
 
         public String contentType = "";
         public long contentLength = 0;
-        Response response;
+        public Response response;
 
         private HttpDownloader(String url) {
             this.response = OkHttp.newCall(url);
@@ -61,6 +61,13 @@ public class Proxy extends Spider {
         }
     }
 
+    public static Object[] genProxy1(String url) throws Exception {
+        HttpDownloader httpDownloader = new HttpDownloader("https://xiaoya.1996999.xyz/my_fan.json");
+        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
+        for (String key : httpDownloader.response.headers().names()) resp.addHeader(key, httpDownloader.response.headers().get(key));
+        return new Object[]{resp};
+    }
+
 
     public static Object[] genProxy(String url) throws Exception {
         Response response = OkHttp.newCall(url);
@@ -72,14 +79,6 @@ public class Proxy extends Spider {
         for (String key : response.headers().names()) resp.addHeader(key, response.headers().get(key));
         return new Object[]{resp};
     }
-
-    public static Object[] genProxy1(String url) throws Exception {
-        HttpDownloader httpDownloader = new HttpDownloader("https://xiaoya.1996999.xyz/my_fan.json");
-        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
-        for (String key : httpDownloader.response.headers().names()) resp.addHeader(key, httpDownloader.response.headers().get(key));
-        return new Object[]{resp};
-    }
-
 
     static void adjustPort() {
         if (Proxy.port > 0) return;
