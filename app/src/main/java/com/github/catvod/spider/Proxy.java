@@ -7,14 +7,16 @@ import com.github.catvod.net.OkHttp;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
+import fi.iki.elonen.NanoHTTPD;
+
 public class Proxy extends Spider {
 
     private static int port = -1;
 
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
-            case "my":
-                return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("test".getBytes("UTF-8"))};
+            case "gen":
+                return genProxy("https://xiaoya.1996999.xyz/my_fan.json")
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
@@ -27,6 +29,18 @@ public class Proxy extends Spider {
                 return null;
         }
     }
+
+    public static Object[] genProxy(String url) throws Exception {
+        Response response = OkHttp.newCall(url, headers);
+        String contentType = response.headers().get("Content-Type");
+        String hContentLength = response.headers().get("Content-Length");
+        String contentDisposition = response.headers().get("Content-Disposition");
+        long contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, contentType, response.body().byteStream(), contentLength);
+        for (String key : response.headers().names()) resp.addHeader(key, response.headers().get(key));
+        return new Object[]{resp};
+    }
+
 
     static void adjustPort() {
         if (Proxy.port > 0) return;
