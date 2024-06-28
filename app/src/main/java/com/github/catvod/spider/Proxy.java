@@ -10,7 +10,7 @@ import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 import okhttp3.Response;
 import static fi.iki.elonen.NanoHTTPD.Response.Status;
-import static fi.iki.elonen.NanoHTTPD.Response;
+//import static fi.iki.elonen.NanoHTTPD.Response;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
