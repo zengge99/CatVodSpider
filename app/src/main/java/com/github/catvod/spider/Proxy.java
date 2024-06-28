@@ -32,7 +32,8 @@ public class Proxy extends Spider {
             this.success = true;
             try {
                 Request request = new Request.Builder().head().url(url).build();
-                this.header = OkHttp.newCall(request).headers();
+                Headers headers = new Headers.Builder().add("Accept-Encoding", "").build();
+                this.header = OkHttp.newCall(request, headers).headers();
                 this.contentType = this.header.get("Content-Type");
                 String hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
@@ -50,9 +51,6 @@ public class Proxy extends Spider {
 
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-            if (!this.success) {
-                return -1;
-            }
             return this.response.body().byteStream().read(buffer, off, len);
         }
 
