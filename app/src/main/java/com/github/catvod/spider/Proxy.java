@@ -31,17 +31,18 @@ public class Proxy extends Spider {
         private HttpDownloader(String url) {
             this.success = true;
             try {
-                this.response = OkHttp.newCall(url);
-            } catch (Exception e) {
-                this.success = false;
-            }
-            this.contentType = this.response.headers().get("Content-Type");
-            String hContentLength = this.response.headers().get("Content-Length");
-            this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-
-            try {
                 Request request = new Request.Builder().head().url(url).build();
                 this.header = OkHttp.newCall(request).headers();
+                this.contentType = this.header.get("Content-Type");
+                String hContentLength = this.header.get("Content-Length");
+                this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+            } catch (Exception e) {
+                this.success = false;
+                return;
+            }
+            
+            try {
+                this.response = OkHttp.newCall(url);
             } catch (Exception e) {
                 this.success = false;
             }
@@ -66,7 +67,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                return genProxy1("https://xiaoya.1996999.xyz/tvbox/my.json");
+                return genProxy1("https://pan.1996999.xyz/tmp.txt");
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
