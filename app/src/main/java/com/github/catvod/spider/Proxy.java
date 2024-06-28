@@ -15,6 +15,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
+import okhttp3.Request;
 
 public class Proxy extends Spider {
 
@@ -31,6 +32,9 @@ public class Proxy extends Spider {
             this.contentType = this.response.headers().get("Content-Type");
             String hContentLength = this.response.headers().get("Content-Length");
             this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+
+            Request request = new Request.Builder().head().url(url).build();
+            this.response = OkHttp.newCall(request);
         }
 
         @Override
