@@ -80,13 +80,13 @@ public class Proxy extends Spider {
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                 }
-                int len = this.is.read(buffer, off, len);
-                if ( len == -1 )
+                int ol = this.is.read(buffer, off, len);
+                if ( ol == -1 )
                 {
                     this.is = this.futureQueue.remove().get();
-                    len = this.is.read(buffer, off, len);
+                    ol = this.is.read(buffer, off, len);
                 }
-                return len;
+                return ol;
             } catch (Exception e) {
                 return -1;
             }
