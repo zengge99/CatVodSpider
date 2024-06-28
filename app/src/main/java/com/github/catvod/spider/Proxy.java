@@ -20,6 +20,7 @@ import okhttp3.Headers;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.Queue;
 
 public class Proxy extends Spider {
 
@@ -30,7 +31,7 @@ public class Proxy extends Spider {
         public Headers header;
         Response response;
         boolean success;
-        Map<int,Future<ByteArrayInputStream>> futureList;
+        Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
 
         private HttpDownloader(String url) {
@@ -50,7 +51,7 @@ public class Proxy extends Spider {
             for (int i = 0; i < 10; i++) {
                 Future future = this.executorService.submit(() -> {
                     try {
-                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("bytes=" + (i*10) + "-" + ((i+1)*10 - 1)).build();
+                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (i*10) + "-" + ((i+1)*10 - 1)).build();
                         Response response = OkHttp.newCall(request);
                     
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -65,7 +66,7 @@ public class Proxy extends Spider {
                         return null;
                     }
                 });
-                futureList[i] = future;
+                this.futureQueue.add(future);
             }
         }
 
@@ -73,7 +74,7 @@ public class Proxy extends Spider {
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             ByteArrayInputStream is = null;
             try {
-                is = this.futureList[0].get();
+                is = this.futureQueue.remove();
             } catch (Exception e) {}
             return is.read(buffer, off, len);
         }
