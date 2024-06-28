@@ -23,13 +23,17 @@ public class Proxy extends Spider {
 
         public String contentType = "";
         public long contentLength = 0;
-        public Map<String, String> header;
+        public Headers header;
         Response response;
+        boolean success;
 
         private HttpDownloader(String url) {
+            this.success = true;
             try {
                 this.response = OkHttp.newCall(url);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                this.success = false;
+            }
             this.contentType = this.response.headers().get("Content-Type");
             String hContentLength = this.response.headers().get("Content-Length");
             this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
@@ -37,7 +41,9 @@ public class Proxy extends Spider {
             try {
                 Request request = new Request.Builder().head().url(url).build();
                 this.header = OkHttp.newCall(request).headers();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                this.success = false;
+            }
         }
 
         @Override
