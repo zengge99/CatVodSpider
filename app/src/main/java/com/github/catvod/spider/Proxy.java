@@ -23,7 +23,8 @@ public class Proxy extends Spider {
 
         public String contentType = "";
         public long contentLength = 0;
-        public Response response;
+        public Map<String, String> header;
+        Response response;
 
         private HttpDownloader(String url) {
             try {
@@ -35,7 +36,7 @@ public class Proxy extends Spider {
 
             try {
                 Request request = new Request.Builder().head().url(url).build();
-                this.response = OkHttp.newCall(request);
+                this.header = OkHttp.newCall(request).headers();
             } catch (Exception e) {}
         }
 
@@ -72,7 +73,7 @@ public class Proxy extends Spider {
     public static Object[] genProxy1(String url) throws Exception {
         HttpDownloader httpDownloader = new HttpDownloader(url);
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
-        for (String key : httpDownloader.response.headers().names()) resp.addHeader(key, httpDownloader.response.headers().get(key));
+        for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
     }
 
