@@ -10,9 +10,32 @@ import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 import okhttp3.Response;
 import static fi.iki.elonen.NanoHTTPD.Response.Status;
+import static fi.iki.elonen.NanoHTTPD.Response;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PipedInputStream;
 
 public class Proxy extends Spider {
+
+    private static class ChunkedInputStream extends PipedInputStream {
+
+        int chunk = 0;
+
+        String[] chunks;
+
+        private ChunkedInputStream(String[] chunks) {
+            this.chunks = chunks;
+        }
+
+        @Override
+        public synchronized int read(byte[] buffer, int off, int len) throws IOException {
+            for (int i = 0; i < this.chunks[this.chunk].length(); ++i) {
+                buffer[i] = (byte) this.chunks[this.chunk].charAt(i);
+            }
+            return this.chunks[this.chunk++].length();
+        }
+    }
 
     private static int port = -1;
 
