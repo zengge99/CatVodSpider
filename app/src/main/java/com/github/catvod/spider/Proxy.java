@@ -25,7 +25,9 @@ public class Proxy extends Spider {
         public Response response;
 
         private HttpDownloader(String url) {
-            this.response = OkHttp.newCall(url);
+            try {
+                this.response = OkHttp.newCall(url);
+            } catch {}
             this.contentType = this.response.headers().get("Content-Type");
             String hContentLength = this.response.headers().get("Content-Length");
             this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
