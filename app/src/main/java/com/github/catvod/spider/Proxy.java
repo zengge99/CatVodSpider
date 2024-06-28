@@ -55,7 +55,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                return genProxy1("https://xiaoya.1996999.xyz/my_fan.json");
+                return genProxy1("https://xiaoya.1996999.xyz/tvbox/my.json");
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
@@ -70,7 +70,7 @@ public class Proxy extends Spider {
     }
 
     public static Object[] genProxy1(String url) throws Exception {
-        HttpDownloader httpDownloader = new HttpDownloader("https://xiaoya.1996999.xyz/my_fan.json");
+        HttpDownloader httpDownloader = new HttpDownloader(url);
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.response.headers().names()) resp.addHeader(key, httpDownloader.response.headers().get(key));
         return new Object[]{resp};
