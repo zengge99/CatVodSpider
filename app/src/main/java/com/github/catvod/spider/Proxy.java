@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.net.URLDecoder;
 import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
+import java.io.InputStream;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
