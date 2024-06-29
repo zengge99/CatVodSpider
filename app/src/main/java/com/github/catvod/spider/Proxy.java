@@ -42,12 +42,12 @@ public class Proxy extends Spider {
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
-            this.executorService = Executors.newFixedThreadPool(5);
             this.getHeader(url, headers);
             this.createDownloadTask(url, headers);
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
+            this.executorService = Executors.newFixedThreadPool(5);
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
