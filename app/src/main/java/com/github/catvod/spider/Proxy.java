@@ -1,3 +1,4 @@
+
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
@@ -57,6 +58,12 @@ public class Proxy extends Spider {
             this.executorService = Executors.newFixedThreadPool(5);
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
+                
+                downloadTask(url, headers, "");
+            downloadTask(url, headers, "");
+
+                
+                
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
@@ -64,9 +71,7 @@ public class Proxy extends Spider {
                 return;
             }
             
-            downloadTask(url, headers, "");
-            downloadTask(url, headers, "");
-
+            
             //多线程下载
             long start = 0; 
             long end = this.contentLength - 1;
