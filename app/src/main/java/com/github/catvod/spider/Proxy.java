@@ -210,7 +210,8 @@ public class Proxy extends Spider {
                     this.waiting--;
                 }
                 int ol = this.is.read(buffer, off, len);
-                if ( ol == -1 )
+                //因为是预先下载到内存块，因此0也是读完了
+                if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
                     this.waiting--;
