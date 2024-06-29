@@ -164,9 +164,9 @@ public class Proxy extends Spider {
                             while(this.waiting > threadNum){
                             Thread.sleep(100);
                         }
-                        } catch (Exception e) {}
-                        this.executorService.shutdown();
-                        return new ByteArrayInputStream(errorStream.toByteArray());
+                        } catch (Exception er) {}
+                            this.executorService.shutdown();
+                            return new ByteArrayInputStream(errorStream.toByteArray());
                     }
                 }
             }
