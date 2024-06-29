@@ -188,7 +188,7 @@ public class Proxy extends Spider {
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
-                if (this.header.get("Accept-Ranges").toLowerCase() != "bytes") {
+                if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
