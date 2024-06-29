@@ -72,7 +72,7 @@ public class Proxy extends Spider {
             }
         }
 
-        private getHeader(String url, Map<String, String> headers) {
+        private void getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
             Response response = null;
