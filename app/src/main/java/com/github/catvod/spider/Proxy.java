@@ -44,6 +44,7 @@ public class Proxy extends Spider {
         boolean supportRange = true;
         long blockSize = 1 * 1024 * 1024; //默认1MB
         int threadNum = 5; //默认5线程
+        String cookie = "";
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.getHeader(url, headers);
@@ -106,6 +107,9 @@ public class Proxy extends Spider {
                     if (!range.isEmpty()) {
                         requestBuilder.removeHeader("Range").addHeader("Range", range);
                     }
+                    if (!cookie.isEmpty()) {
+                        requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+                    }
                     Request request = requestBuilder.build();
                     Response response = OkHttp.newCall(request);
         
@@ -153,6 +157,9 @@ public class Proxy extends Spider {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
                 //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                if (!cookie.isEmpty()) {
+                    requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+                }
                 Request request = requestBuilder.build();
                 
                 this.header = OkHttp.newCall(request).headers();
@@ -203,7 +210,15 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                Notify.show("代理加载成功");
+                if(params.get("thread") != null){
+                    threadNum = Integer.parseInt(params.get("thread"));
+                }
+                if(params.get("blocksize") != null){
+                    blockSize = Integer.parseInt(params.get("blocksize"));
+                }
+                if(params.get("cookie") != null){
+                    cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
+                }
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
