@@ -39,7 +39,7 @@ public class Proxy extends Spider {
         public int statusCode = 200;
         int waiting = 0;
         ByteArrayInputStream is = null;
-        Queue<Future<ByteArrayInputStream>> futureQueue;
+        Queue<Future<InputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认1MB
@@ -78,9 +78,8 @@ public class Proxy extends Spider {
             this.executorService = Executors.newFixedThreadPool(threadNum);
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
-                Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    ByteArrayInputStream si = downloadTask(url, headers, "");
-                    return si;
+                Future<InputStream> future = this.executorService.submit(() -> {
+                    return downloadTask(url, headers, "");
                 });
                 this.futureQueue.add(future);
                 return;
@@ -105,7 +104,7 @@ public class Proxy extends Spider {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
-                Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
+                Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, ra);
                 });
                 this.futureQueue.add(future);
@@ -113,7 +112,7 @@ public class Proxy extends Spider {
             }
         }
 
-        private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
+        private InputStream downloadTask(String url, Map<String, String> headers, String range) {
             int retryCount = 0;
             int maxRetry = 5;
             while (retryCount < maxRetry) {
