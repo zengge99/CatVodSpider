@@ -131,12 +131,10 @@ public class Proxy extends Spider {
             String hContentLength = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url).head();
-                /*
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
-                */
-                requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
                 /*
                 range = request.headers().get("Range");
@@ -173,9 +171,11 @@ public class Proxy extends Spider {
                 this.supportRange = false;
                 return;
             }
+            /*
             if (this.supportRange) {
                 this.header = this.header.newBuilder().add("Content-Range", "bytes " + range + "/" + hContentLength).build();
             }
+            */
         }
 
         @Override
