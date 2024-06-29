@@ -79,6 +79,8 @@ public class Proxy extends Spider {
 
             long blockSize = 1024 * 1024;
             while (start <= end) {
+                downloadTask(url, headers, "");
+            downloadTask(url, headers, "");
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
@@ -88,9 +90,6 @@ public class Proxy extends Spider {
                 this.futureQueue.add(future);
                 start = curEnd + 1;
             }
-
-            downloadTask(url, headers, "");
-            downloadTask(url, headers, "");
         }
 
         private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
