@@ -246,7 +246,8 @@ public class Proxy extends Spider {
 
     public static Object[] genProxy(Map<String, String> params) throws Exception {
         HttpDownloader httpDownloader = new HttpDownloader(params);
-        NanoHTTPD.Response resp = newFixedLengthResponse(httpDownloader.statusCode, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
+        NanoHTTPD.Response.IStatus status = NanoHTTPD.Response.Status.lookup(httpDownloader.statusCode);
+        NanoHTTPD.Response resp = newFixedLengthResponse(status, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
     }
