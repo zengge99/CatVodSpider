@@ -29,9 +29,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class Proxy extends Spider {
-
     private static class HttpDownloader extends PipedInputStream {
-
         public String contentType = "";
         public long contentLength = 0;
         public Headers header;
@@ -74,14 +72,15 @@ public class Proxy extends Spider {
             }
         }
 
-        public bool getHeader(String url, Map<String, String> headers) {
+        public boolean getHeader(String url, Map<String, String> headers) {
+            String range = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
                 Request request = requestBuilder.build();
-                String range = request.headers().get("Range");
+                range = request.headers().get("Range");
                 int index = range.indexOf("=");
                 if (index != -1 && index < range.length() - 1) {
                     range = range.substring(index + 1);
@@ -111,7 +110,7 @@ public class Proxy extends Spider {
                 this.supportRange = false;
             }
             if (this.supportRange) {
-                this.header.addHeader("Content-Range", "bytes "+range+"/"+hContentLength);
+                this.header.addHeader("Content-Range", "bytes " + range+"/" + hContentLength);
             }
             return this.supportRange;
         }
