@@ -111,7 +111,7 @@ public class Proxy extends Spider {
                 this.supportRange = false;
             }
             if (this.supportRange) {
-                this.header.addHeader("Content-Range", "bytes " + range+"/" + hContentLength);
+                this.header.addHeader("Content-Range", "bytes " + range + "/" + hContentLength);
             }
         }
 
