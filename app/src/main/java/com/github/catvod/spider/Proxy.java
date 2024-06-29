@@ -119,7 +119,9 @@ public class Proxy extends Spider {
                 }
                 return new ByteArrayInputStream(baos.toByteArray());
             } catch (Exception e) {
-                return null;
+                ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
+                e.printStackTrace(new PrintStream(errorStream));
+                return new ByteArrayInputStream(errorStream.toByteArray());
             }
         }
 
@@ -164,7 +166,7 @@ public class Proxy extends Spider {
                 return;
             }
             if (this.supportRange) {
-                this.header = this.header.newBuilder().remove("Content-Range").add("Content-Range", "bytes " + range + "/" + hContentLength).build();
+                this.header = this.header.newBuilder().add("Content-Range", "bytes " + range + "/" + hContentLength).build();
             }
         }
 
