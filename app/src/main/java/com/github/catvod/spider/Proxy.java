@@ -127,6 +127,7 @@ public class Proxy extends Spider {
         }
 
         private void getHeader(String url, Map<String, String> headers) {
+            this.supportRange = false;
             String range = "";
             String hContentLength = "";
             try {
@@ -134,7 +135,7 @@ public class Proxy extends Spider {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
-                //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
                 /*
                 range = request.headers().get("Range");
