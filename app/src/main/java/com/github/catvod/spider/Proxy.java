@@ -46,10 +46,16 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
+            Request.Builder requestBuilder = new Request.Builder().url(url);
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                requestBuilder.addHeader(entry.getKey(), entry.getValue());
+            }
+            Request request = requestBuilder.build();
+            String range = request.headers().get("Range");
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(5);
             //不支持断点续传，单线程下载
-            if(!this.supportRange) {
+            if(!this.supportRange && !range == "") {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
@@ -58,13 +64,6 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
-            Request.Builder requestBuilder = new Request.Builder().url(url);
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                requestBuilder.addHeader(entry.getKey(), entry.getValue());
-            }
-            Request request = requestBuilder.build();
-            String range = request.headers().get("Range");
-
             
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
