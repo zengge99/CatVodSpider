@@ -42,7 +42,7 @@ public class Proxy extends Spider {
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
-        long blockSize = 1 * 1024 * 1024; //默认1MB
+        int blockSize = 1 * 1024 * 1024; //默认1MB
         int threadNum = 5; //默认5线程
         String cookie = "";
 
