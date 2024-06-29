@@ -106,6 +106,14 @@ public class Proxy extends Spider {
                 requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
+
+                //单线程模式，重新获取更准确的响应头
+                if(range == ""){
+                    this.header = response.headers();
+                    this.contentType = this.header.get("Content-Type");
+                    hContentLength = this.header.get("Content-Length");
+                    this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                }
                     
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -127,7 +135,6 @@ public class Proxy extends Spider {
         }
 
         private void getHeader(String url, Map<String, String> headers) {
-            this.supportRange = false;
             String range = "";
             String hContentLength = "";
             try {
@@ -142,7 +149,7 @@ public class Proxy extends Spider {
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-                if (this.contentLength != 2) {
+                if (this.header.get("Accept-Ranges") != "bytes") {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
