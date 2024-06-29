@@ -62,38 +62,6 @@ public class Proxy extends Spider {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     ByteArrayInputStream si = downloadTask(url, headers, "");
                     return si;
-
-                    /*
-                    try {
-                        Request.Builder requestBuilder1 = new Request.Builder().url(url);
-                        for (Map.Entry<String, String> entry : headers.entrySet()) {
-                            requestBuilder1.addHeader(entry.getKey(), entry.getValue());
-                        }
-                        if(range != ""){
-                            requestBuilder1.removeHeader("Range").addHeader("Range", range);
-                        }
-                        requestBuilder1.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
-                        Request request1 = requestBuilder1.build();
-                        Response response = OkHttp.newCall(request1);
-                            
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-        
-                        while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
-                            baos.write(buffer, 0, bytesRead);
-                        }
-                        this.waiting++;
-                        while(this.waiting>5){
-                            Thread.sleep(100);
-                        }
-                        return new ByteArrayInputStream(baos.toByteArray());
-                    } catch (Exception e) {
-                        ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-                        e.printStackTrace(new PrintStream(errorStream));
-                        return new ByteArrayInputStream(errorStream.toByteArray());
-                    }
-                    */
                 });
                 this.futureQueue.add(future);
                 return;
@@ -163,11 +131,14 @@ public class Proxy extends Spider {
             String hContentLength = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url).head();
+                /*
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
+                */
                 requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
+                /*
                 range = request.headers().get("Range");
                 int index = range.indexOf("=");
                 if (index != -1 && index < range.length() - 1) {
@@ -177,6 +148,8 @@ public class Proxy extends Spider {
                 }
                 requestBuilder.removeHeader("Range").addHeader("Range", "bytes=0-1");
                 request = requestBuilder.build();
+                */
+                
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
@@ -184,6 +157,7 @@ public class Proxy extends Spider {
                 if (this.contentLength != 2) {
                     this.supportRange = false;
                 }
+                /*
                 hContentLength = this.header.get("Content-Range");
                 String pattern = "\\d+";
                 Pattern r = Pattern.compile(pattern);
@@ -194,6 +168,7 @@ public class Proxy extends Spider {
                     hContentLength = "";
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                */
             } catch (Exception e) {
                 this.supportRange = false;
                 return;
