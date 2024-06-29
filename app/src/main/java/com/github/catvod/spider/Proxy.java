@@ -64,16 +64,16 @@ public class Proxy extends Spider {
                     //return si;
 
                     try {
-                        Request.Builder requestBuilder = new Request.Builder().url(url);
+                        Request.Builder requestBuilder1 = new Request.Builder().url(url);
                         for (Map.Entry<String, String> entry : headers.entrySet()) {
-                            requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                            requestBuilder1.addHeader(entry.getKey(), entry.getValue());
                         }
                         if(range != ""){
-                            requestBuilder.removeHeader("Range").addHeader("Range", range);
+                            requestBuilder1.removeHeader("Range").addHeader("Range", range);
                         }
-                        requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
-                        Request request = requestBuilder.build();
-                        Response response = OkHttp.newCall(request);
+                        requestBuilder1.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                        Request request1 = requestBuilder1.build();
+                        Response response = OkHttp.newCall(request1);
                             
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         byte[] buffer = new byte[1024];
