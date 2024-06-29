@@ -48,6 +48,18 @@ public class Proxy extends Spider {
         private void createDownloadTask(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(5);
+            //不支持断点续传，单线程下载
+            if(!this.supportRange) {
+                Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
+                    return downloadTask(url, headers, "");
+                });
+                this.futureQueue.add(future);
+                return;
+            }
+
+            //多线程下载
+
+            
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
