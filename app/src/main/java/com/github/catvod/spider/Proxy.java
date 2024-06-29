@@ -53,10 +53,19 @@ public class Proxy extends Spider {
                 this.contentType = this.header.get("Content-Type");
                 String hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-                
                 if (this.contentLength != 2) {
                     supportRange = false;
                 }
+                hContentLength = this.header.get("Content-Range");
+                String pattern = "\\d+";
+                Pattern r = Pattern.compile(pattern);
+                Matcher m = r.matcher(hContentLength);
+                if (m.find()) {
+                    hContentLength = m.group();
+                } else {
+                    hContentLength = ""
+                }
+                this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
             } catch (Exception e) {
                 supportRange = false;
             }
