@@ -42,6 +42,8 @@ public class Proxy extends Spider {
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
+        long blockSize = 1 * 1024 * 1024; //默认1MB
+        int threadNum = 5; //默认5线程
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.getHeader(url, headers);
@@ -56,7 +58,7 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             String range = request.headers().get("Range");
             this.futureQueue = new LinkedList<>();
-            this.executorService = Executors.newFixedThreadPool(5);
+            this.executorService = Executors.newFixedThreadPool(threadNum);
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
@@ -80,7 +82,6 @@ public class Proxy extends Spider {
                 end = Long.parseLong(endString);
             }
 
-            long blockSize = 1024 * 1024;
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
@@ -93,49 +94,10 @@ public class Proxy extends Spider {
             }
         }
 
-        private ByteArrayInputStream downloadTaskOld(String url, Map<String, String> headers, String range) {
-            try {
-                Request.Builder requestBuilder = new Request.Builder().url(url);
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    requestBuilder.addHeader(entry.getKey(), entry.getValue());
-                }
-                if(range != ""){
-                    requestBuilder.removeHeader("Range").addHeader("Range", range);
-                }
-                //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
-                Request request = requestBuilder.build();
-                Response response = OkHttp.newCall(request);
-
-                //单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
-                if(range == ""){
-                    this.header = response.headers();
-                    this.contentType = this.header.get("Content-Type");
-                    String hContentLength = this.header.get("Content-Length");
-                    this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-                }
-                    
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-
-                while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
-                    baos.write(buffer, 0, bytesRead);
-                }
-                this.waiting++;
-                while(this.waiting>5){
-                    Thread.sleep(100);
-                }
-                return new ByteArrayInputStream(baos.toByteArray());
-            } catch (Exception e) {
-                ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(errorStream));
-                return new ByteArrayInputStream(errorStream.toByteArray());
-            }
-        }
-
         private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
             int retryCount = 0;
-            while (retryCount < 5) {
+            int maxRetry = 5;
+            while (retryCount < maxRetry) {
                 try {
                     Request.Builder requestBuilder = new Request.Builder().url(url);
                     for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -163,13 +125,19 @@ public class Proxy extends Spider {
                         baos.write(buffer, 0, bytesRead);
                     }
                     this.waiting++;
+                    while(this.waiting > threadNum){
+                        Thread.sleep(100);
+                    }
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
-                    if (retryCount == 5) {
+                    if (retryCount == maxRetry) {
                         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
                         e.printStackTrace(new PrintStream(errorStream));
                         this.waiting++;
+                        while(this.waiting > threadNum){
+                            Thread.sleep(100);
+                        }
                         this.executorService.shutdown();
                         return new ByteArrayInputStream(errorStream.toByteArray());
                     }
