@@ -31,7 +31,6 @@ public class Proxy extends Spider {
         public long contentLength = 0;
         public Headers header;
         Response response;
-        boolean success;
         int waiting = 0;
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
@@ -39,21 +38,28 @@ public class Proxy extends Spider {
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
-            this.success = true;
+            bool supportRange = true;
             try {
-                Request.Builder requestBuilder = new Request.Builder().head().url(url);
+                Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
-                requestBuilder.addHeader("Accept-Encoding", "");
+                requestBuilder.addHeader("Range", "bytes=0-1");
                 Request request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
                 String hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                
+                if (this.contentLength != 2) {
+                    supportRange = false;
+                }
             } catch (Exception e) {
-                this.success = false;
-                return;
+                supportRange = false;
+            }
+
+            if (!supportRange) {
+                
             }
 
             this.executorService = Executors.newFixedThreadPool(5);
