@@ -136,7 +136,7 @@ public class Proxy extends Spider {
                         this.header = response.headers();
                         this.contentType = this.header.get("Content-Type");
                         String hContentLength = this.header.get("Content-Length");
-                        this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                        this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                     }
                         
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -185,7 +185,7 @@ public class Proxy extends Spider {
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
-                this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (this.header.get("Accept-Ranges") != "bytes") {
                     this.supportRange = false;
                 }
