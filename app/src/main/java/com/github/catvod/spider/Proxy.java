@@ -64,8 +64,8 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
-            int startInt = 0; 
-            int endInt = this.contentLength - 1;
+            long startInt = 0; 
+            long endInt = this.contentLength - 1;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(range);
