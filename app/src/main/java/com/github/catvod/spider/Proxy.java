@@ -75,6 +75,7 @@ public class Proxy extends Spider {
         private getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
+            Response response = null;
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -90,7 +91,8 @@ public class Proxy extends Spider {
                 }
                 requestBuilder.addHeader("Range", "bytes=0-1");
                 request = requestBuilder.build();
-                this.header = OkHttp.newCall(request).headers();
+                response = OkHttp.newCall(request);
+                this.header = response.headers();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
@@ -109,9 +111,11 @@ public class Proxy extends Spider {
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
             } catch (Exception e) {
                 this.supportRange = false;
+                return;
             }
             if (this.supportRange) {
-                this.header.addHeader("Content-Range", "bytes " + range + "/" + hContentLength);
+                response.addHeader("Content-Range", "bytes " + range + "/" + hContentLength);
+                this.header = response.headers();
             }
         }
 
