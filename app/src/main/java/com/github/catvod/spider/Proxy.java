@@ -51,27 +51,31 @@ public class Proxy extends Spider {
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    try {
-                        Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*1024*1024) + "-" + ((index+1)*1024*1024 - 1)).build();
-                        Response response = OkHttp.newCall(request);
-                    
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-
-                        while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
-                            baos.write(buffer, 0, bytesRead);
-                        }
-                        this.waiting++;
-                        while(this.waiting>5){
-                            Thread.sleep(100);
-                        }
-                        return new ByteArrayInputStream(baos.toByteArray());
-                    } catch (Exception e) {
-                        return null;
-                    }
+                    downloadTask(url, headers, "");
                 });
                 this.futureQueue.add(future);
+            }
+        }
+
+        private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
+            try {
+                Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*1024*1024) + "-" + ((index+1)*1024*1024 - 1)).build();
+                Response response = OkHttp.newCall(request);
+                    
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+
+                while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+                this.waiting++;
+                while(this.waiting>5){
+                    Thread.sleep(100);
+                }
+                return new ByteArrayInputStream(baos.toByteArray());
+            } catch (Exception e) {
+                return null;
             }
         }
 
