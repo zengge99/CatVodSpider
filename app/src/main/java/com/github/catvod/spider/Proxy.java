@@ -221,7 +221,7 @@ public class Proxy extends Spider {
                 return ol;
             } catch (Exception e) {
                 this.is = null;
-                return -1;
+                return 0;
             }
         }
 
