@@ -119,7 +119,10 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                return genProxy(params.get("url"));
+                Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent");
+                for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
+                return genProxy(params.get("url"), headers);
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
@@ -133,8 +136,8 @@ public class Proxy extends Spider {
         }
     }
 
-    public static Object[] genProxy(String url) throws Exception {
-        HttpDownloader httpDownloader = new HttpDownloader(url);
+    public static Object[] genProxy(String url, Map<String, String> headers) throws Exception {
+        HttpDownloader httpDownloader = new HttpDownloader(url, headers);
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
