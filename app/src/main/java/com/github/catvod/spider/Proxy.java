@@ -114,13 +114,13 @@ public class Proxy extends Spider {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
-            InputStream in = _downloadTask(url,headers,range);
-            this.waiting++;
-            while(this.waiting > threadNum + 1){
+            while(this.waiting > threadNum){
                 try{
                     Thread.sleep(100);
                 } catch (Exception e) {}
             }
+            InputStream in = _downloadTask(url,headers,range);
+            this.waiting++;
             return in;
         }
 
