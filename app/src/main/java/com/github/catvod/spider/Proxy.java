@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.net.URLDecoder;
-import com.github.catvod.utils.Notify;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -202,7 +201,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                Notify.show("通用代理");
+                Notice.show("通用代理");
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
