@@ -60,8 +60,38 @@ public class Proxy extends Spider {
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    ByteArrayInputStream si = downloadTask(url, headers, "");
-                    return si;
+                    //ByteArrayInputStream si = downloadTask(url, headers, "");
+                    //return si;
+
+                    try {
+                        Request.Builder requestBuilder = new Request.Builder().url(url);
+                        for (Map.Entry<String, String> entry : headers.entrySet()) {
+                            requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                        }
+                        if(range != ""){
+                            requestBuilder.removeHeader("Range").addHeader("Range", range);
+                        }
+                        requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                        Request request = requestBuilder.build();
+                        Response response = OkHttp.newCall(request);
+                            
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+        
+                        while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
+                            baos.write(buffer, 0, bytesRead);
+                        }
+                        this.waiting++;
+                        while(this.waiting>5){
+                            Thread.sleep(100);
+                        }
+                        return new ByteArrayInputStream(baos.toByteArray());
+                    } catch (Exception e) {
+                        ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
+                        e.printStackTrace(new PrintStream(errorStream));
+                        return new ByteArrayInputStream(errorStream.toByteArray());
+                    }
                 });
                 this.futureQueue.add(future);
                 return;
