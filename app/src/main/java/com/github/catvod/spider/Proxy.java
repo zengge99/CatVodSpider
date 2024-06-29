@@ -160,9 +160,11 @@ public class Proxy extends Spider {
                         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
                         e.printStackTrace(new PrintStream(errorStream));
                         this.waiting++;
-                        while(this.waiting > threadNum){
+                        try {
+                            while(this.waiting > threadNum){
                             Thread.sleep(100);
                         }
+                        } catch (Exception e) {}
                         this.executorService.shutdown();
                         return new ByteArrayInputStream(errorStream.toByteArray());
                     }
