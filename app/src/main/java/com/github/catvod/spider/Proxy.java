@@ -1,4 +1,3 @@
-
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
@@ -65,6 +64,8 @@ public class Proxy extends Spider {
                 
                 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
+                    downloadTask(url, headers, "");
+            downloadTask(url, headers, "");
                     return downloadTask(url, headers, "");
                 });
                 this.futureQueue.add(future);
