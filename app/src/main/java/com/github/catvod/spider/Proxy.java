@@ -127,21 +127,20 @@ public class Proxy extends Spider {
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
             int retryCount = 0;
             int maxRetry = 5;
+            Request.Builder requestBuilder = new Request.Builder().url(url);
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                requestBuilder.addHeader(entry.getKey(), entry.getValue());
+            }
+            if (!range.isEmpty()) {
+                requestBuilder.removeHeader("Range").addHeader("Range", range);
+            }
+            if (!cookie.isEmpty()) {
+                requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+            }
+            Request request = requestBuilder.build();
             while (retryCount < maxRetry) {
                 try {
-                    Request.Builder requestBuilder = new Request.Builder().url(url);
-                    for (Map.Entry<String, String> entry : headers.entrySet()) {
-                        requestBuilder.addHeader(entry.getKey(), entry.getValue());
-                    }
-                    if (!range.isEmpty()) {
-                        requestBuilder.removeHeader("Range").addHeader("Range", range);
-                    }
-                    if (!cookie.isEmpty()) {
-                        requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
-                    }
-                    Request request = requestBuilder.build();
                     Response response = OkHttp.newCall(request);
-        
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
                         statusCode = response.code();
