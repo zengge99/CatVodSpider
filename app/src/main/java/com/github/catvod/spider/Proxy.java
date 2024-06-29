@@ -64,9 +64,6 @@ public class Proxy extends Spider {
                 return;
             }
 
-            downloadTask(url, headers, "");
-            downloadTask(url, headers, "");
-
             //多线程下载
             long start = 0; 
             long end = this.contentLength - 1;
@@ -91,6 +88,9 @@ public class Proxy extends Spider {
                 this.futureQueue.add(future);
                 start = curEnd + 1;
             }
+
+            downloadTask(url, headers, "");
+            downloadTask(url, headers, "");
         }
 
         private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
