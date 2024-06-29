@@ -47,21 +47,25 @@ public class Proxy extends Spider {
         String cookie = "";
 
         private HttpDownloader(Map<String, String> params) {
-            if(params.get("thread") != null){
-                threadNum = Integer.parseInt(params.get("thread"));
+            try{
+                if(params.get("thread") != null){
+                    threadNum = Integer.parseInt(params.get("thread"));
+                }
+                if(params.get("blocksize") != null){
+                    blockSize = Integer.parseInt(params.get("blocksize"));
+                }
+                if(params.get("cookie") != null){
+                    cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
+                }
+                Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
+                for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
+                String url = URLDecoder.decode(params.get("url"), "UTF-8");
+                this.getHeader(url, headers);
+                this.createDownloadTask(url, headers);
+            } catch {
+                //不需要做什么
             }
-            if(params.get("blocksize") != null){
-                blockSize = Integer.parseInt(params.get("blocksize"));
-            }
-            if(params.get("cookie") != null){
-                cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
-            }
-            Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
-            for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
-            String url = URLDecoder.decode(params.get("url"), "UTF-8");
-            this.getHeader(url, headers);
-            this.createDownloadTask(url, headers);
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
