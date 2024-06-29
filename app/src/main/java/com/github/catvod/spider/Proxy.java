@@ -64,18 +64,16 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
-            int startInt = Integer.parseInt(start); 
-            int endInt = Integer.parseInt(end);
+            int startInt = -1; 
+            int endInt = -1;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(range);
             if (m.find()) {
                 String start = m.group(1); 
                 String end = m.group(2);
-                int startInt = Integer.parseInt(start); 
-                int endInt = Integer.parseInt(end);
-            } else {
-                System.out.println("未找到匹配的数字");
+                startInt = Integer.parseInt(start); 
+                endInt = Integer.parseInt(end);
             }
             
             for (int i = 0; i < 10; i++) {
