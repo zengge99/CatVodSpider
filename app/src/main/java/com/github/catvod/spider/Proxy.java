@@ -114,6 +114,15 @@ public class Proxy extends Spider {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
+            InputStream in = _downloadTask(url,headers,range);
+            this.waiting++;
+            while(this.waiting > threadNum){
+                Thread.sleep(100);
+            }
+            return in;
+        }
+
+        private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
             int retryCount = 0;
             int maxRetry = 5;
             while (retryCount < maxRetry) {
@@ -148,10 +157,6 @@ public class Proxy extends Spider {
                     while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
                         baos.write(buffer, 0, bytesRead);
                     }
-                    this.waiting++;
-                    while(this.waiting > threadNum){
-                        Thread.sleep(100);
-                    }
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
@@ -159,7 +164,6 @@ public class Proxy extends Spider {
                         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
                         e.printStackTrace(new PrintStream(errorStream));
                         this.executorService.shutdown();
-                        this.waiting++;
                         return new ByteArrayInputStream(errorStream.toByteArray());
                     }
                 }
