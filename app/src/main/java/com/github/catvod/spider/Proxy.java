@@ -46,6 +46,7 @@ public class Proxy extends Spider {
         int blockSize = 10 * 1024 * 1024; //默认1MB
         int threadNum = 2; //默认2线程
         String cookie = "";
+        byte[] downloadbBuffer;
 
         private HttpDownloader(Map<String, String> params) {
             try{
@@ -58,6 +59,7 @@ public class Proxy extends Spider {
                 if(params.get("cookie") != null){
                     cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
                 }
+                downloadbBuffer = new byte[1024 * 1024];
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
@@ -136,7 +138,6 @@ public class Proxy extends Spider {
                 requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
             }
             Request request = requestBuilder.build();
-            byte[] buffer = new byte[1024 * 1024];
             int retryCount = 0;
             int maxRetry = 5;
             while (retryCount < maxRetry) {
@@ -154,8 +155,8 @@ public class Proxy extends Spider {
                         
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
-                    while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
-                        baos.write(buffer, 0, bytesRead);
+                    while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                        baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
