@@ -175,6 +175,8 @@ public class Proxy extends Spider {
                     }
                 }
             }
+            //其实不可能走到这里， 避免编译报错。
+            return null;
         }
 
         private void getHeader(String url, Map<String, String> headers) {
