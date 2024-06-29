@@ -27,6 +27,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.net.URLDecoder;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -200,7 +201,8 @@ public class Proxy extends Spider {
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
-                return genProxy(params.get("url"), headers);
+                String decodedUrl = URLDecoder.decode(params.get("url"), "UTF-8");
+                return genProxy(decodedUrl, headers);
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
