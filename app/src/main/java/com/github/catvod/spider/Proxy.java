@@ -52,8 +52,8 @@ public class Proxy extends Spider {
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
-                if(params.get("blocksize") != null){
-                    blockSize = Integer.parseInt(params.get("blocksize"));
+                if(params.get("size") != null){
+                    blockSize = Integer.parseInt(params.get("size"));
                 }
                 if(params.get("cookie") != null){
                     cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
