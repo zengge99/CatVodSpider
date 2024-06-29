@@ -93,7 +93,7 @@ public class Proxy extends Spider {
             }
         }
 
-        private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
+        private ByteArrayInputStream downloadTaskOld(String url, Map<String, String> headers, String range) {
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -130,6 +130,50 @@ public class Proxy extends Spider {
                 ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
                 e.printStackTrace(new PrintStream(errorStream));
                 return new ByteArrayInputStream(errorStream.toByteArray());
+            }
+        }
+
+        private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
+            int retryCount = 0;
+            while (retryCount < 5) {
+                try {
+                    Request.Builder requestBuilder = new Request.Builder().url(url);
+                    for (Map.Entry<String, String> entry : headers.entrySet()) {
+                        requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                    }
+                    if (!range.isEmpty()) {
+                        requestBuilder.removeHeader("Range").addHeader("Range", range);
+                    }
+                    Request request = requestBuilder.build();
+                    Response response = OkHttp.newCall(request);
+        
+                    // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
+                    if (range.isEmpty()) {
+                        this.header = response.headers();
+                        this.contentType = this.header.get("Content-Type");
+                        String hContentLength = this.header.get("Content-Length");
+                        this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
+                    }
+                        
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+        
+                    while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
+                        baos.write(buffer, 0, bytesRead);
+                    }
+                    this.waiting++;
+                    return new ByteArrayInputStream(baos.toByteArray());
+                } catch (Exception e) {
+                    retryCount++;
+                    if (retryCount == 5) {
+                        ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
+                        e.printStackTrace(new PrintStream(errorStream));
+                        this.waiting++;
+                        this.close();
+                        return new ByteArrayInputStream(errorStream.toByteArray());
+                    }
+                }
             }
         }
 
