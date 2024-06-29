@@ -102,7 +102,7 @@ public class Proxy extends Spider {
                 if(range != ""){
                     requestBuilder.removeHeader("Range").addHeader("Range", range);
                 }
-                requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
 
@@ -141,7 +141,7 @@ public class Proxy extends Spider {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
-                requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
+                //requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
                 
                 this.header = OkHttp.newCall(request).headers();
