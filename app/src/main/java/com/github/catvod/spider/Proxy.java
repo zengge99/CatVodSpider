@@ -230,9 +230,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                String decodeStr = new java.net.URI(params.get("url")).getPath();
-                return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream(decodeStr.getBytes("UTF-8"))};
-                //return genProxy(params);
+                return genProxy(params);
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
