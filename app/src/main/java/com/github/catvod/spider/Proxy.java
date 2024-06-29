@@ -225,6 +225,29 @@ public class Proxy extends Spider {
             }
         }
 
+        
+        public synchronized int read_(byte[] buffer, int off, int len) throws IOException {
+            try {
+                if (this.is == null ) {
+                    if(this.futureQueue.size() == 0){
+                        return -1;
+                    }
+                    this.is = this.futureQueue.remove().get();
+                    this.waiting--;
+                }
+                int ol = this.is.read(buffer, off, len);
+                if ( ol == -1 )
+                {
+                    this.is = null;
+                    return 1;
+                }
+                return ol;
+            } catch (Exception e) {
+                this.is = null;
+                return 1;
+            }
+        }
+
         @Override
         public void close() throws IOException {
             super.close();
