@@ -40,10 +40,10 @@ public class Proxy extends Spider {
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
+        boolean supportRange = true;
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
-            boolean supportRange = true;
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -51,6 +51,12 @@ public class Proxy extends Spider {
                 }
                 Request request = requestBuilder.build();
                 String range = request.headers().get("Range");
+                int index = range.indexOf("=");
+                if (index != -1 && index < range.length() - 1) {
+                    range = range.substring(index + 1);
+                } else {
+                    range = "";
+                }
                 requestBuilder.addHeader("Range", "bytes=0-1");
                 request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
@@ -58,7 +64,7 @@ public class Proxy extends Spider {
                 String hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
                 if (this.contentLength != 2) {
-                    supportRange = false;
+                    this.supportRange = false;
                 }
                 hContentLength = this.header.get("Content-Range");
                 String pattern = "\\d+";
@@ -71,11 +77,10 @@ public class Proxy extends Spider {
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
             } catch (Exception e) {
-                supportRange = false;
+                this.supportRange = false;
             }
-
-            if (!supportRange) {
-                
+            if (this.supportRange) {
+                this.header.addHeader("Content-Range", "bytes "+range+"/"+hContentLength);
             }
 
             this.executorService = Executors.newFixedThreadPool(5);
