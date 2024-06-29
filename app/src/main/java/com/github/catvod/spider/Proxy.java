@@ -72,8 +72,8 @@ public class Proxy extends Spider {
             if (m.find()) {
                 String start = m.group(1); 
                 String end = m.group(2);
-                startInt = Integer.parseInt(start); 
-                endInt = Integer.parseInt(end);
+                startInt = Long.parseLong(start); 
+                endInt = Long.parseLong(end);
             }
             
             for (int i = 0; i < 10; i++) {
