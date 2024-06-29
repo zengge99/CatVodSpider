@@ -64,24 +64,28 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
-            long startInt = 0; 
-            long endInt = this.contentLength - 1;
+            long start = 0; 
+            long end = this.contentLength - 1;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(range);
             if (m.find()) {
-                String start = m.group(1); 
-                String end = m.group(2);
-                startInt = Long.parseLong(start); 
-                endInt = Long.parseLong(end);
+                String startString = m.group(1); 
+                String endString = m.group(2);
+                start = Long.parseLong(startString); 
+                end = Long.parseLong(endString);
             }
-            
-            for (int i = 0; i < 10; i++) {
-                final int index = i; 
+
+            long blockSize = 1024*1024;
+            while(start <= end){
+                long curEnd = start + blockSize - 1;
+                curEnd = cuEnd > end ? end : curEnd;
+                String range = "bytes=" + start + "-" + end;
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, "");
+                    return downloadTask(url, headers, range);
                 });
                 this.futureQueue.add(future);
+                start = curEnd + 1;
             }
         }
 
