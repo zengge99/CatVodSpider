@@ -207,7 +207,7 @@ public class Proxy extends Spider {
             try {
                 if (this.is == null ) {
                     if(this.futureQueue.size() == 0){
-                        //return -1;
+                        return -1;
                     }
                     this.is = this.futureQueue.remove().get();
                     this.waiting--;
