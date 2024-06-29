@@ -47,8 +47,10 @@ public class Proxy extends Spider {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
-                requestBuilder.addHeader("Range", "bytes=0-1");
                 Request request = requestBuilder.build();
+                String range = request.headers().get("Range");
+                requestBuilder.addHeader("Range", "bytes=0-1");
+                request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
                 String hContentLength = this.header.get("Content-Length");
@@ -63,7 +65,7 @@ public class Proxy extends Spider {
                 if (m.find()) {
                     hContentLength = m.group();
                 } else {
-                    hContentLength = ""
+                    hContentLength = "";
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
             } catch (Exception e) {
