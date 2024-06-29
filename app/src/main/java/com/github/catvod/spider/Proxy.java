@@ -75,6 +75,9 @@ public class Proxy extends Spider {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
+                if(range != ""){
+                    requestBuilder.addHeader("Range", range);
+                }
                 Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
                     
