@@ -78,6 +78,7 @@ public class Proxy extends Spider {
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(threadNum);
             //不支持断点续传，单线程下载
+            /*
             if(!this.supportRange) {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     ByteArrayInputStream si = downloadTask(url, headers, "");
@@ -86,6 +87,7 @@ public class Proxy extends Spider {
                 this.futureQueue.add(future);
                 return;
             }
+            */
             
             //多线程下载
             long start = 0; 
