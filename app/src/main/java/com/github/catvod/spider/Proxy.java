@@ -55,7 +55,7 @@ public class Proxy extends Spider {
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(5);
             //不支持断点续传，单线程下载
-            if(!this.supportRange && !range == "") {
+            if(!this.supportRange || range == "") {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
@@ -64,6 +64,19 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
+            int startInt = Integer.parseInt(start); 
+            int endInt = Integer.parseInt(end);
+            String pattern = "bytes=(\\d+)-(\\d+)";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(range);
+            if (m.find()) {
+                String start = m.group(1); 
+                String end = m.group(2);
+                int startInt = Integer.parseInt(start); 
+                int endInt = Integer.parseInt(end);
+            } else {
+                System.out.println("未找到匹配的数字");
+            }
             
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
