@@ -101,7 +101,7 @@ public class Proxy extends Spider {
                 if(range != ""){
                     requestBuilder.addHeader("Range", range);
                 }
-                requestBuilder.addHeader("Accept-Encoding1", "");
+                //requestBuilder.addHeader("Accept-Encoding1", "");
                 Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
                     
