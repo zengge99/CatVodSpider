@@ -58,6 +58,12 @@ public class Proxy extends Spider {
             }
 
             //多线程下载
+            Request.Builder requestBuilder = new Request.Builder().url(url);
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                requestBuilder.addHeader(entry.getKey(), entry.getValue());
+            }
+            Request request = requestBuilder.build();
+            String range = request.headers().get("Range");
 
             
             for (int i = 0; i < 10; i++) {
