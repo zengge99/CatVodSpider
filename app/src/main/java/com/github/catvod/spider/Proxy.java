@@ -56,7 +56,7 @@ public class Proxy extends Spider {
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(5);
             //不支持断点续传，单线程下载
-            if(!this.supportRange || range == "") {
+            if(!this.supportRange) {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
