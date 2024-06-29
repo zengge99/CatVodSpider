@@ -38,7 +38,7 @@ public class Proxy extends Spider {
         public Headers header;
         public int statusCode = 200;
         int waiting = 0;
-        ByteArrayInputStream is = null;
+        InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
