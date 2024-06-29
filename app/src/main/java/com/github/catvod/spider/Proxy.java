@@ -31,6 +31,7 @@ import java.net.URLDecoder;
 import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
 import java.io.InputStream;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -46,7 +47,8 @@ public class Proxy extends Spider {
         int blockSize = 10 * 1024 * 1024; //默认1MB
         int threadNum = 2; //默认2线程
         String cookie = "";
-
+        private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+        
         private HttpDownloader(Map<String, String> params) {
             try{
                 if(params.get("thread") != null){
@@ -69,16 +71,31 @@ public class Proxy extends Spider {
             }
         }
 
-        synchronized void incrementWaiting() {
-            waiting++;
+        void incrementWaiting() {
+            lock.writeLock().lock();
+            try {
+                waiting++;
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
 
-        synchronized void decrementWaiting() {
-            waiting--;
+        void decrementWaiting() {
+            lock.writeLock().lock();
+            try {
+                waiting--;
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
 
-        synchronized int readWaiting() {
-            return waiting;
+        int readWaiting() {
+            lock.readLock().lock();
+            try {
+                return waiting;
+            } finally {
+                lock.readLock().unlock();
+            }
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
