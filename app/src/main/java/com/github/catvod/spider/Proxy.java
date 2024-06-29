@@ -164,7 +164,7 @@ public class Proxy extends Spider {
                     if (retryCount == maxRetry) {
                         try{
                             this.close();
-                        } catch ( Exception e ) {}
+                        } catch ( Exception ) {}
                         return null;
                     }
                 }
