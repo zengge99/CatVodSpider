@@ -60,9 +60,10 @@ public class Proxy extends Spider {
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    //ByteArrayInputStream si = downloadTask(url, headers, "");
-                    //return si;
+                    ByteArrayInputStream si = downloadTask(url, headers, "");
+                    return si;
 
+                    /*
                     try {
                         Request.Builder requestBuilder1 = new Request.Builder().url(url);
                         for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -92,6 +93,7 @@ public class Proxy extends Spider {
                         e.printStackTrace(new PrintStream(errorStream));
                         return new ByteArrayInputStream(errorStream.toByteArray());
                     }
+                    */
                 });
                 this.futureQueue.add(future);
                 return;
