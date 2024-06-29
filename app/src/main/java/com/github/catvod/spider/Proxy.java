@@ -76,11 +76,11 @@ public class Proxy extends Spider {
                 end = Long.parseLong(endString);
             }
 
-            long blockSize = 1024*1024;
-            while(start <= end){
+            long blockSize = 1024 * 1024;
+            while (start <= end) {
                 long curEnd = start + blockSize - 1;
-                curEnd = cuEnd > end ? end : curEnd;
-                String range = "bytes=" + start + "-" + end;
+                curEnd = curEnd > end ? end : curEnd;
+                String range = "bytes=" + start + "-" + curEnd;
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, range);
                 });
