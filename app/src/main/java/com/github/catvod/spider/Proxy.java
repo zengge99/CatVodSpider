@@ -208,7 +208,7 @@ public class Proxy extends Spider {
             case "gen":
                 Notify.show("代理加载成功");
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-                List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent");
+                List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String decodedUrl = URLDecoder.decode(params.get("url"), "UTF-8");
                 return genProxy(decodedUrl, headers);
