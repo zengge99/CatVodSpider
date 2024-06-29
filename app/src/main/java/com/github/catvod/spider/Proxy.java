@@ -43,7 +43,7 @@ public class Proxy extends Spider {
         ExecutorService executorService;
         boolean supportRange = true;
         int blockSize = 1 * 1024 * 1024; //默认1MB
-        int threadNum = 5; //默认5线程
+        int threadNum = 2; //默认2线程
         String cookie = "";
 
         private HttpDownloader(Map<String, String> params) {
