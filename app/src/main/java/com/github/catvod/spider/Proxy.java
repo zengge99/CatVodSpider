@@ -170,7 +170,7 @@ public class Proxy extends Spider {
                         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
                         e.printStackTrace(new PrintStream(errorStream));
                         this.waiting++;
-                        this.close();
+                        this.executorService.shutdown();
                         return new ByteArrayInputStream(errorStream.toByteArray());
                     }
                 }
