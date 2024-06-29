@@ -125,8 +125,6 @@ public class Proxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            int retryCount = 0;
-            int maxRetry = 5;
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -138,6 +136,9 @@ public class Proxy extends Spider {
                 requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
             }
             Request request = requestBuilder.build();
+            byte[] buffer = new byte[1024 * 1024];
+            int retryCount = 0;
+            int maxRetry = 5;
             while (retryCount < maxRetry) {
                 try {
                     Response response = OkHttp.newCall(request);
@@ -152,9 +153,7 @@ public class Proxy extends Spider {
                     }
                         
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    byte[] buffer = new byte[1024];
                     int bytesRead;
-        
                     while ((bytesRead = response.body().byteStream().read(buffer)) != -1) {
                         baos.write(buffer, 0, bytesRead);
                     }
@@ -162,10 +161,8 @@ public class Proxy extends Spider {
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry) {
-                        ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-                        e.printStackTrace(new PrintStream(errorStream));
                         this.executorService.shutdown();
-                        return new ByteArrayInputStream(errorStream.toByteArray());
+                        return null;
                     }
                 }
             }
