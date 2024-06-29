@@ -132,7 +132,7 @@ public class Proxy extends Spider {
         
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
-                        statusCode = reponse.code();
+                        statusCode = response.code();
                         this.header = response.headers();
                         this.contentType = this.header.get("Content-Type");
                         String hContentLength = this.header.get("Content-Length");
@@ -180,9 +180,9 @@ public class Proxy extends Spider {
                 }
                 Request request = requestBuilder.build();
 
-                Response reponse = OkHttp.newCall(request);
-                this.header = reponse.headers();
-                statusCode = reponse.code();
+                Response response = OkHttp.newCall(request);
+                this.header = response.headers();
+                statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
