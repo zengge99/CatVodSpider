@@ -67,7 +67,6 @@ public class Proxy extends Spider {
                 return;
             }
             
-            
             //多线程下载
             long start = 0; 
             long end = this.contentLength - 1;
@@ -107,7 +106,7 @@ public class Proxy extends Spider {
                 Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
 
-                //单线程模式，重新获取更准确的响应头
+                //单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                 if(range == ""){
                     this.header = response.headers();
                     this.contentType = this.header.get("Content-Type");
