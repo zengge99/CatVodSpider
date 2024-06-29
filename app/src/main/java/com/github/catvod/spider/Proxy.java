@@ -34,7 +34,7 @@ import java.io.PrintStream;
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
-        public long contentLength = 0;
+        public long contentLength = -1;
         public Headers header;
         public int statusCode = 200;
         int waiting = 0;
