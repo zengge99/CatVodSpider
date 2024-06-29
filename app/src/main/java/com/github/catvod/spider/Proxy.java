@@ -74,7 +74,6 @@ public class Proxy extends Spider {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
             Request request = requestBuilder.build();
-            String range = request.headers().get("Range");
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(threadNum);
             //不支持断点续传，单线程下载
@@ -92,6 +91,8 @@ public class Proxy extends Spider {
             //多线程下载
             long start = 0; 
             long end = this.contentLength - 1;
+            String range = request.headers().get("Range");
+            range = range == null ? "" : range;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(range);
