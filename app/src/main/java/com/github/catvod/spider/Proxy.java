@@ -63,7 +63,7 @@ public class Proxy extends Spider {
                 String url = URLDecoder.decode(params.get("url"), "UTF-8");
                 this.getHeader(url, headers);
                 this.createDownloadTask(url, headers);
-            } catch {
+            } catch (Exception e) {
                 //不需要做什么
             }
         }
