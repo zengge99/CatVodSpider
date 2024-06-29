@@ -71,7 +71,11 @@ public class Proxy extends Spider {
 
         private ByteArrayInputStream downloadTask(String url, Map<String, String> headers, String range) {
             try {
-                Request request = new Request.Builder().url(url).addHeader("Accept-Encoding", "").addHeader("Range","bytes=" + (index*1024*1024) + "-" + ((index+1)*1024*1024 - 1)).build();
+                Request.Builder requestBuilder = new Request.Builder().url(url);
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                }
+                Request request = requestBuilder.build();
                 Response response = OkHttp.newCall(request);
                     
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
