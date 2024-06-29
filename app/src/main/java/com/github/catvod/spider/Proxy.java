@@ -72,7 +72,7 @@ public class Proxy extends Spider {
             }
         }
 
-        public boolean getHeader(String url, Map<String, String> headers) {
+        private getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
             try {
@@ -113,7 +113,6 @@ public class Proxy extends Spider {
             if (this.supportRange) {
                 this.header.addHeader("Content-Range", "bytes " + range+"/" + hContentLength);
             }
-            return this.supportRange;
         }
 
         @Override
