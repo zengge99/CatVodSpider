@@ -162,7 +162,7 @@ public class Proxy extends Spider {
             String range = "";
             String hContentLength = "";
             try {
-                Request.Builder requestBuilder = new Request.Builder().url(url);
+                Request.Builder requestBuilder = new Request.Builder().url(url).head();
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
