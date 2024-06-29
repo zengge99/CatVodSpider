@@ -69,6 +69,18 @@ public class Proxy extends Spider {
             }
         }
 
+        synchronized void incrementWaiting() {
+            waiting++;
+        }
+
+        synchronized void decrementWaiting() {
+            waiting--;
+        }
+
+        synchronized int readWaiting() {
+            return waiting;
+        }
+
         private void createDownloadTask(String url, Map<String, String> headers) {
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -114,13 +126,13 @@ public class Proxy extends Spider {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
-            while(this.waiting > threadNum){
+            while(readWaiting() > threadNum){
                 try{
                     Thread.sleep(100);
                 } catch (Exception e) {}
             }
             InputStream in = _downloadTask(url,headers,range);
-            this.waiting++;
+            incrementWaiting();
             return in;
         }
 
@@ -208,7 +220,7 @@ public class Proxy extends Spider {
                 this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
-                    this.waiting--;
+                    decrementWaiting();
                 }
                 int ol = this.is.read(buffer, off, len);
                 //因为是预先下载到内存块，因此0也是读完了
