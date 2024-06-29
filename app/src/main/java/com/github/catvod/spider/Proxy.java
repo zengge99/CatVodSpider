@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 
 import fi.iki.elonen.NanoHTTPD;
 import okhttp3.Response;
@@ -40,7 +41,7 @@ public class Proxy extends Spider {
 
         private HttpDownloader(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
-            bool supportRange = true;
+            boolean supportRange = true;
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
