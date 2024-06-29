@@ -36,7 +36,7 @@ public class Proxy extends Spider {
         public String contentType = "";
         public long contentLength = 0;
         public Headers header;
-        Response response;
+        public int statusCode = 200;
         int waiting = 0;
         ByteArrayInputStream is = null;
         Queue<Future<ByteArrayInputStream>> futureQueue;
@@ -132,6 +132,7 @@ public class Proxy extends Spider {
         
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
+                        statusCode = reponse.code();
                         this.header = response.headers();
                         this.contentType = this.header.get("Content-Type");
                         String hContentLength = this.header.get("Content-Length");
@@ -178,8 +179,10 @@ public class Proxy extends Spider {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
                 }
                 Request request = requestBuilder.build();
-                
-                this.header = OkHttp.newCall(request).headers();
+
+                Response reponse = OkHttp.newCall(request);
+                this.header = reponse.headers();
+                statusCode = reponse.code();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
@@ -243,7 +246,7 @@ public class Proxy extends Spider {
 
     public static Object[] genProxy(Map<String, String> params) throws Exception {
         HttpDownloader httpDownloader = new HttpDownloader(params);
-        NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
+        NanoHTTPD.Response resp = newFixedLengthResponse(httpDownloader.statusCode, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
     }
