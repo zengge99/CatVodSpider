@@ -81,9 +81,9 @@ public class Proxy extends Spider {
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
-                String range = "bytes=" + start + "-" + curEnd;
+                String ra = "bytes=" + start + "-" + curEnd;
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, range);
+                    return downloadTask(url, headers, ra);
                 });
                 this.futureQueue.add(future);
                 start = curEnd + 1;
