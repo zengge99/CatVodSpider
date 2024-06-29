@@ -37,11 +37,16 @@ public class Proxy extends Spider {
         Queue<Future<ByteArrayInputStream>> futureQueue;
         ExecutorService executorService;
 
-        private HttpDownloader(String url) {
+        private HttpDownloader(String url, Map<String, String> headers) {
             this.futureQueue = new LinkedList<>();
             this.success = true;
             try {
-                Request request = new Request.Builder().head().url(url).addHeader("Accept-Encoding", "").build();
+                Request.Builder requestBuilder = new Request.Builder().head().url(url);
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                }
+                requestBuilder.addHeader("Accept-Encoding", "");
+                Request request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
                 String hContentLength = this.header.get("Content-Length");
