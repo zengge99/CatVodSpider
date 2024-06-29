@@ -100,7 +100,7 @@ public class Proxy extends Spider {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
                 if(range != ""){
-                    requestBuilder.addHeader("Range", range);
+                    requestBuilder.removeHeader("Range").addHeader("Range", range);
                 }
                 requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
@@ -140,7 +140,7 @@ public class Proxy extends Spider {
                 } else {
                     range = "";
                 }
-                requestBuilder.addHeader("Range", "bytes=0-1");
+                requestBuilder.removeHeader("Range").addHeader("Range", "bytes=0-1");
                 request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
@@ -164,7 +164,7 @@ public class Proxy extends Spider {
                 return;
             }
             if (this.supportRange) {
-                this.header = this.header.newBuilder().add("Content-Range", "bytes " + range + "/" + hContentLength).build();
+                this.header = this.header.newBuilder().remove("Content-Range").add("Content-Range", "bytes " + range + "/" + hContentLength).build();
             }
         }
 
