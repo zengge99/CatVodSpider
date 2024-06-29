@@ -74,6 +74,7 @@ public class Proxy extends Spider {
 
         public boolean getHeader(String url, Map<String, String> headers) {
             String range = "";
+            String hContentLength = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -91,7 +92,7 @@ public class Proxy extends Spider {
                 request = requestBuilder.build();
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
-                String hContentLength = this.header.get("Content-Length");
+                hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
                 if (this.contentLength != 2) {
                     this.supportRange = false;
