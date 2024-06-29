@@ -51,7 +51,7 @@ public class Proxy extends Spider {
             for (int i = 0; i < 10; i++) {
                 final int index = i; 
                 Future<ByteArrayInputStream> future = this.executorService.submit(() -> {
-                    retrun downloadTask(url, headers, "");
+                    return downloadTask(url, headers, "");
                 });
                 this.futureQueue.add(future);
             }
