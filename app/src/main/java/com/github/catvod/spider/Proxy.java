@@ -137,47 +137,18 @@ public class Proxy extends Spider {
                 }
                 requestBuilder.removeHeader("Accept-Encoding").addHeader("Accept-Encoding", "");
                 Request request = requestBuilder.build();
-                /*
-                range = request.headers().get("Range");
-                int index = range.indexOf("=");
-                if (index != -1 && index < range.length() - 1) {
-                    range = range.substring(index + 1);
-                } else {
-                    range = "";
-                }
-                requestBuilder.removeHeader("Range").addHeader("Range", "bytes=0-1");
-                request = requestBuilder.build();
-                */
                 
                 this.header = OkHttp.newCall(request).headers();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-                this.contentLength = 0;
                 if (this.contentLength != 2) {
                     this.supportRange = false;
                 }
-                /*
-                hContentLength = this.header.get("Content-Range");
-                String pattern = "\\d+";
-                Pattern r = Pattern.compile(pattern);
-                Matcher m = r.matcher(hContentLength);
-                if (m.find()) {
-                    hContentLength = m.group();
-                } else {
-                    hContentLength = "";
-                }
-                this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : 0;
-                */
             } catch (Exception e) {
                 this.supportRange = false;
                 return;
             }
-            /*
-            if (this.supportRange) {
-                this.header = this.header.newBuilder().add("Content-Range", "bytes " + range + "/" + hContentLength).build();
-            }
-            */
         }
 
         @Override
