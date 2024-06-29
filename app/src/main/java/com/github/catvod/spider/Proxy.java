@@ -46,7 +46,20 @@ public class Proxy extends Spider {
         int threadNum = 5; //默认5线程
         String cookie = "";
 
-        private HttpDownloader(String url, Map<String, String> headers) {
+        private HttpDownloader(Map<String, String> params) {
+            if(params.get("thread") != null){
+                threadNum = Integer.parseInt(params.get("thread"));
+            }
+            if(params.get("blocksize") != null){
+                blockSize = Integer.parseInt(params.get("blocksize"));
+            }
+            if(params.get("cookie") != null){
+                cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
+            }
+            Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
+            for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
+            String url = URLDecoder.decode(params.get("url"), "UTF-8");
             this.getHeader(url, headers);
             this.createDownloadTask(url, headers);
         }
@@ -210,20 +223,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                if(params.get("thread") != null){
-                    threadNum = Integer.parseInt(params.get("thread"));
-                }
-                if(params.get("blocksize") != null){
-                    blockSize = Integer.parseInt(params.get("blocksize"));
-                }
-                if(params.get("cookie") != null){
-                    cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
-                }
-                Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-                List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
-                for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
-                String decodedUrl = URLDecoder.decode(params.get("url"), "UTF-8");
-                return genProxy(decodedUrl, headers);
+                return genProxy(params);
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
@@ -237,8 +237,8 @@ public class Proxy extends Spider {
         }
     }
 
-    public static Object[] genProxy(String url, Map<String, String> headers) throws Exception {
-        HttpDownloader httpDownloader = new HttpDownloader(url, headers);
+    public static Object[] genProxy(Map<String, String> params) throws Exception {
+        HttpDownloader httpDownloader = new HttpDownloader(params);
         NanoHTTPD.Response resp = newFixedLengthResponse(Status.PARTIAL_CONTENT, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
         for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
         return new Object[]{resp};
