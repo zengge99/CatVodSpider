@@ -233,8 +233,8 @@ public class Proxy extends Spider {
             try {
                 //*
                 OkHttpClient client = new OkHttpClient.Builder()
-                .followRedirects(false)
-                .followSslRedirects(false)
+                //.followRedirects(false)
+                //.followSslRedirects(false)
                 .build();
                 //*/
                 Request.Builder requestBuilder = new Request.Builder().url(url).head();
