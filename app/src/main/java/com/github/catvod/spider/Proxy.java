@@ -102,11 +102,7 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
-            final String finalUrl = url; // 将url声明为final变量
-            final Map<String, String> finalHeaders = new HashMap<>(headers); // 将headers声明为final变量
-            if (newUrl != null) {
-                finalUrl = newUrl;
-            }
+            final String finalUrl = newUrl != null ? newUrl : url; 
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
