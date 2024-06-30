@@ -39,6 +39,7 @@ public class Proxy extends Spider {
         public long contentLength = -1;
         public Headers header;
         public int statusCode = 200;
+        Sting newUrl = ""
         int waiting = 0;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -66,7 +67,7 @@ public class Proxy extends Spider {
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
                 this.getHeader(url, headers);
-                this.createDownloadTask(url, headers);
+                this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
                 //不需要做什么
             }
@@ -206,6 +207,12 @@ public class Proxy extends Spider {
         }
 
         private void getHeader(String url, Map<String, String> headers) {
+            _getHeader(url, headers);
+            if(statusCode == 302){
+                _getHeader(newUrl, headers);
+            }
+        }
+        private void _getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
             try {
@@ -224,6 +231,8 @@ public class Proxy extends Spider {
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
+                newUrl = this.header.get("Location");
+                newUrl = newUrl != null ? newUrl : url;
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
                     this.supportRange = false;
