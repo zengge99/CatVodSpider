@@ -223,15 +223,15 @@ public class Proxy extends Spider {
                 statusCode = 302;
                 newUrl = url;
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
-                    //return;
+                    return;
                 }
                 URL urlObj = new URL(url);
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
                 String path = urlObj.getPath();
                 String alistApi = host + "/api/fs/other";
                 Map<String, String> params = new HashMap<>();
-                params.put("action", "get_token");
-                params.put("from", "web");
+                params.put("path", path);
+                params.put("method", "video_download");
                 String rsp = OkHttp.post(alistApi, params);
                 JSONObject object = new JSONObject(rsp);
                 String data = object.getString("data");
