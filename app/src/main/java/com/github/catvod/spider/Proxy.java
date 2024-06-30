@@ -240,7 +240,7 @@ public class Proxy extends Spider {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
                 }
                 Request request = requestBuilder.build();
-                Response response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
+                Response response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request).execute();
                 //Response response = OkHttp.newCall(request);
                 this.header = response.headers();
                 statusCode = response.code();
