@@ -223,7 +223,7 @@ public class Proxy extends Spider {
                 statusCode = 302;
                 newUrl = url;
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
-                    return;
+                    //return;
                 }
                 URL urlObj = new URL(url);
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
