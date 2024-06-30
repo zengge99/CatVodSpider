@@ -64,7 +64,7 @@ public class Proxy extends Spider {
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
-                String url = URLDecoder.decode(params.get("url"), "UTF-8");
+                String url = params.get("url");
                 this.getHeader(url, headers);
                 this.createDownloadTask(url, headers);
             } catch (Exception e) {
