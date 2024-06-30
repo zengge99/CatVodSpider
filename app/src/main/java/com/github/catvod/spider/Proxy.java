@@ -237,7 +237,7 @@ public class Proxy extends Spider {
                 String data = object.getString("data");
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
-                string location = object.getString("download_link");
+                String location = object.getString("download_link");
                 newUrl = location == null ? url : location;
             } catch (Exception e) {}
         }
