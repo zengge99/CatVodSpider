@@ -232,7 +232,8 @@ public class Proxy extends Spider {
             String hContentLength = "";
             try {
                 OkHttpClient client = new OkHttpClient.Builder()
-                .followRedirects(false) // 禁用重定向
+                .followRedirects(false)
+                .followSslRedirects(false)
                 .build();
                 Request.Builder requestBuilder = new Request.Builder().url(url).head();
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
