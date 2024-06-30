@@ -230,7 +230,7 @@ public class Proxy extends Spider {
                 String path = "";
                 int index = url.indexOf("/d/");
                 if (index != -1) {
-                    String path = "/" + url.substring(index + 3);
+                    path = "/" + url.substring(index + 3);
                 } 
                 String alistApi = host + "/api/fs/other";
                 Map<String, String> params = new HashMap<>();
