@@ -39,7 +39,7 @@ public class Proxy extends Spider {
         public long contentLength = -1;
         public Headers header;
         public int statusCode = 200;
-        Sting newUrl = "";
+        String newUrl = "";
         int waiting = 0;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
