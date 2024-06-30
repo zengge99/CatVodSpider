@@ -51,7 +51,7 @@ public class Proxy extends Spider {
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认1MB
         int threadNum = 2; //默认2线程
-        String cookie = "";
+        String cookie = null;
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
@@ -170,7 +170,7 @@ public class Proxy extends Spider {
             if (!range.isEmpty()) {
                 requestBuilder.removeHeader("Range").addHeader("Range", range);
             }
-            if (!cookie.isEmpty()) {
+            if (cookie != null) {
                 requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
             }
             Request request = requestBuilder.build();
@@ -211,14 +211,17 @@ public class Proxy extends Spider {
         }
         
         private void getHeader(String url, Map<String, String> headers) {
-            _getHeader(url, headers);
-            if (statusCode == 302){
+            getQuarkLink(url, headers);
+            while (statusCode == 302){
                 _getHeader(newUrl, headers);
             }
         }
 
         private void getQuarkLink(String url, Map<String, String> headers) {
             try {
+                //先假装自己重定向到自己
+                statusCode = 302;
+                newUrl = url;
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
                     return;
                 }
@@ -233,12 +236,14 @@ public class Proxy extends Spider {
                 JSONObject object = new JSONObject(rsp);
                 String data = object.getString("data");
                 object = new JSONObject(data);
-                String cookie = object.getString("cookie");
-                String downloadLink = object.getString("download_link");
+                cookie = object.getString("cookie");
+                string location = object.getString("download_link");
+                newUrl = location == null ? url : location;
             } catch (Exception e) {}
         }
         
         private void _getHeader(String url, Map<String, String> headers) {
+            statusCode = 200;
             this.supportRange = true;
             String range = "";
             String hContentLength = "";
@@ -248,7 +253,7 @@ public class Proxy extends Spider {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
                 
-                if (!cookie.isEmpty()) {
+                if (cookie != null) {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
                 }
                 Request request = requestBuilder.build();
