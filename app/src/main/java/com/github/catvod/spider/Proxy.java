@@ -231,12 +231,6 @@ public class Proxy extends Spider {
             String range = "";
             String hContentLength = "";
             try {
-                /*
-                OkHttpClient client = new OkHttpClient.Builder()
-                .followRedirects(false)
-                .followSslRedirects(false)
-                .build();
-                //*/
                 Request.Builder requestBuilder = new Request.Builder().url(url).head();
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -246,8 +240,8 @@ public class Proxy extends Spider {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
                 }
                 Request request = requestBuilder.build();
-                //Response response = client.newCall(request).execute();
-                Response response = OkHttp.newCall(request);
+                Response response = client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
+                //Response response = OkHttp.newCall(request);
                 this.header = response.headers();
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
