@@ -228,6 +228,7 @@ public class Proxy extends Spider {
         }
         
         private void _getHeader(String url, Map<String, String> headers) {
+            this.supportRange = true;
             String range = "";
             String hContentLength = "";
             try {
@@ -253,10 +254,10 @@ public class Proxy extends Spider {
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
-                    //this.supportRange = false;
+                    this.supportRange = false;
                 }
             } catch (Exception e) {
-                //this.supportRange = false;
+                this.supportRange = false;
                 return;
             }
         }
