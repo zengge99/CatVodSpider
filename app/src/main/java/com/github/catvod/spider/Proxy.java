@@ -209,9 +209,6 @@ public class Proxy extends Spider {
         }
         
         private void getHeader(String url, Map<String, String> headers) {
-            if (newUrl !=null){
-                return;
-            }
             _getHeader(url, headers);
             if (newUrl != null){
                 _getHeader(newUrl, headers);
@@ -234,7 +231,7 @@ public class Proxy extends Spider {
             String range = "";
             String hContentLength = "";
             try {
-                Request.Builder requestBuilder = new Request.Builder().url(url).head();
+                Request.Builder requestBuilder = new Request.Builder().url(url).head().followRedirects(false);
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
