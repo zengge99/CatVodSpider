@@ -227,7 +227,11 @@ public class Proxy extends Spider {
                 }
                 URL urlObj = new URL(url);
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
-                String path = urlObj.getPath();
+                String path = "";
+                int index = url.indexOf("/d/");
+                if (index != -1) {
+                    String path = "/" + url.substring(index + 3);
+                } 
                 String alistApi = host + "/api/fs/other";
                 Map<String, String> params = new HashMap<>();
                 params.put("path", path);
