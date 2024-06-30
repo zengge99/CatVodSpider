@@ -33,6 +33,7 @@ import java.io.PrintStream;
 import java.io.InputStream;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.net.URL;
+import okhttp3.OkHttpClient;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -68,7 +69,7 @@ public class Proxy extends Spider {
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
                 this.getHeader(url, headers);
-                this.createDownloadTask(url, headers);
+                this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
                 //不需要做什么
             }
@@ -147,7 +148,6 @@ public class Proxy extends Spider {
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
             try{
-                url = newUrl != null ? newUrl : url;
                 while(readWaiting() > threadNum){
                 try{
                     Thread.sleep(100);
@@ -231,7 +231,10 @@ public class Proxy extends Spider {
             String range = "";
             String hContentLength = "";
             try {
-                Request.Builder requestBuilder = new Request.Builder().url(url).head().followRedirects(false);
+                OkHttpClient client = new OkHttpClient.Builder()
+                .followRedirects(false) // 禁用重定向
+                .build();
+                Request.Builder requestBuilder = new Request.Builder().url(url).head();
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     requestBuilder.addHeader(entry.getKey(), entry.getValue());
                 }
@@ -240,8 +243,7 @@ public class Proxy extends Spider {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
                 }
                 Request request = requestBuilder.build();
-
-                Response response = OkHttp.newCall(request);
+                Response response = client.newCall(request).execute();
                 this.header = response.headers();
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
@@ -249,6 +251,8 @@ public class Proxy extends Spider {
                 String location = this.header.get("Location");
                 if(location != null && statusCode == 302){
                     newUrl = location;
+                } else {
+                    newUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
