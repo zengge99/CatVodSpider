@@ -224,6 +224,15 @@ public class Proxy extends Spider {
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
                 String path = urlObj.getPath();
                 String alistApi = host + "/api/fs/other";
+                Map<String, String> params = new HashMap<>();
+                params.put("action", "get_token");
+                params.put("from", "web");
+                String rsp = OkHttp.post(alistApi, params);
+                JSONObject object = new JSONObject(rsp);
+                String data = object.getString("data");
+                object = new JSONObject(data);
+                String cookie = object.getString("cookie");
+                String downloadLink = object.getString("download_link");
             } catch (Exception e) {}
         }
         
