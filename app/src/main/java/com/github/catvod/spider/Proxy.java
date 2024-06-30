@@ -102,7 +102,8 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
-            final String finalUrl = newUrl != null ? newUrl : url; 
+            //final String finalUrl = newUrl != null ? newUrl : url; 
+            final String finalUrl = newUrl; 
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
