@@ -210,7 +210,7 @@ public class Proxy extends Spider {
         
         private void getHeader(String url, Map<String, String> headers) {
             _getHeader(url, headers);
-            if (newUrl != null){
+            if (statusCode == 302){
                 _getHeader(newUrl, headers);
             }
         }
