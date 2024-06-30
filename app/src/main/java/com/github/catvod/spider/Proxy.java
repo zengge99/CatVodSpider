@@ -27,7 +27,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.net.URLDecoder;
+//import java.net.URLDecoder;
 import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
 import java.io.InputStream;
@@ -58,7 +58,8 @@ public class Proxy extends Spider {
                     blockSize = Integer.parseInt(params.get("size"));
                 }
                 if(params.get("cookie") != null){
-                    cookie = URLDecoder.decode(params.get("cookie"), "UTF-8");
+                    //如果发送是EncodeURIComponet过的，get会自动转码，不需要手工转，坑啊
+                    cookie = params.get("cookie");
                 }
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
@@ -269,9 +270,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "gen":
-                String url = params.get("url");
-                return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream(url.getBytes("UTF-8"))};
-                //return genProxy(params);
+                return genProxy(params);
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
