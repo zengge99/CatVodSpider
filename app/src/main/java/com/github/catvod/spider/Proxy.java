@@ -40,7 +40,7 @@ public class Proxy extends Spider {
         public long contentLength = -1;
         public Headers header;
         public int statusCode = 200;
-        String newUrl = "";
+        String newUrl = null;
         int waiting = 0;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -68,7 +68,7 @@ public class Proxy extends Spider {
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
                 this.getHeader(url, headers);
-                this.createDownloadTask(newUrl, headers);
+                this.createDownloadTask(url, headers);
             } catch (Exception e) {
                 //不需要做什么
             }
@@ -102,6 +102,9 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
+            if (newUrl != null){
+                url = newUrl;
+            }
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -209,7 +212,7 @@ public class Proxy extends Spider {
         
         private void getHeader(String url, Map<String, String> headers) {
             _getHeader(url, headers);
-            if(statusCode == 302){
+            if (newUrl != null){
                 _getHeader(newUrl, headers);
             }
         }
@@ -245,8 +248,10 @@ public class Proxy extends Spider {
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
                 hContentLength = this.header.get("Content-Length");
-                newUrl = this.header.get("Location");
-                newUrl = newUrl != null ? newUrl : url;
+                String location = this.header.get("Location");
+                if(location != null && statusCode == 302){
+                    newUrl = location;
+                }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
                     this.supportRange = false;
