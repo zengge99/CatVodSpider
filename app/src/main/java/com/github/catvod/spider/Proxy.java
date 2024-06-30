@@ -143,14 +143,18 @@ public class Proxy extends Spider {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
-            while(readWaiting() > threadNum){
+            try{
+                while(readWaiting() > threadNum){
                 try{
                     Thread.sleep(100);
-                } catch (Exception e) {}
+                    } catch (Exception e) {}
+                }
+                InputStream in = _downloadTask(url,headers,range);
+                return in;   
+            } finally {
+                incrementWaiting();
             }
-            InputStream in = _downloadTask(url,headers,range);
-            incrementWaiting();
-            return in;
+
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
