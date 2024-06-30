@@ -34,6 +34,8 @@ import java.io.InputStream;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.net.URL;
 import okhttp3.OkHttpClient;
+import org.json.JSONObject;
+import java.util.HashMap;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
