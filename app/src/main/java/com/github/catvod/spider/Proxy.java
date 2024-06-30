@@ -241,7 +241,6 @@ public class Proxy extends Spider {
                 }
                 Request request = requestBuilder.build();
                 Response response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request).execute();
-                //Response response = OkHttp.newCall(request);
                 this.header = response.headers();
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
@@ -254,10 +253,10 @@ public class Proxy extends Spider {
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 if (!this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
-                    this.supportRange = false;
+                    //this.supportRange = false;
                 }
             } catch (Exception e) {
-                this.supportRange = false;
+                //this.supportRange = false;
                 return;
             }
         }
