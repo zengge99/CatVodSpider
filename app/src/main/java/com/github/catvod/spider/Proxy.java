@@ -154,7 +154,6 @@ public class Proxy extends Spider {
             } finally {
                 incrementWaiting();
             }
-
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
@@ -248,7 +247,7 @@ public class Proxy extends Spider {
                 if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
-                    this.waiting--;
+                    decrementWaiting();
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
