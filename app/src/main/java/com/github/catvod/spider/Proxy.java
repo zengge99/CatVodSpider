@@ -32,6 +32,7 @@ import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
 import java.io.InputStream;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.net.URL;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -205,13 +206,26 @@ public class Proxy extends Spider {
             //其实不可能走到这里， 避免编译报错。
             return null;
         }
-
+        
         private void getHeader(String url, Map<String, String> headers) {
             _getHeader(url, headers);
             if(statusCode == 302){
                 _getHeader(newUrl, headers);
             }
         }
+
+        private void getQuarkLink(String url, Map<String, String> headers) {
+            try {
+                if (!(url.contains("/d/") && url.contains("夸克"))) {
+                    return;
+                }
+                URL urlObj = new URL(url);
+                String host = urlObj.getProtocol() + "://" + urlObj.getHost();
+                String path = urlObj.getPath();
+                String alistApi = host + "/api/fs/other";
+            } catch (Exception e) {}
+        }
+        
         private void _getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
