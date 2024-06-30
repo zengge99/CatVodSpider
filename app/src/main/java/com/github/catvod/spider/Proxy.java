@@ -209,6 +209,9 @@ public class Proxy extends Spider {
         }
         
         private void getHeader(String url, Map<String, String> headers) {
+            if (newUrl !=null){
+                return;
+            }
             _getHeader(url, headers);
             if (newUrl != null){
                 _getHeader(newUrl, headers);
