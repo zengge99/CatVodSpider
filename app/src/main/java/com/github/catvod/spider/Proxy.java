@@ -227,7 +227,7 @@ public class Proxy extends Spider {
             } catch (Exception e) {}
         }
         
-        private void _(String url, Map<String, String> headers) {
+        private void _getHeader(String url, Map<String, String> headers) {
             String range = "";
             String hContentLength = "";
             try {
