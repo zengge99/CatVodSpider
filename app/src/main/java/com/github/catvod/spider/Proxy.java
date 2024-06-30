@@ -102,8 +102,6 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
-            //final String finalUrl = newUrl != null ? newUrl : url; 
-            final String finalUrl = newUrl; 
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -114,7 +112,7 @@ public class Proxy extends Spider {
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(finalUrl, headers, "");
+                    return downloadTask(url, headers, "");
                 });
                 this.futureQueue.add(future);
                 return;
@@ -140,7 +138,7 @@ public class Proxy extends Spider {
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
                 Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(finalUrl, headers, ra);
+                    return downloadTask(url, headers, ra);
                 });
                 this.futureQueue.add(future);
                 start = curEnd + 1;
@@ -149,6 +147,7 @@ public class Proxy extends Spider {
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
             try{
+                url = newUrl != null ? newUrl : url;
                 while(readWaiting() > threadNum){
                 try{
                     Thread.sleep(100);
