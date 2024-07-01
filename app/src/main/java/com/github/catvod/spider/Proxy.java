@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-private class Logger {
+class Logger {
     public static void log(String message) {
         String filePath = "/storage/emulated/0/TV/log.txt";
         
