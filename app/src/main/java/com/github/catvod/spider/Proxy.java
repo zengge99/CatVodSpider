@@ -275,6 +275,9 @@ public class Proxy extends Spider {
                 }
             }
             this.header = headersBuilder.build();
+            try{
+                Thread.sleep(500);
+            }catch(Exception e){}
         }
 
         private void getQuarkLink(String url, Map<String, String> headers) {
@@ -367,7 +370,6 @@ public class Proxy extends Spider {
                 if(response!=null){
                     response.close();
                 }
-                Thread.sleep(500);
             }
         }
 
