@@ -70,6 +70,7 @@ public class Proxy extends Spider {
         int blockSize = 10 * 1024 * 1024; //默认1MB
         int threadNum = 2; //默认2线程
         String cookie = null;
+        String referer = null;
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
@@ -191,6 +192,9 @@ public class Proxy extends Spider {
             if (cookie != null) {
                 requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
             }
+            if (referer != null) {
+                requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
+            }
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
@@ -261,6 +265,7 @@ public class Proxy extends Spider {
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
+                referer = "https://pan.quark.cn";
                 Logger.log("获取到夸克下载直链：" + location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {
@@ -295,6 +300,9 @@ public class Proxy extends Spider {
                 
                 if (cookie != null) {
                     requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+                }
+                if (referer != null) {
+                    requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
                 Request request = requestBuilder.build();
                 Response response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request).execute();
