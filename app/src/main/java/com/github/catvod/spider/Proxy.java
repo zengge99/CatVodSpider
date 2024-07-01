@@ -367,6 +367,7 @@ public class Proxy extends Spider {
                 if(response!=null){
                     response.close();
                 }
+                Thread.sleep(500);
             }
         }
 
