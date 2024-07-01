@@ -40,7 +40,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 class Logger {
-    static boolean dbg = false;
+    static boolean dbg = true;
     public static void log(String message) {
         if(!dbg){
             return;
