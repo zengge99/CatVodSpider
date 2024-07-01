@@ -226,6 +226,9 @@ public class Proxy extends Spider {
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
+                    if(response!=null){
+                        response.close();
+                    }
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
