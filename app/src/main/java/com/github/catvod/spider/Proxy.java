@@ -243,7 +243,7 @@ public class Proxy extends Spider {
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
-                location = StringEscapeUtils.unescapeJava(location)
+                location = StringEscapeUtils.unescapeJava(location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {}
         }
