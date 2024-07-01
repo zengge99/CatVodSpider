@@ -40,9 +40,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 
 class Logger {
+    boolean dbg = true;
     public static void log(String message) {
+        if(!dbg){
+            return;
+        }
         String filePath = "/storage/emulated/0/TV/log.txt";
-        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(message);
             writer.newLine();
