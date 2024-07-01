@@ -248,7 +248,12 @@ public class Proxy extends Spider {
         }
 
         private String unicodeToString(String unicode) {
-            return unicode.replaceAll("\\\\u(.{4})", match -> String.valueOf((char) Integer.parseInt(match.group(1), 16)));
+            return unicode.replaceAll("\\\\u(.{4})", new Function<MatchResult, String>() {
+                @Override
+                public String apply(MatchResult match) {
+                    return String.valueOf((char) Integer.parseInt(match.group(1), 16));
+                }
+            });
         }
         
         private void _getHeader(String url, Map<String, String> headers) {
