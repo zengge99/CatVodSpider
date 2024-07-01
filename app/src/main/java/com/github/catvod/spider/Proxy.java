@@ -322,6 +322,7 @@ public class Proxy extends Spider {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
+                Logger.log("_getHeader发生错误：" + e.getMessage());
                 this.supportRange = false;
                 return;
             } finally {
