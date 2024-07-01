@@ -330,7 +330,7 @@ public class Proxy extends Spider {
 
     private static int port = -1;
 
-            private String unescapeUnicode(String unicodeString) {
+            private static String unescapeUnicode(String unicodeString) {
             Pattern pattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
             Matcher matcher = pattern.matcher(unicodeString);
             
