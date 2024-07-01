@@ -369,6 +369,7 @@ public class Proxy extends Spider {
 
         @Override
         public void close() throws IOException {
+            Logger.log("数据流关闭");
             super.close();
             this.executorService.shutdown();
         }
