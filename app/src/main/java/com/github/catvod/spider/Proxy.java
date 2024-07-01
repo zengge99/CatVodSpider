@@ -133,7 +133,7 @@ public class Proxy extends Spider {
             this.executorService = Executors.newFixedThreadPool(threadNum);
             //this.executorService = Executors.newFixedThreadPool(1);
             //supportRange=false;
-            不支持断点续传，单线程下载
+            //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
@@ -208,6 +208,13 @@ public class Proxy extends Spider {
             Response response = null;
             while (retryCount < maxRetry) {
                 try {
+                    if(Thread.currentThread().isInterrupted()){
+                        if(response!=null){
+                            response.close();
+                        }
+                        Logger.log("连接提前终止");
+                        return null;
+                    }
                     response = OkHttp.newCall(request);
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
