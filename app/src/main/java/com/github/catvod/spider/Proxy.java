@@ -237,6 +237,7 @@ public class Proxy extends Spider {
             while (statusCode == 302){
                 _getHeader(newUrl, headers);
             }
+            statusCode = 206;
         }
 
         private void getQuarkLink(String url, Map<String, String> headers) {
