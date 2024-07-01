@@ -202,7 +202,7 @@ public class Proxy extends Spider {
             if (referer != null) {
                 requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
             }
-            requestBuilder.removeHeader("Keep-Alive").addHeader("Keep-Alive", false);
+            requestBuilder.removeHeader("Keep-Alive").addHeader("Keep-Alive", "false");
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
@@ -347,7 +347,7 @@ public class Proxy extends Spider {
                 if (referer != null) {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
-                requestBuilder.removeHeader("Keep-Alive").addHeader("Keep-Alive", false);
+                requestBuilder.removeHeader("Keep-Alive").addHeader("Keep-Alive", "false");
                 Request request = requestBuilder.build();
                 response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request).execute();
                 this.header = response.headers();
