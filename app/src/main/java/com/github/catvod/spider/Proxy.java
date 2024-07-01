@@ -75,6 +75,7 @@ public class Proxy extends Spider {
         
         private HttpDownloader(Map<String, String> params) {
             try{
+                Thread.sleep(500);
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
