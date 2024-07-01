@@ -238,7 +238,15 @@ public class Proxy extends Spider {
             while (statusCode == 302){
                 _getHeader(newUrl, headers);
             }
-        }
+            Headers originalHeaders = this.header;
+            Headers.Builder headersBuilder = new Headers.Builder();
+            for (int i = 0; i < originalHeaders.size(); i++) {
+                (!name.equals("Content-Length") && !name.equals("Content-Type")){
+                    headersBuilder.add(originalHeaders.name(i), originalHeaders.value(i));
+                }
+            }
+            this.header = headersBuilder.build();
+            }
 
         private void getQuarkLink(String url, Map<String, String> headers) {
             try {
