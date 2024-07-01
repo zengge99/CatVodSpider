@@ -215,6 +215,7 @@ public class Proxy extends Spider {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                        this.available();
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     return new ByteArrayInputStream(baos.toByteArray());
