@@ -241,7 +241,7 @@ public class Proxy extends Spider {
             Headers originalHeaders = this.header;
             Headers.Builder headersBuilder = new Headers.Builder();
             for (int i = 0; i < originalHeaders.size(); i++) {
-                (!name.equals("Content-Length") && !name.equals("Content-Type")){
+                if(!name.equals("Content-Length") && !name.equals("Content-Type")){
                     headersBuilder.add(originalHeaders.name(i), originalHeaders.value(i));
                 }
             }
