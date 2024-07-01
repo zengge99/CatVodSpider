@@ -36,7 +36,6 @@ import java.net.URL;
 import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 import java.util.HashMap;
-import org.apache.commons.text.StringEscapeUtils;
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -243,9 +242,13 @@ public class Proxy extends Spider {
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
-                location = StringEscapeUtils.unescapeJava(location);
+                location = unicodeToString(location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {}
+        }
+
+        private String unicodeToString(String unicode) {
+            return unicode.replaceAll("\\\\u(.{4})", match -> String.valueOf((char) Integer.parseInt(match.group(1), 16)));
         }
         
         private void _getHeader(String url, Map<String, String> headers) {
