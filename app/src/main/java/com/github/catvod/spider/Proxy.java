@@ -258,8 +258,11 @@ public class Proxy extends Spider {
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
+                Logger.log("获取到夸克下载直链：" + location);
                 newUrl = location == null ? url : location;
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                Logger.log("获取到夸克发生错误：" + e.getMessage());
+            }
         }
 
         private String unescapeUnicode(String unicodeString) {
@@ -345,25 +348,8 @@ public class Proxy extends Spider {
 
     private static int port = -1;
 
-            private static String unescapeUnicode(String unicodeString) {
-            Pattern pattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
-            Matcher matcher = pattern.matcher(unicodeString);
-            
-            StringBuffer sb = new StringBuffer();
-            while (matcher.find()) {
-                char ch = (char) Integer.parseInt(matcher.group(1), 16);
-                matcher.appendReplacement(sb, String.valueOf(ch));
-            }
-            matcher.appendTail(sb);
-            
-            return sb.toString();
-        }
-
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
-            case "dbg":
-                Logger.log(unescapeUnicode("heihei\\u0026haha"));
-                return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream(unescapeUnicode("heihei\\u0026haha").getBytes("UTF-8"))};
             case "genck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "gen":
