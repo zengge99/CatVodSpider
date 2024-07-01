@@ -131,7 +131,7 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(threadNum);
-            supportRange=false;
+            //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
                 Future<InputStream> future = this.executorService.submit(() -> {
