@@ -198,7 +198,7 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
-            byte[] downloadbBuffer = new byte[1024 * 1024];
+            byte[] downloadbBuffer = new byte[100*1024];
             while (retryCount < maxRetry) {
                 try {
                     Response response = OkHttp.newCall(request);
@@ -215,7 +215,10 @@ public class Proxy extends Spider {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                        //this.available();
+                        if(Thread.currentThread().isInterrupted()){
+                            Logger.log("连接提前终止");
+                            return null;
+                        }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     return new ByteArrayInputStream(baos.toByteArray());
@@ -371,6 +374,7 @@ public class Proxy extends Spider {
         public void close() throws IOException {
             Logger.log("数据流关闭");
             super.close();
+            this.executorService.shutdownNow();
             this.executorService.shutdown();
         }
     }
