@@ -204,7 +204,7 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
-            byte[] downloadbBuffer = new byte[100*1024];
+            byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             while (retryCount < maxRetry) {
                 try {
