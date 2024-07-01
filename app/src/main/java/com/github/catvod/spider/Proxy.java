@@ -200,9 +200,10 @@ public class Proxy extends Spider {
             int retryCount = 0;
             int maxRetry = 5;
             byte[] downloadbBuffer = new byte[100*1024];
+            Response response = null;
             while (retryCount < maxRetry) {
                 try {
-                    Response response = OkHttp.newCall(request);
+                    response = OkHttp.newCall(request);
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
                         statusCode = response.code();
