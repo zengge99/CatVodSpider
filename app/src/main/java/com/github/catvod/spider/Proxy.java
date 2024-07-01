@@ -172,6 +172,10 @@ public class Proxy extends Spider {
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
             try{
                 while(readWaiting() > threadNum){
+                if(Thread.currentThread().isInterrupted()){
+                        Logger.log("连接提前终止");
+                        return null;
+                }
                 try{
                     Thread.sleep(100);
                     } catch (Exception e) {}
