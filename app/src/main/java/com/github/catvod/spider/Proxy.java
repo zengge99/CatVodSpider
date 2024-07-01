@@ -330,6 +330,20 @@ public class Proxy extends Spider {
 
     private static int port = -1;
 
+            private String unescapeUnicode(String unicodeString) {
+            Pattern pattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
+            Matcher matcher = pattern.matcher(unicodeString);
+            
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                char ch = (char) Integer.parseInt(matcher.group(1), 16);
+                matcher.appendReplacement(sb, String.valueOf(ch));
+            }
+            matcher.appendTail(sb);
+            
+            return sb.toString();
+        }
+
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
