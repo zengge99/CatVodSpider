@@ -36,6 +36,21 @@ import java.net.URL;
 import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 import java.util.HashMap;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+public class Logger {
+    public static void log(String message) {
+        String filePath = "/storage/emulated/0/TV/log.txt";
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(message);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error writing to log file: " + e.getMessage());
+        }
+    }
+}
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
@@ -347,6 +362,7 @@ public class Proxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
+                Logger.log(unescapeUnicode("heihei\\u0026haha"));
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream(unescapeUnicode("heihei\\u0026haha").getBytes("UTF-8"))};
             case "genck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
