@@ -242,18 +242,23 @@ public class Proxy extends Spider {
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
-                location = unicodeToString(location);
+                location = unescapeUnicode(location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {}
         }
 
-        private String unicodeToString(String unicode) {
-            return unicode.replaceAll("\\\\u(.{4})", new Function<MatchResult, String>() {
-                @Override
-                public String apply(MatchResult match) {
-                    return String.valueOf((char) Integer.parseInt(match.group(1), 16));
-                }
-            });
+        private String unescapeUnicode(String unicodeString) {
+            Pattern pattern = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
+            Matcher matcher = pattern.matcher(unicodeString);
+            
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                char ch = (char) Integer.parseInt(matcher.group(1), 16);
+                matcher.appendReplacement(sb, String.valueOf(ch));
+            }
+            matcher.appendTail(sb);
+            
+            return sb.toString();
         }
         
         private void _getHeader(String url, Map<String, String> headers) {
