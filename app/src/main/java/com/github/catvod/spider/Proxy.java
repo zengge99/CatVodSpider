@@ -217,7 +217,9 @@ public class Proxy extends Spider {
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         if(Thread.currentThread().isInterrupted()){
-                            response.close();
+                            if(response!=null){
+                                response.close();
+                            }
                             Logger.log("连接提前终止");
                             return null;
                         }
@@ -226,6 +228,9 @@ public class Proxy extends Spider {
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
+                    if(response!=null){
+                        response.close();
+                    }
                     if (retryCount == maxRetry) {
                         try{
                             this.close();
