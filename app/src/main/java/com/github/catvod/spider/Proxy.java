@@ -50,6 +50,7 @@ class Logger {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(message);
             writer.newLine();
+            writer.newLine();
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
         }
@@ -91,7 +92,11 @@ public class Proxy extends Spider {
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
-                Logger.log("[HttpDownloader]：下载链接：" + url);
+                String range = "";
+                if (keys.contains(key)) {
+                    headers.put(key, params.get(key))
+                }
+                Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url, "播放器指定的range：" + range);
                 this.getHeader(url, headers);
                 Logger.log("[HttpDownloader]：新下载链接：" + newUrl);
                 this.createDownloadTask(newUrl, headers);
