@@ -96,7 +96,7 @@ public class Proxy extends Spider {
                 if (params.get("range") != null) {
                     range = params.get("range");
                 }
-                Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url, "播放器指定的range：" + range);
+                Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
                 this.getHeader(url, headers);
                 Logger.log("[HttpDownloader]：新下载链接：" + newUrl);
                 this.createDownloadTask(newUrl, headers);
