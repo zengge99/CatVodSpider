@@ -64,6 +64,7 @@ public class Proxy extends Spider {
     private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
         public long contentLength = -1;
+        long contentEnd;
         public Headers header;
         public int statusCode = 200;
         String newUrl = null;
@@ -165,10 +166,10 @@ public class Proxy extends Spider {
             
             //多线程下载
             long start = 0; 
-            long end = this.contentLength - 1;
+            long end = this.contentEnd ;
             String range = request.headers().get("Range");
             range = range == null ? "" : range;
-            range = range + "-" + (this.contentLength - 1);
+            range = range + "-" + this.contentEnd;
             range = range.replace("--", "-");
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
@@ -382,7 +383,11 @@ public class Proxy extends Spider {
                     newUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
-                Logger.log(connId + "[_getHeader]：从头部获取到长度：" + this.contentLength;
+                String hContentEnd = this.header.get("Content-Range");
+                if (hContentEnd != null) {
+                    hContentEnd = hContentEnd.split("/")[1];
+                    this.contentEnd = Long.parseLong(hContentEnd) - 1;
+                }
                 if (this.header.get("Accept-Ranges") == null || !this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
                     this.supportRange = false;
                 }
