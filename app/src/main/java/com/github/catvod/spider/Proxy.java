@@ -382,6 +382,7 @@ public class Proxy extends Spider {
                     newUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
+                Logger.log(connId + "[_getHeader]：从头部获取到长度：" + this.contentLength;
                 if (this.header.get("Accept-Ranges") == null || !this.header.get("Accept-Ranges").toLowerCase().equals("bytes")) {
                     this.supportRange = false;
                 }
@@ -425,7 +426,7 @@ public class Proxy extends Spider {
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
                 this.is = null;
-                return 0;
+                return -1;
             }
         }
 
