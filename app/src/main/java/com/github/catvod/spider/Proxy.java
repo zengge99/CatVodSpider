@@ -72,6 +72,7 @@ public class Proxy extends Spider {
         Queue<Future<InputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
+        boolean closed = false;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
         String cookie = null;
@@ -81,7 +82,7 @@ public class Proxy extends Spider {
         
         private HttpDownloader(Map<String, String> params) {
             try{
-                //Thread.sleep(3000);
+                Thread.sleep(3000);
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
@@ -398,18 +399,21 @@ public class Proxy extends Spider {
                 this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
+                    if(closed) return -1;
                     Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
                 }
                 int ol = this.is.read(buffer, off, len);
+                if(closed) return -1;
                 //因为是预先下载到内存块，因此0也是读完了
                 if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
-                    Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
+                    if(closed) return -1;
+                    Logger.log("[read]：读取数据块：" + blockCounter);
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
@@ -422,6 +426,7 @@ public class Proxy extends Spider {
 
         @Override
         public void close() throws IOException {
+            closed = true;
             Logger.log("播放器主动关闭数据流");
             super.close();
             this.executorService.shutdownNow();
