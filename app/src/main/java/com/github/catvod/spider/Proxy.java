@@ -140,8 +140,10 @@ public class Proxy extends Spider {
             }
             Request request = requestBuilder.build();
             this.futureQueue = new LinkedList<>();
-            this.executorService = Executors.newFixedThreadPool(threadNum);
-            //this.executorService = Executors.newFixedThreadPool(1);
+            //this.executorService = Executors.newFixedThreadPool(threadNum);
+            this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
+           0L, TimeUnit.MILLISECONDS,
+           new ArrayBlockingQueue<>(threadNum));
             //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
