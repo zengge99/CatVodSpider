@@ -39,6 +39,9 @@ import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import okhttp3.Call;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
 
 class Logger {
     static boolean dbg = true;
@@ -250,6 +253,7 @@ public class Proxy extends Spider {
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
+                    Logger.log("[_downloadTask]：任务完成，下载链接：" + url + "下载分片：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
