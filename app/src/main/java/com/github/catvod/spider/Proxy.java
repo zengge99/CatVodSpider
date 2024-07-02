@@ -93,7 +93,7 @@ public class Proxy extends Spider {
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
                 String range = "";
-                if (params.get("range")) {
+                if (params.get("range") != null) {
                     range = params.get("range");
                 }
                 Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url, "播放器指定的range：" + range);
