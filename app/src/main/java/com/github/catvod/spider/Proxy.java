@@ -193,7 +193,7 @@ public class Proxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            Logger.log("[_downloadTask]：下载链接：" + url + "下载分片：" + rang);
+            Logger.log("[_downloadTask]：下载链接：" + url + "下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -238,7 +238,7 @@ public class Proxy extends Spider {
                                 Logger.log("[_downloadTask]：关闭响应");
                                 response.close();
                             }
-                            Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
+                            Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + range);
                             return null;
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
@@ -253,7 +253,7 @@ public class Proxy extends Spider {
                             Logger.log("[_downloadTask]：关闭响应");
                             response.close();
                         }
-                        Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
+                        Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + range);
                         return null;
                     }
                 }
@@ -380,7 +380,7 @@ public class Proxy extends Spider {
                     Logger.log("[_getHeader]：关闭响应");
                     response.close();
                 }
-                Logger.log("[_getHeader]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
+                Logger.log("[_getHeader]：连接提前终止，下载链接：" + url);
             }
         }
 
