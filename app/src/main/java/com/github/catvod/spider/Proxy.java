@@ -215,7 +215,7 @@ public class Proxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            Logger.log(connId + "[_downloadTask]：下载链接：" + url + "下载分片：" + range);
+            Logger.log(connId + "[_downloadTask]：下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -264,7 +264,7 @@ public class Proxy extends Spider {
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    Logger.log(connId + "[_downloadTask]：任务完成，下载链接：" + url + "下载分片：" + range);
+                    Logger.log(connId + "[_downloadTask]：任务完成，下载分片：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
