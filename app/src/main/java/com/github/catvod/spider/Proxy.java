@@ -240,9 +240,7 @@ public class Proxy extends Spider {
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         if(Thread.currentThread().isInterrupted()){
                             if(response!=null){
-                                Logger.log("[_downloadTask]：取消下载");
                                 call.cancel();
-                                Logger.log("[_downloadTask]：关闭响应");
                                 response.close();
                             }
                             Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
@@ -255,9 +253,7 @@ public class Proxy extends Spider {
                     retryCount++;
                     if (retryCount == maxRetry) {
                         if(response!=null){
-                            Logger.log("[_downloadTask]：取消下载");
                             call.cancel();
-                            Logger.log("[_downloadTask]：关闭响应");
                             response.close();
                         }
                         Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
@@ -382,12 +378,9 @@ public class Proxy extends Spider {
                 return;
             } finally {
                 if(response!=null){
-                    Logger.log("[_getHeader]：取消下载");
                     call.cancel();
-                    Logger.log("[_getHeader]：关闭响应");
                     response.close();
                 }
-                Logger.log("[_getHeader]：连接提前终止，下载链接：" + url);
             }
         }
 
