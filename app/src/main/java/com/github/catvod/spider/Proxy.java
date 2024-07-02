@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import okhttp3.Call
+import okhttp3.Call;
 
 class Logger {
     static boolean dbg = true;
