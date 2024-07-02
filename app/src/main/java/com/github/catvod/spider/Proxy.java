@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
 class Logger {
-    static boolean dbg = true;
+    static boolean dbg = false;
     public static void log(String message) {
         if(!dbg){
             return;
