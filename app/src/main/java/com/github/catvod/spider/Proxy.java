@@ -91,10 +91,12 @@ public class Proxy extends Spider {
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
+                Logger.log("[HttpDownloader]：下载链接：" + url);
                 this.getHeader(url, headers);
+                Logger.log("[HttpDownloader]：新下载链接：" + newUrl);
                 this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
-                //不需要做什么
+                Logger.log("[HttpDownloader]：发生错误：" + e.getMessage());
             }
         }
 
@@ -126,6 +128,7 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
+            Logger.log("[createDownloadTask]：下载链接：" + url);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -175,8 +178,8 @@ public class Proxy extends Spider {
             try{
                 while(readWaiting() > threadNum){
                 if(Thread.currentThread().isInterrupted()){
-                        Logger.log("连接提前终止");
-                        return null;
+                    Logger.log("[downloadTask]：连接提前终止：" + url);
+                    return null;
                 }
                 try{
                     Thread.sleep(100);
@@ -190,6 +193,7 @@ public class Proxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
+            Logger.log("[_downloadTask]：下载链接：" + url + "下载分片：" + rang);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -214,16 +218,6 @@ public class Proxy extends Spider {
                 try {
                     call = Spider.client().newBuilder().build().newCall(request);
                     response = call.execute();
-
-                    if(Thread.currentThread().isInterrupted()){
-                        if(response!=null){
-                            call.cancel();
-                            response.close();
-                        }
-                        Logger.log("连接提前终止");
-                        return null;
-                    }
-                    
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
                         statusCode = response.code();
@@ -239,29 +233,27 @@ public class Proxy extends Spider {
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         if(Thread.currentThread().isInterrupted()){
                             if(response!=null){
+                                Logger.log("[_downloadTask]：取消下载");
                                 call.cancel();
+                                Logger.log("[_downloadTask]：关闭响应");
                                 response.close();
                             }
-                            Logger.log("连接提前终止");
+                            Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
                             return null;
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    if(response!=null){
-                        call.cancel();
-                        response.close();
-                    }
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
-                    if(response!=null){
-                        response.close();
-                    }
                     if (retryCount == maxRetry) {
-                        try{
+                        if(response!=null){
+                            Logger.log("[_downloadTask]：取消下载");
                             call.cancel();
-                            this.close();
-                        } catch ( Exception err ) {}
+                            Logger.log("[_downloadTask]：关闭响应");
+                            response.close();
+                        }
+                        Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
                         return null;
                     }
                 }
@@ -272,8 +264,10 @@ public class Proxy extends Spider {
         
         private void getHeader(String url, Map<String, String> headers) {
             getQuarkLink(url, headers);
-            while (statusCode == 302){
+            int count = 0;
+            while (statusCode == 302 && count < 3){
                 _getHeader(newUrl, headers);
+                count++;
             }
             Headers originalHeaders = this.header;
             Headers.Builder headersBuilder = new Headers.Builder();
@@ -376,14 +370,17 @@ public class Proxy extends Spider {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
-                Logger.log("_getHeader发生错误：" + e.getMessage());
+                Logger.log("[_getHeader]：发生错误：" + e.getMessage());
                 this.supportRange = false;
                 return;
             } finally {
                 if(response!=null){
+                    Logger.log("[_getHeader]：取消下载");
                     call.cancel();
+                    Logger.log("[_getHeader]：关闭响应");
                     response.close();
                 }
+                Logger.log("[_getHeader]：连接提前终止，下载链接：" + url + "下载分片：" + rang);
             }
         }
 
@@ -406,6 +403,7 @@ public class Proxy extends Spider {
                 } 
                 return ol;
             } catch (Exception e) {
+                Logger.log("[read]：发生错误：" + e.getMessage());
                 this.is = null;
                 return -1;
             }
@@ -413,7 +411,7 @@ public class Proxy extends Spider {
 
         @Override
         public void close() throws IOException {
-            Logger.log("数据流关闭");
+            Logger.log("播放器主动关闭数据流");
             super.close();
             this.executorService.shutdownNow();
             this.executorService.shutdown();
