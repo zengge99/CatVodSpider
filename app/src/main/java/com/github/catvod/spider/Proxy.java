@@ -208,16 +208,21 @@ public class Proxy extends Spider {
             int maxRetry = 5;
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
+            val call = null;
             while (retryCount < maxRetry) {
                 try {
+                    call = Spider.client().newBuilder().build().newCall(request);
+                    response = call.execute();
+
                     if(Thread.currentThread().isInterrupted()){
                         if(response!=null){
+                            call.cancel();
                             response.close();
                         }
                         Logger.log("连接提前终止");
                         return null;
                     }
-                    response = OkHttp.newCall(request);
+                    
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
                         statusCode = response.code();
@@ -233,6 +238,7 @@ public class Proxy extends Spider {
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         if(Thread.currentThread().isInterrupted()){
                             if(response!=null){
+                                call.cancel();
                                 response.close();
                             }
                             Logger.log("连接提前终止");
@@ -241,6 +247,7 @@ public class Proxy extends Spider {
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     if(response!=null){
+                        call.cancel();
                         response.close();
                     }
                     return new ByteArrayInputStream(baos.toByteArray());
@@ -251,6 +258,7 @@ public class Proxy extends Spider {
                     }
                     if (retryCount == maxRetry) {
                         try{
+                            call.cancel();
                             this.close();
                         } catch ( Exception err ) {}
                         return null;
