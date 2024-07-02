@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import okhttp3.Call
 
 class Logger {
     static boolean dbg = true;
@@ -208,7 +209,7 @@ public class Proxy extends Spider {
             int maxRetry = 5;
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
-            val call = null;
+            Call call = null;
             while (retryCount < maxRetry) {
                 try {
                     call = Spider.client().newBuilder().build().newCall(request);
@@ -342,7 +343,7 @@ public class Proxy extends Spider {
             this.supportRange = true;
             String range = "";
             Response response = null;
-            val call = null;
+            Call call = null;
             String hContentLength = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
