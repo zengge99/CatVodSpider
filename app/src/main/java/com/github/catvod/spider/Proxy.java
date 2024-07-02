@@ -404,7 +404,6 @@ public class Proxy extends Spider {
                     decrementWaiting();
                 }
                 int ol = this.is.read(buffer, off, len);
-                if(closed) return -1;
                 //因为是预先下载到内存块，因此0也是读完了
                 if ( ol == -1 || ol == 0 )
                 {
