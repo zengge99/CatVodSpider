@@ -93,8 +93,8 @@ public class Proxy extends Spider {
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
                 String url = params.get("url");
                 String range = "";
-                if (keys.contains(key)) {
-                    headers.put(key, params.get(key))
+                if (params.get("range")) {
+                    range = params.get("range");
                 }
                 Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url, "播放器指定的range：" + range);
                 this.getHeader(url, headers);
@@ -245,7 +245,7 @@ public class Proxy extends Spider {
                                 Logger.log("[_downloadTask]：关闭响应");
                                 response.close();
                             }
-                            Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + range);
+                            Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
                             return null;
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
@@ -260,7 +260,7 @@ public class Proxy extends Spider {
                             Logger.log("[_downloadTask]：关闭响应");
                             response.close();
                         }
-                        Logger.log("[_downloadTask]：连接提前终止，下载链接：" + url + "下载分片：" + range);
+                        Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
                     }
                 }
