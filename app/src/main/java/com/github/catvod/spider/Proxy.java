@@ -137,7 +137,7 @@ public class Proxy extends Spider {
             this.futureQueue = new LinkedList<>();
             this.executorService = Executors.newFixedThreadPool(threadNum);
             //this.executorService = Executors.newFixedThreadPool(1);
-            supportRange=false;
+            //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
                 Logger.log("[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
