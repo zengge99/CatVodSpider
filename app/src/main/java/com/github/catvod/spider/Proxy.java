@@ -104,12 +104,12 @@ public class Proxy extends Spider {
                 if (params.get("range") != null) {
                     range = params.get("range");
                 }
-                Logger.log("[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
+                Logger.log(connId + "[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
                 this.getHeader(url, headers);
-                Logger.log("[HttpDownloader]：新下载链接：" + newUrl);
+                Logger.log(connId + "[HttpDownloader]：新下载链接：" + newUrl);
                 this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
-                Logger.log("[HttpDownloader]：发生错误：" + e.getMessage());
+                Logger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
             }
         }
 
@@ -141,7 +141,7 @@ public class Proxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
-            Logger.log("[createDownloadTask]：下载链接：" + url);
+            Logger.log(connId + "[createDownloadTask]：下载链接：" + url);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -155,7 +155,7 @@ public class Proxy extends Spider {
             //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
-                Logger.log("[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
+                Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
@@ -167,7 +167,6 @@ public class Proxy extends Spider {
             long start = 0; 
             long end = this.contentLength - 1;
             String range = request.headers().get("Range");
-            Logger.log("[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
             range = range == null ? "" : range;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
@@ -178,6 +177,7 @@ public class Proxy extends Spider {
                 start = Long.parseLong(startString); 
                 end = Long.parseLong(endString);
             }
+            Logger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
 
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
@@ -195,7 +195,7 @@ public class Proxy extends Spider {
             try{
                 while(readWaiting() > threadNum){
                 if(Thread.currentThread().isInterrupted()){
-                    Logger.log("[downloadTask]：连接提前终止：" + url);
+                    Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
                     return null;
                 }
                 try{
@@ -210,7 +210,7 @@ public class Proxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            Logger.log("[_downloadTask]：下载链接：" + url + "下载分片：" + range);
+            Logger.log(connId + "[_downloadTask]：下载链接：" + url + "下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -253,12 +253,12 @@ public class Proxy extends Spider {
                                 call.cancel();
                                 response.close();
                             }
-                            Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
+                            Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                             return null;
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    Logger.log("[_downloadTask]：任务完成，下载链接：" + url + "下载分片：" + range);
+                    Logger.log(connId + "[_downloadTask]：任务完成，下载链接：" + url + "下载分片：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
@@ -267,7 +267,7 @@ public class Proxy extends Spider {
                             call.cancel();
                             response.close();
                         }
-                        Logger.log("[_downloadTask]：连接提前终止，下载分片：" + range);
+                        Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
                     }
                 }
@@ -384,7 +384,7 @@ public class Proxy extends Spider {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
-                Logger.log("[_getHeader]：发生错误：" + e.getMessage());
+                Logger.log(connId + "[_getHeader]：发生错误：" + e.getMessage());
                 this.supportRange = false;
                 return;
             } finally {
@@ -404,7 +404,7 @@ public class Proxy extends Spider {
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return 0;
-                    Logger.log("[read]：读取数据块：" + blockCounter);
+                    Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
                 }
@@ -414,14 +414,14 @@ public class Proxy extends Spider {
                 {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return 0;
-                    Logger.log("[read]：读取数据块：" + blockCounter);
+                    Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
             } catch (Exception e) {
-                Logger.log("[read]：发生错误：" + e.getMessage());
+                Logger.log(connId + "[read]：发生错误：" + e.getMessage());
                 this.is = null;
                 return -1;
             }
