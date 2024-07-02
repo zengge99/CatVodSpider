@@ -152,7 +152,7 @@ public class Proxy extends Spider {
             long start = 0; 
             long end = this.contentLength - 1;
             String range = request.headers().get("Range");
-            Logger.log("[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：", range);
+            Logger.log("[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
             range = range == null ? "" : range;
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
