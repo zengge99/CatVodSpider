@@ -107,7 +107,6 @@ public class Proxy extends Spider {
                 }
                 Logger.log(connId + "[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
                 this.getHeader(url, headers);
-                Logger.log(connId + "[HttpDownloader]：新下载链接：" + newUrl);
                 this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
                 Logger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
