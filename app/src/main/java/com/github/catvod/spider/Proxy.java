@@ -334,6 +334,7 @@ public class Proxy extends Spider {
             this.supportRange = true;
             String range = "";
             Response response = null;
+            val call = null;
             String hContentLength = "";
             try {
                 Request.Builder requestBuilder = new Request.Builder().url(url);
@@ -349,7 +350,8 @@ public class Proxy extends Spider {
                 }
                 requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 Request request = requestBuilder.build();
-                response = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request).execute();
+                call = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
+                response = call.execute();
                 this.header = response.headers();
                 statusCode = response.code();
                 this.contentType = this.header.get("Content-Type");
@@ -370,6 +372,7 @@ public class Proxy extends Spider {
                 return;
             } finally {
                 if(response!=null){
+                    call.cancel();
                     response.close();
                 }
             }
