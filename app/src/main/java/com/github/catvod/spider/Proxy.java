@@ -425,7 +425,7 @@ public class Proxy extends Spider {
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
                 this.is = null;
-                return -1;
+                return 0;
             }
         }
 
