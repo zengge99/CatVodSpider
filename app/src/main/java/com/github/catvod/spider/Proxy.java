@@ -76,6 +76,7 @@ public class Proxy extends Spider {
         int threadNum = 2; //默认2线程
         String cookie = null;
         String referer = null;
+        int blockCounter = 0;
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
@@ -397,6 +398,8 @@ public class Proxy extends Spider {
                 this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
+                    Logger.log("[read]：读取数据块：" + blockCounter);
+                    blockCounter++;
                     decrementWaiting();
                 }
                 int ol = this.is.read(buffer, off, len);
@@ -404,6 +407,8 @@ public class Proxy extends Spider {
                 if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
+                    Logger.log("[read]：读取数据块：" + blockCounter);
+                    blockCounter++;
                     decrementWaiting();
                     return this.is.read(buffer, off, len);
                 } 
