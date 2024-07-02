@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
 class Logger {
-    static boolean dbg = false;
+    static boolean dbg = true;
     public static void log(String message) {
         if(!dbg){
             return;
@@ -150,12 +150,14 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             this.futureQueue = new LinkedList<>();
             //this.executorService = Executors.newFixedThreadPool(threadNum);
+            int totalNum = this.contentLength / this.blockSize + 1;
+            totalNum = totalNum < 1 ? 1 : totalNum; 
             this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
            0L, TimeUnit.MILLISECONDS,
-           new ArrayBlockingQueue<>(10000));
+           new ArrayBlockingQueue<>(totalNum));
             //supportRange=false;
             //不支持断点续传，单线程下载
-            if(!this.supportRange || threadNum ==1) {
+            if(!this.supportRange || threadNum == 1) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
