@@ -168,6 +168,8 @@ public class Proxy extends Spider {
             long end = this.contentLength - 1;
             String range = request.headers().get("Range");
             range = range == null ? "" : range;
+            range = range + "-" + (this.contentLength - 1);
+            range = range.replace("--", "-");
             String pattern = "bytes=(\\d+)-(\\d+)";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(range);
