@@ -72,7 +72,6 @@ public class Proxy extends Spider {
         Queue<Future<InputStream>> futureQueue;
         ExecutorService executorService;
         boolean supportRange = true;
-        boolean closed = false;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
         String cookie = null;
@@ -362,6 +361,7 @@ public class Proxy extends Spider {
                 if (referer != null) {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
+                requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 //requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 Request request = requestBuilder.build();
                 call = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
@@ -399,7 +399,6 @@ public class Proxy extends Spider {
                 this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
-                    if(closed) return -1;
                     Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
@@ -410,10 +409,9 @@ public class Proxy extends Spider {
                 if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
+                    Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
-                    if(closed) return -1;
-                    Logger.log("[read]：读取数据块：" + blockCounter);
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
@@ -426,7 +424,6 @@ public class Proxy extends Spider {
 
         @Override
         public void close() throws IOException {
-            closed = true;
             Logger.log("播放器主动关闭数据流");
             super.close();
             this.executorService.shutdownNow();
