@@ -150,7 +150,7 @@ public class Proxy extends Spider {
             Request request = requestBuilder.build();
             this.futureQueue = new LinkedList<>();
             //this.executorService = Executors.newFixedThreadPool(threadNum);
-            int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);|
+            int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);
             totalNum = totalNum < 1 ? 1 : totalNum; 
             this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
            0L, TimeUnit.MILLISECONDS,
