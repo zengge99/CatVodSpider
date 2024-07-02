@@ -146,7 +146,7 @@ public class Proxy extends Spider {
             //this.executorService = Executors.newFixedThreadPool(threadNum);
             this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
            0L, TimeUnit.MILLISECONDS,
-           new ArrayBlockingQueue<>(threadNum));
+           new ArrayBlockingQueue<>(10000));
             //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum ==1) {
