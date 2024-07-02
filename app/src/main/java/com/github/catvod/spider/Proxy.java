@@ -68,6 +68,8 @@ public class Proxy extends Spider {
         public int statusCode = 200;
         String newUrl = null;
         int waiting = 0;
+        static int curConnId = 0;
+        int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
         ExecutorService executorService;
@@ -81,6 +83,8 @@ public class Proxy extends Spider {
         
         private HttpDownloader(Map<String, String> params) {
             try{
+                curConnId++;
+                connId = curConnId;
                 Thread.sleep(100);
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
@@ -361,7 +365,6 @@ public class Proxy extends Spider {
                 if (referer != null) {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
-                requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 //requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 Request request = requestBuilder.build();
                 call = Spider.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
@@ -395,10 +398,12 @@ public class Proxy extends Spider {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
+                if (curConnId!=connId) return 0;
                 //流如果关闭了会抛异常
                 this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
+                    if (curConnId!=connId) return 0;
                     Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
@@ -408,6 +413,7 @@ public class Proxy extends Spider {
                 if ( ol == -1 || ol == 0 )
                 {
                     this.is = this.futureQueue.remove().get();
+                    if (curConnId!=connId) return 0;
                     Logger.log("[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
