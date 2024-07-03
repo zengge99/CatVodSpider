@@ -3,6 +3,7 @@ package com.github.catvod.spider;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderDebug;
 import com.github.catvod.net.OkHttp;
+import android.content.Context;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
@@ -517,6 +518,6 @@ public class Proxy extends Spider {
 
     @Override
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) throws Exception {
-        return douban.categoryContent(pg, filter, extend);
+        return douban.categoryContent(tid, pg, filter, extend);
     }
 }
