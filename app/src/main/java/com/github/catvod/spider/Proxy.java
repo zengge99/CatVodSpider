@@ -61,7 +61,7 @@ class Logger {
     }
     
     public static void log(String message) {
-        log(message, false);
+        Logger.log(message, false);
     }
 }
 
