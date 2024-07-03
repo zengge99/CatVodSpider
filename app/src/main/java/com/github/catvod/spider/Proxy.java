@@ -65,6 +65,8 @@ class Logger {
 }
 
 public class Proxy extends Spider {
+    private static int port = -1;
+    private Douban douban;
     private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
         public long contentLength = -1;
@@ -450,8 +452,6 @@ public class Proxy extends Spider {
             this.executorService.shutdown();
         }
     }
-
-    private static int port = -1;
 
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
