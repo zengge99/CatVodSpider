@@ -67,7 +67,7 @@ class MyLogger {
 
 public class XiaoyaProxy extends Spider {
     private static int port = -1;
-    private Douban douban = newDouban();
+    private Douban douban = new Douban();
     private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
         public long contentLength = -1;
