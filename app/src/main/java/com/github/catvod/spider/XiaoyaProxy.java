@@ -44,7 +44,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
-class Logger {
+class MyLogger {
     static boolean dbg = false;
     public static void log(String message, boolean force) {
         if(!dbg && !force){
@@ -91,7 +91,7 @@ public class XiaoyaProxy extends Spider {
         
         private HttpDownloader(Map<String, String> params) {
             try{
-                Logger.log(connId + "[HttpDownloader]：构造函数调用");
+                MyLogger.log(connId + "[HttpDownloader]：构造函数调用");
                 curConnId++;
                 connId = curConnId;
                 Thread.sleep(100);
@@ -113,11 +113,11 @@ public class XiaoyaProxy extends Spider {
                 if (params.get("range") != null) {
                     range = params.get("range");
                 }
-                Logger.log(connId + "[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
+                MyLogger.log(connId + "[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
                 this.getHeader(url, headers);
                 this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
-                Logger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
+                MyLogger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
             }
         }
 
@@ -149,7 +149,7 @@ public class XiaoyaProxy extends Spider {
         }
 
         private void createDownloadTask(String url, Map<String, String> headers) {
-            Logger.log(connId + "[createDownloadTask]：下载链接：" + url);
+            MyLogger.log(connId + "[createDownloadTask]：下载链接：" + url);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -165,7 +165,7 @@ public class XiaoyaProxy extends Spider {
             //supportRange=false;
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum == 1) {
-                Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
+                MyLogger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "");
                 });
@@ -189,7 +189,7 @@ public class XiaoyaProxy extends Spider {
                 start = Long.parseLong(startString); 
                 end = Long.parseLong(endString);
             }
-            Logger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
+            MyLogger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
 
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
@@ -207,7 +207,7 @@ public class XiaoyaProxy extends Spider {
             try{
                 while(readWaiting() > threadNum){
                 if(Thread.currentThread().isInterrupted()){
-                    Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
+                    MyLogger.log(connId + "[downloadTask]：连接提前终止：" + url);
                     return null;
                 }
                 try{
@@ -222,7 +222,7 @@ public class XiaoyaProxy extends Spider {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            Logger.log(connId + "[_downloadTask]：下载分片：" + range);
+            MyLogger.log(connId + "[_downloadTask]：下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
@@ -266,12 +266,12 @@ public class XiaoyaProxy extends Spider {
                                 call.cancel();
                                 response.close();
                             }
-                            Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
+                            MyLogger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                             return null;
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+                    MyLogger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
@@ -280,7 +280,7 @@ public class XiaoyaProxy extends Spider {
                             call.cancel();
                             response.close();
                         }
-                        Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
+                        MyLogger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
                     }
                 }
@@ -338,10 +338,10 @@ public class XiaoyaProxy extends Spider {
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
                 referer = "https://pan.quark.cn";
-                Logger.log("获取到夸克下载直链：" + location);
+                MyLogger.log("获取到夸克下载直链：" + location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {
-                Logger.log("获取到夸克发生错误：" + e.getMessage());
+                MyLogger.log("获取到夸克发生错误：" + e.getMessage());
             }
         }
 
@@ -402,7 +402,7 @@ public class XiaoyaProxy extends Spider {
                     this.supportRange = false;
                 }
             } catch (Exception e) {
-                Logger.log(connId + "[_getHeader]：发生错误：" + e.getMessage());
+                MyLogger.log(connId + "[_getHeader]：发生错误：" + e.getMessage());
                 this.supportRange = false;
                 return;
             } finally {
@@ -422,7 +422,7 @@ public class XiaoyaProxy extends Spider {
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return 0;
-                    Logger.log(connId + "[read]：读取数据块：" + blockCounter);
+                    MyLogger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
                 }
@@ -432,14 +432,14 @@ public class XiaoyaProxy extends Spider {
                 {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return 0;
-                    Logger.log(connId + "[read]：读取数据块：" + blockCounter);
+                    MyLogger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     decrementWaiting();
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
             } catch (Exception e) {
-                Logger.log(connId + "[read]：发生错误：" + e.getMessage());
+                MyLogger.log(connId + "[read]：发生错误：" + e.getMessage());
                 this.is = null;
                 return -1;
             }
@@ -447,7 +447,7 @@ public class XiaoyaProxy extends Spider {
 
         @Override
         public void close() throws IOException {
-            Logger.log("播放器主动关闭数据流");
+            MyLogger.log("播放器主动关闭数据流");
             super.close();
             this.executorService.shutdownNow();
             this.executorService.shutdown();
@@ -457,7 +457,7 @@ public class XiaoyaProxy extends Spider {
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
-                Logger.dbg = true;
+                MyLogger.dbg = true;
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "gen":
                 return genProxy(params);
@@ -483,13 +483,13 @@ public class XiaoyaProxy extends Spider {
     }
     
     static void adjustPort() {
-        if (Proxy.port > 0) return;
+        if (XiaoyaProxy.port > 0) return;
         int port = 9978;
         while (port < 10000) {
             String resp = OkHttp.string("http://127.0.0.1:" + port + "/proxy?do=ck", null);
             if (resp.equals("ok")) {
                 SpiderDebug.log("Found local server port " + port);
-                Proxy.port = port;
+                XiaoyaProxy.port = port;
                 break;
             }
             port++;
