@@ -65,6 +65,16 @@ class Logger {
     }
 }  
 
+class QurakLinkCacheInfo {
+}
+
+class QurakLinkCachekManager {
+    static HashMap<String, QurakLinkCacheInfo> = new HashMap<>();
+    public static void getLinkCache(String url) {
+        return;
+    }
+} 
+
 public class Proxy extends Spider {
     private static int port = -1;
     private Douban douban;
