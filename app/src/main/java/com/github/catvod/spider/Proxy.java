@@ -378,15 +378,15 @@ public class Proxy extends Spider {
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
-                referer = "https://pan.quark.cn";
-                Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
-                newUrl = location == null ? url : location;
                 if(location != null && cookie != null){
                     QurakLinkCacheInfo var = new QurakLinkCacheInfo();
-                    var.cacheLink = newUrl;
+                    var.cacheLink = location;
                     var.cookie = cookie;
                     QurakLinkCachekManager.putLinkCache(url, var);
                 }
+                referer = "https://pan.quark.cn";
+                Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
+                newUrl = location == null ? url : location;
             } catch (Exception e) {
                 Logger.log(connId + "[getQuarkLink]获取到夸克发生错误：" + e.getMessage());
             }
