@@ -379,7 +379,7 @@ public class Proxy extends Spider {
                 cookie = object.getString("cookie");
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
-                if(location != null && cookie != null){
+                if(location != null && cookie != null && !location.isEmpty() && !cookie.isEmpty()){
                     QurakLinkCacheInfo var = new QurakLinkCacheInfo();
                     var.cacheLink = location;
                     var.cookie = cookie;
