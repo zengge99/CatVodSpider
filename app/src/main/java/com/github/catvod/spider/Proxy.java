@@ -495,7 +495,7 @@ public class Proxy extends Spider {
         }
     }
 
-    public voide Proxy()
+    public void Proxy()
     {
         Logger.log("代理已加载", true);
     }
