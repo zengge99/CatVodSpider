@@ -507,6 +507,8 @@ public class Proxy extends Spider {
             case "dbg":
                 Logger.dbg = true;
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
+            case "genck":
+                return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "gen":
                 return genProxy(params);
             case "ck":
