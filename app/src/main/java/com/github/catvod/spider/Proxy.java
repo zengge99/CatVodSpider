@@ -351,7 +351,7 @@ public class Proxy extends Spider {
                     return;
                 }
                 
-                QurakLinkCacheInfo info = QurakLinkCachekManager.getLinkCache(url)
+                QurakLinkCacheInfo info = QurakLinkCachekManager.getLinkCache(url);
                 if(info != null){
                     cookie = info.cookie;
                     newUrl = info.cacheLink;
