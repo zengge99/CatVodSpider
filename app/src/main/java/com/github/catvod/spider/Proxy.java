@@ -63,9 +63,7 @@ class Logger {
     public static void log(String message) {
         Logger.log(message, false);
     }
-}
-
-    
+}  
 
 public class Proxy extends Spider {
     private static int port = -1;
