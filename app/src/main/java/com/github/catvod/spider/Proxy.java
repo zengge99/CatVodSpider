@@ -504,4 +504,19 @@ public class Proxy extends Spider {
         adjustPort();
         return "http://127.0.0.1:" + port + "/proxy";
     }
+
+    @Override
+    public void init(Context context, String extend) throws Exception {
+        douban.init(context, extend);
+    }
+
+    @Override
+    public String homeContent(boolean filter) throws Exception {
+        return douban.homeContent(filter);
+    }
+
+    @Override
+    public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) throws Exception {
+        return douban.categoryContent(pg, filter, extend);
+    }
 }
