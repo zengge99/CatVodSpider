@@ -61,7 +61,7 @@ class Logger {
 }
 
 public class Proxy extends Spider {
-    private static class HttpDownloader extends PipedInputStream {
+    private static class HttpDownloader extends ByteArrayInputStream {
         public String contentType = "";
         public long contentLength = -1;
         long contentEnd;
