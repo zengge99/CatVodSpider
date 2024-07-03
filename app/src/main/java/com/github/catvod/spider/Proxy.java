@@ -91,7 +91,6 @@ public class Proxy extends Spider {
         
         private HttpDownloader(Map<String, String> params) {
             try{
-                Logger.log(connId + "[HttpDownloader]：构造函数调用");
                 curConnId++;
                 connId = curConnId;
                 Thread.sleep(100);
@@ -494,6 +493,11 @@ public class Proxy extends Spider {
             }
             port++;
         }
+    }
+
+    public voide Proxy()
+    {
+        Logger.log("代理已加载", true);
     }
 
     public static int getPort() {
