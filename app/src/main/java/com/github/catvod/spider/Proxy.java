@@ -344,6 +344,7 @@ public class Proxy extends Spider {
 
         private void getQuarkLink(String url, Map<String, String> headers) {
             try {
+                Logger.log(connId + "[getQuarkLink]播放器连接请求：" + url);
                 //先假装自己重定向到自己
                 statusCode = 302;
                 newUrl = url;
@@ -388,7 +389,7 @@ public class Proxy extends Spider {
                 Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
                 newUrl = location == null ? url : location;
             } catch (Exception e) {
-                Logger.log(connId + "[getQuarkLink]获取到夸克发生错误：" + e.getMessage());
+                Logger.log(connId + "[getQuarkLink]获取夸克发生错误：" + e.getMessage());
             }
         }
 
