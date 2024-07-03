@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
 class Logger {
-    static boolean dbg = true;
+    static boolean dbg = false;
     public static void log(String message) {
         if(!dbg){
             return;
@@ -263,7 +263,7 @@ public class Proxy extends Spider {
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    Logger.log(connId + "[_downloadTask]：任务完成，下载分片：" + range);
+                    Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
@@ -450,7 +450,8 @@ public class Proxy extends Spider {
 
     public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
-            case "genck":
+            case "dbg":
+                Logger.dbg = true;
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "gen":
                 return genProxy(params);
