@@ -73,8 +73,20 @@ class QurakLinkCacheInfo {
 
 class QurakLinkCachekManager {
     static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
-    public static void getLinkCache(String url) {
-        return;
+    public static QurakLinkCacheInfo getLinkCache(String url) {
+        QurakLinkCacheInfo cacheInfo = map.get(url);
+        if (cacheInfo != null) {
+            long currentTime = System.currentTimeMillis();
+            long cacheTime = cacheInfo.cacheTime;
+            if (currentTime - cacheTime <= 10 * 60 * 1000) {
+                return cacheInfo;
+            } else {
+                map.remove(url);
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 } 
 
