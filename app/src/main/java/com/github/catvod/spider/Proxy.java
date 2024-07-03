@@ -344,13 +344,13 @@ public class Proxy extends Spider {
 
         private void getQuarkLink(String url, Map<String, String> headers) {
             try {
-                Logger.log(connId + "[getQuarkLink]播放器连接请求：" + url);
                 //先假装自己重定向到自己
                 statusCode = 302;
                 newUrl = url;
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
                     return;
                 }
+                Logger.log(connId + "[getQuarkLink]播放器连接请求：" + url);
                 
                 QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
                 if(info != null){
