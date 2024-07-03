@@ -66,10 +66,13 @@ class Logger {
 }  
 
 class QurakLinkCacheInfo {
+    long cacheTime;
+    String cacheLink;
+    String cookie;
 }
 
 class QurakLinkCachekManager {
-    static HashMap<String, QurakLinkCacheInfo> = new HashMap<>();
+    static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
     public static void getLinkCache(String url) {
         return;
     }
