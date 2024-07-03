@@ -88,6 +88,13 @@ class QurakLinkCachekManager {
             return null;
         }
     }
+
+    public static void putLinkCache(String url, QurakLinkCacheInfo value) {
+        long currentTime = System.currentTimeMillis();
+        value.cacheTime = currentTime;
+        map.put(url, value);
+        map.entrySet().removeIf(entry -> currentTime - entry.getValue().cacheTime > 10 * 60 * 1000);
+    }
 } 
 
 public class Proxy extends Spider {
