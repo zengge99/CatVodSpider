@@ -350,6 +350,16 @@ public class Proxy extends Spider {
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
                     return;
                 }
+                
+                QurakLinkCacheInfo info = QurakLinkCachekManager.getLinkCache(url)
+                if(info != null){
+                    cookie = info.cookie;
+                    newUrl = info.cacheLink;
+                    referer = "https://pan.quark.cn";
+                    Logger.log(connId + "[getQuarkLink]获取到夸克下载直链缓存：" + newUrl);
+                    return;
+                }
+                
                 URL urlObj = new URL(url);
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
                 String path = "";
@@ -369,10 +379,16 @@ public class Proxy extends Spider {
                 String location = object.getString("download_link");
                 location = unescapeUnicode(location);
                 referer = "https://pan.quark.cn";
-                Logger.log("获取到夸克下载直链：" + location);
+                Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
                 newUrl = location == null ? url : location;
+                if(location != null && cookie != null){
+                    QurakLinkCacheInfo var = new QurakLinkCacheInfo();
+                    var.cacheLink = newUrl;
+                    var.cookie = cookie;
+                    QurakLinkCachekManager.putLinkCache(url, var);
+                }
             } catch (Exception e) {
-                Logger.log("获取到夸克发生错误：" + e.getMessage());
+                Logger.log(connId + "[getQuarkLink]获取到夸克发生错误：" + e.getMessage());
             }
         }
 
