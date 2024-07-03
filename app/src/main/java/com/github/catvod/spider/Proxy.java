@@ -71,7 +71,7 @@ class QurakLinkCacheInfo {
     String cookie;
 }
 
-class QurakLinkCachekManager {
+class QurakLinkCacheManager {
     static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
     public static QurakLinkCacheInfo getLinkCache(String url) {
         QurakLinkCacheInfo cacheInfo = map.get(url);
@@ -351,7 +351,7 @@ public class Proxy extends Spider {
                     return;
                 }
                 
-                QurakLinkCacheInfo info = QurakLinkCachekManager.getLinkCache(url);
+                QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
                 if(info != null){
                     cookie = info.cookie;
                     newUrl = info.cacheLink;
@@ -382,7 +382,7 @@ public class Proxy extends Spider {
                     QurakLinkCacheInfo var = new QurakLinkCacheInfo();
                     var.cacheLink = location;
                     var.cookie = cookie;
-                    QurakLinkCachekManager.putLinkCache(url, var);
+                    QurakLinkCacheManager.putLinkCache(url, var);
                 }
                 referer = "https://pan.quark.cn";
                 Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
