@@ -455,6 +455,10 @@ public class Proxy extends Spider {
     }
 
     public static Object[] proxy(Map<String, String> params) throws Exception {
+        return null;
+    }
+
+    public static Object[] _proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
                 Logger.dbg = true;
