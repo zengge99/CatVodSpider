@@ -62,7 +62,6 @@ class Logger {
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends ByteArrayInputStream {
-        super(new byte[0]);
         public String contentType = "";
         public long contentLength = -1;
         long contentEnd;
@@ -84,6 +83,7 @@ public class Proxy extends Spider {
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
+            super(new byte[0]);
             try{
                 curConnId++;
                 connId = curConnId;
