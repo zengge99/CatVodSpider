@@ -62,6 +62,7 @@ class Logger {
 
 public class Proxy extends Spider {
     private static class HttpDownloader extends ByteArrayInputStream {
+        super(new byte[0]);
         public String contentType = "";
         public long contentLength = -1;
         long contentEnd;
