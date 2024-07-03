@@ -45,8 +45,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 class Logger {
     static boolean dbg = false;
-    public static void log(String message) {
-        if(!dbg){
+    public static void log(String message, boolean force) {
+        if(!dbg && !force){
             return;
         }
         String filePath = "/storage/emulated/0/TV/log.txt";
@@ -57,6 +57,10 @@ class Logger {
         } catch (IOException e) {
             System.err.println("Error writing to log file: " + e.getMessage());
         }
+    }
+    
+    public static void log(String message) {
+        log(message, false);
     }
 }
 
