@@ -61,7 +61,7 @@ class Logger {
 }
 
 public class Proxy extends Spider {
-    private static class HttpDownloader extends ByteArrayInputStream {
+    private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
         public long contentLength = -1;
         long contentEnd;
@@ -83,8 +83,8 @@ public class Proxy extends Spider {
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
-            super(new byte[0]);
             try{
+                Logger.log(connId + "[HttpDownloader]：构造函数调用");
                 curConnId++;
                 connId = curConnId;
                 Thread.sleep(100);
