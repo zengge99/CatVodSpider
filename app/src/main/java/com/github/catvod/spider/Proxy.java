@@ -479,7 +479,7 @@ public class Proxy extends Spider {
         }
     }
 
-    public static Object[] proxy(Map<String, String> params) throws Exception {
+    public static Object[] proxy1(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
                 Logger.dbg = true;
@@ -488,6 +488,13 @@ public class Proxy extends Spider {
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "gen":
                 return genProxy(params);
+                default:
+                return null;
+        }
+    }
+
+    public static Object[] proxy(Map<String, String> params) throws Exception {
+        switch (params.get("do")) {
             case "ck":
                 return new Object[]{200, "text/plain; charset=utf-8", new ByteArrayInputStream("ok".getBytes("UTF-8"))};
             case "ali":
