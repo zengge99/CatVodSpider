@@ -2,18 +2,6 @@ package com.github.catvod.spider;
 
 import android.util.Base64;
 
-/*
-import com.fongmi.android.tv.api.config.LiveConfig;
-import com.fongmi.android.tv.api.config.VodConfig;
-import com.fongmi.android.tv.bean.Device;
-import com.fongmi.android.tv.server.process.Action;
-import com.fongmi.android.tv.server.process.Cache;
-import com.fongmi.android.tv.server.process.Local;
-import com.fongmi.android.tv.server.process.Process;
-import com.github.catvod.utils.Asset;
-import com.google.common.net.HttpHeaders;
-*/
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +52,7 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         try {
             Map<String, String> params = session.getParms();
             params.putAll(session.getHeaders());
-            Object[] rs = VodConfig.get().proxyLocal(params);
+            Object[] rs = Proxy.proxy(params);
             return rs[0] instanceof Response ? (Response) rs[0] : newChunkedResponse(Response.Status.lookup((Integer) rs[0]), (String) rs[1], (InputStream) rs[2]);
         } catch (Exception e) {
             return error(e.getMessage());
