@@ -2,6 +2,7 @@ package com.github.catvod.spider;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class Logger {
     static boolean dbg = false;
