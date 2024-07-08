@@ -41,6 +41,16 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
+        XiaoyaProxyServer xiaoya = null;
+        try {
+            xiaoya = new XiaoyaProxyServer(9979);
+            xiaoya.start();
+        } catch (Exception e) {
+            Logger.log("小雅代理服务器启动失败", e.getMessage());
+            xiaoya.stop();
+            xiaoya = null;
+        }
+        
         Logger.log("自定义爬虫初始化", true);
         SpiderDebug.log("自定義爬蟲代碼載入成功！");
     }
