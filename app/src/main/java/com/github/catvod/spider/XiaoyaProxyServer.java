@@ -52,7 +52,7 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         try {
             Map<String, String> params = session.getParms();
             params.putAll(session.getHeaders());
-            Object[] rs = Proxy.proxy(params);
+            Object[] rs = Proxy.proxy1(params);
             return rs[0] instanceof Response ? (Response) rs[0] : newChunkedResponse(Response.Status.lookup((Integer) rs[0]), (String) rs[1], (InputStream) rs[2]);
         } catch (Exception e) {
             return error(e.getMessage());
