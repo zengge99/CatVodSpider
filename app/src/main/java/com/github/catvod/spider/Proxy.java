@@ -42,6 +42,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
+/*
 class Logger {
     static boolean dbg = false;
     public static void log(String message, boolean force) {
@@ -62,6 +63,7 @@ class Logger {
         Logger.log(message, false);
     }
 }  
+*/
 
 class QurakLinkCacheInfo {
     long cacheTime;
