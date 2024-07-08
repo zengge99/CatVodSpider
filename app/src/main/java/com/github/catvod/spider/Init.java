@@ -46,13 +46,12 @@ public class Init {
             xiaoya = new XiaoyaProxyServer(9979);
             xiaoya.start();
         } catch (Exception e) {
-            Logger.log("小雅代理服务器启动失败：" + e.getMessage(), true);
+            Logger.log("小雅代理启动失败：" + e.getMessage(), true);
             xiaoya.stop();
             xiaoya = null;
+            return;
         }
-        
-        Logger.log("自定义爬虫初始化", true);
-        SpiderDebug.log("自定義爬蟲代碼載入成功！");
+        Logger.log("小雅代理启动成功", true);
     }
 
     public static void execute(Runnable runnable) {
