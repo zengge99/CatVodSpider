@@ -46,7 +46,7 @@ public class Init {
             xiaoya = new XiaoyaProxyServer(9979);
             xiaoya.start();
         } catch (Exception e) {
-            Logger.log("小雅代理服务器启动失败", e.getMessage());
+            Logger.log("小雅代理服务器启动失败：" + e.getMessage(), true);
             xiaoya.stop();
             xiaoya = null;
         }
