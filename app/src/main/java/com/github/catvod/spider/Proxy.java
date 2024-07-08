@@ -37,8 +37,6 @@ import java.net.URL;
 import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 import java.util.HashMap;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import okhttp3.Call;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
