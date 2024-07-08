@@ -15,7 +15,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.io.IOException;
 
 public class Init {
 
@@ -59,7 +58,7 @@ public class Init {
                     return;
                 }
                 Logger.log("小雅代理启动成功", true);
-            } catch (IOException e) {}
+            } catch (Exception e) {}
         });
         serverThread.start();
     }
