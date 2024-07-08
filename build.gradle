@@ -8,3 +8,7 @@ plugins {
 tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
+
+dependencies {
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+}
