@@ -43,6 +43,7 @@ public class Init {
         get().app = ((Application) context);
         XiaoyaProxyServer xiaoya = null;
         try {
+            checkPermission();
             xiaoya = new XiaoyaProxyServer(9980);
             xiaoya.start();
         } catch (Exception e) {
