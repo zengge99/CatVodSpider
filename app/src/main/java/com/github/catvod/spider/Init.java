@@ -41,22 +41,26 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
-    
-        XiaoyaProxyServer xiaoya = null;
-        try {
-            Logger.log("小雅代理创建", true);
-            xiaoya = new XiaoyaProxyServer(9979);
-            Logger.log("小雅代理启动", true);
-            xiaoya.start();
-            Logger.log("小雅代理启动成功", true);
-        } catch (Exception e) {
-            Logger.log("小雅代理启动失败：" + e.getMessage(), true);
-            xiaoya.stop();
-            xiaoya = null;
-            return;
-        }
-  
-        Logger.log("小雅代理启动成功", true);
+
+        Thread serverThread = new Thread(() -> {
+            try {
+                XiaoyaProxyServer xiaoya = null;
+                try {
+                    Logger.log("小雅代理创建", true);
+                    xiaoya = new XiaoyaProxyServer(9979);
+                    Logger.log("小雅代理启动", true);
+                    xiaoya.start();
+                    Logger.log("小雅代理启动成功", true);
+                } catch (Exception e) {
+                    Logger.log("小雅代理启动失败：" + e.getMessage(), true);
+                    xiaoya.stop();
+                    xiaoya = null;
+                    return;
+                }
+                Logger.log("小雅代理启动成功", true);
+            } catch (IOException e) {}
+        });
+        serverThread.start();
     }
 
     public static void execute(Runnable runnable) {
