@@ -39,7 +39,7 @@ public class XiaoyaProxyServer extends NanoHTTPD {
     public static Response redirect(String url, Map<String, String> headers) {
         Response response = newFixedLengthResponse(Response.Status.REDIRECT, MIME_HTML, "");
         for (Map.Entry<String, String> entry : headers.entrySet()) response.addHeader(entry.getKey(), entry.getValue());
-        response.addHeader(HttpHeaders.LOCATION, url);
+        response.addHeader("Location", url);
         return response;
     }
 
@@ -62,6 +62,5 @@ public class XiaoyaProxyServer extends NanoHTTPD {
     @Override
     public void stop() {
         super.stop();
-        Go.stop();
     }
 }
