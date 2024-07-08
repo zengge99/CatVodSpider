@@ -1,5 +1,8 @@
 package com.github.catvod.spider;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 public class Logger {
     static boolean dbg = false;
     public static void log(String message, boolean force) {
