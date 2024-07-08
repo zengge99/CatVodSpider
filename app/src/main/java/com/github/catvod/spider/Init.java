@@ -41,18 +41,18 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
-        /*
+    
         XiaoyaProxyServer xiaoya = null;
         try {
             xiaoya = new XiaoyaProxyServer(9979);
-            xiaoya.start();
+            //xiaoya.start();
         } catch (Exception e) {
             Logger.log("小雅代理启动失败：" + e.getMessage(), true);
             xiaoya.stop();
             xiaoya = null;
             return;
         }
-        */
+  
         Logger.log("小雅代理启动成功", true);
     }
 
