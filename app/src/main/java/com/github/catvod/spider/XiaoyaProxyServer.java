@@ -65,17 +65,7 @@ public class XiaoyaProxyServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        String url = session.getUri().trim();
-        Map<String, String> files = new HashMap<>();
-        if (session.getMethod() == Method.POST) parse(session, files);
-        if (url.contains("?")) url = url.substring(0, url.indexOf('?'));
-        if (url.startsWith("/go")) return go();
-        if (url.startsWith("/proxy")) return proxy(session);
-        if (url.startsWith("/tvbus")) return success(LiveConfig.getResp());
-        if (url.startsWith("/device")) return success(Device.get().toString());
-        if (url.startsWith("/license")) return success(new String(Base64.decode(url.substring(9), Base64.DEFAULT)));
-        for (Process process : process) if (process.isRequest(session, url)) return process.doResponse(session, url, files);
-        return getAssets(url.substring(1));
+        return proxy(session);
     }
 
     private void parse(IHTTPSession session, Map<String, String> files) {
