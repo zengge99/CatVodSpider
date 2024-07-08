@@ -41,7 +41,7 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
-        Logger.log("自定义爬虫初始化");
+        Logger.log("自定义爬虫初始化", true);
         SpiderDebug.log("自定義爬蟲代碼載入成功！");
     }
 
