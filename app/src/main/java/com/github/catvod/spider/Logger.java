@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Logger {
-    static boolean dbg = false;
+    static boolean dbg = true;
     public static void log(String message, boolean force) {
         if(!dbg && !force){
             return;
