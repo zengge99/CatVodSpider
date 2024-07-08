@@ -13,9 +13,7 @@ import java.util.regex.Pattern;
 import fi.iki.elonen.NanoHTTPD;
 
 public class XiaoyaProxyServer extends NanoHTTPD {
-
-    private List<Process> process;
-
+    
     public XiaoyaProxyServer(int port) {
         super(port);
     }
