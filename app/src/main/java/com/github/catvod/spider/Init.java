@@ -44,8 +44,11 @@ public class Init {
     
         XiaoyaProxyServer xiaoya = null;
         try {
+            Logger.log("小雅代理创建", true);
             xiaoya = new XiaoyaProxyServer(9979);
+            Logger.log("小雅代理启动", true);
             xiaoya.start();
+            Logger.log("小雅代理启动成功", true);
         } catch (Exception e) {
             Logger.log("小雅代理启动失败：" + e.getMessage(), true);
             xiaoya.stop();
