@@ -26,7 +26,7 @@ public class XiaoyaProxyServer extends NanoHTTPD {
 
     private List<Process> process;
 
-    public Nano(int port) {
+    public XiaoyaProxyServer(int port) {
         super(port);
         addProcess();
     }
