@@ -20,18 +20,18 @@ import java.io.InputStream;
 import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 
-private class XiaoyaProxyServer1 extends NanoHTTPD {
-    public XiaoyaProxyServer1(int port) {
-        super(port);
-        Logger.log("小雅代理构造函数完成", true);
-    }
-}
-
 public class Init {
 
     private final ExecutorService executor;
     private final Handler handler;
     private Application app;
+
+    private class XiaoyaProxyServer1 extends NanoHTTPD {
+        public XiaoyaProxyServer1(int port) {
+            super(port);
+            Logger.log("小雅代理构造函数完成", true);
+        }
+    }
 
     private static class Loader {
         static volatile Init INSTANCE = new Init();
