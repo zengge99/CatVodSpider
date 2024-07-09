@@ -26,7 +26,7 @@ public class Init {
     private final Handler handler;
     private Application app;
 
-    private class XiaoyaProxyServer1 extends NanoHTTPD {
+    private static class XiaoyaProxyServer1 extends NanoHTTPD {
         public XiaoyaProxyServer1(int port) {
             super(port);
             Logger.log("小雅代理构造函数完成", true);
