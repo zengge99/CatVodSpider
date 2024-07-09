@@ -10,5 +10,5 @@ tasks.register('clean', Delete) {
 }
 
 dependencies {
-    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    compile 'org.nanohttpd:nanohttpd:2.3.1'
 }
