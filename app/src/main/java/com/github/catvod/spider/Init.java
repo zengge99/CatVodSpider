@@ -16,6 +16,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import java.io.InputStream;
+import java.util.Map;
+import fi.iki.elonen.NanoHTTPD;
+
+private class XiaoyaProxyServer1 extends NanoHTTPD {
+    public XiaoyaProxyServer1(int port) {
+        super(port);
+        Logger.log("小雅代理构造函数完成", true);
+    }
+}
+
 public class Init {
 
     private final ExecutorService executor;
@@ -45,10 +56,10 @@ public class Init {
         Runnable myTask = new Runnable() {
             @Override
             public void run() {
-                XiaoyaProxyServer xiaoya = null;
+                XiaoyaProxyServer1 xiaoya = null;
                 try {
                     Logger.log("小雅代理创建", true);
-                    xiaoya = new XiaoyaProxyServer(9979);
+                    xiaoya = new XiaoyaProxyServer1(9979);
                     Logger.log("小雅代理启动", true);
                     xiaoya.start();
                     Logger.log("小雅代理启动成功", true);
