@@ -45,7 +45,20 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
+
+        Thread serverThread = new Thread(() -> {
+            try {
+                Logger.log("小雅代理启动", true);
+                ProxyVideo.go();
+            } catch (Exception e) {
+                Logger.log("小雅代理启动失败：" + e.getMessage(), true);
+                return;
+            }
+            Logger.log("小雅代理启动成功", true);
+        });
+        serverThread.start();
         
+        /*
         Runnable myTask = new Runnable() {
             @Override
             public void run() {
@@ -66,6 +79,7 @@ public class Init {
             }
         };
         execute(myTask);
+        */
 
         /*
         Thread serverThread = new Thread(() -> {
