@@ -441,7 +441,7 @@ public class Proxy extends Spider {
                     newUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
-                this.contentEnd = this.contentLength;
+                this.contentEnd = this.contentLength - 1;
                 String hContentEnd = this.header.get("Content-Range");
                 if (hContentEnd != null) {
                     hContentEnd = hContentEnd.split("/")[1];
