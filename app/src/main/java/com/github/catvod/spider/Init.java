@@ -85,7 +85,6 @@ public class Init {
         execute(myTask);
         */
 
-        /*
         Thread serverThread = new Thread(() -> {
             XiaoyaProxyServer xiaoya = null;
             try {
@@ -102,9 +101,13 @@ public class Init {
             }
             Logger.log("小雅代理启动成功", true);
         });
-        serverThread.start();
-        */
+
+        // 设置未捕获异常处理程序
+        serverThread.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
+            Logger.log("未捕获异常：" + throwable.getMessage(), true);
+        });
         
+        serverThread.start();
     }
 
     public static void execute(Runnable runnable) {
