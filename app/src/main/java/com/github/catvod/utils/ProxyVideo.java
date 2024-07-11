@@ -1,7 +1,7 @@
 package com.github.catvod.utils;
 
-import static fi.iki.elonen.NanoHTTPD.Response.Status;
-import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static com.github.catvod.spider.NanoHTTPD.Response.Status;
+import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -15,7 +15,7 @@ import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.Map;
 
-import fi.iki.elonen.NanoHTTPD;
+import com.github.catvod.spider.NanoHTTPD;
 import okhttp3.Response;
 
 public class ProxyVideo {
