@@ -198,7 +198,7 @@ public class Proxy extends Spider {
             long start = 0; 
             long end = this.contentEnd ;
             String range = request.headers().get("Range");
-            range = range == null ? "" : range;
+            range = range == null ? "0-" : range;
             range = range + "-" + this.contentEnd;
             range = range.replace("--", "-");
             String pattern = "bytes=(\\d+)-(\\d+)";
@@ -441,6 +441,7 @@ public class Proxy extends Spider {
                     newUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
+                this.contentEnd = this.contentLength;
                 String hContentEnd = this.header.get("Content-Range");
                 if (hContentEnd != null) {
                     hContentEnd = hContentEnd.split("/")[1];
