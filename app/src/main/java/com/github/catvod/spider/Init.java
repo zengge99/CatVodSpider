@@ -51,7 +51,7 @@ public class Init {
         /*
         Thread serverThread = new Thread(() -> {
             try {
-                Logger.log("小雅代理启动", true);
+                Logger.log("小雅代理启动1", true);
                 ProxyVideo.go();
             } catch (Exception e) {
                 Logger.log("小雅代理启动失败：" + e.getMessage(), true);
