@@ -1,4 +1,4 @@
-package fi.iki.elonen;
+package com.github.catvod.spider;
 
 /*
  * #%L
