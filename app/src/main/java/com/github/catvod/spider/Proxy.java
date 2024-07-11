@@ -108,7 +108,7 @@ public class Proxy extends Spider {
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
         // 在此处处理未捕获的异常
-                    Logger.log("未捕获的异常：" + e.getMessage());
+                    Logger.log("未捕获的异常1：" + e.getMessage());
                 }
             });
 
@@ -231,7 +231,7 @@ public class Proxy extends Spider {
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
         // 在此处处理未捕获的异常
-                    Logger.log("未捕获的异常：" + e.getMessage());
+                    Logger.log("未捕获的异常2：" + e.getMessage());
                 }
             });
             
