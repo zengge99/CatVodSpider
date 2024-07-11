@@ -49,5 +49,4 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.orhanobut:logger:2.2.0'
     implementation 'org.jsoup:jsoup:1.15.3'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
