@@ -102,6 +102,16 @@ public class Proxy extends Spider {
         private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
+            
+            Thread currentThread = Thread.currentThread();
+            currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+        // 在此处处理未捕获的异常
+                    Logger.log("未捕获的异常：" + e.getMessage());
+                }
+            });
+
             try{
                 curConnId++;
                 connId = curConnId;
@@ -215,6 +225,16 @@ public class Proxy extends Spider {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range) {
+            
+            Thread currentThread = Thread.currentThread();
+            currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread t, Throwable e) {
+        // 在此处处理未捕获的异常
+                    Logger.log("未捕获的异常：" + e.getMessage());
+                }
+            });
+            
             try{
                 while(readWaiting() > threadNum){
                 if(Thread.currentThread().isInterrupted()){
