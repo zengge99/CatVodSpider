@@ -91,8 +91,8 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import fi.iki.elonen.NanoHTTPD.Response.IStatus;
-import fi.iki.elonen.NanoHTTPD.Response.Status;
+import com.github.catvod.spider.NanoHTTPD.Response.IStatus;
+import com.github.catvod.spider.NanoHTTPD.Response.Status;
 
 /**
  * A simple, tiny, nicely embeddable HTTP server in Java
