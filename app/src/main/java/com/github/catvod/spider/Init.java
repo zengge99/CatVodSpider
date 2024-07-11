@@ -47,6 +47,7 @@ public class Init {
     public static void init(Context context) {
         get().app = ((Application) context);
 
+        /*
         Thread serverThread = new Thread(() -> {
             try {
                 Logger.log("小雅代理启动", true);
@@ -58,6 +59,7 @@ public class Init {
             Logger.log("小雅代理启动成功", true);
         });
         serverThread.start();
+        */
         
         /*
         Runnable myTask = new Runnable() {
