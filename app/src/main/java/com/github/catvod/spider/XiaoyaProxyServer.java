@@ -12,7 +12,6 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         Logger.log("小雅代理构造函数完成", true);
     }
 
-    /*
     public static Response success() {
         return success("OK");
     }
@@ -35,7 +34,6 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         response.addHeader("Location", url);
         return response;
     }
-    */
 
     @Override
     public Response serve(IHTTPSession session) {
@@ -53,10 +51,8 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         }
     }
 
-    /*
     @Override
     public void stop() {
         super.stop();
     }
-    */
 }
