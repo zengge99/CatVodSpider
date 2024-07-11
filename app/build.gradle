@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.github.catvod.demo"
-        minSdk 17
+        minSdk 21
         targetSdk 28
         buildConfigField("String", "CLIENT_ID", "\"${clientId}\"")
     }
@@ -27,8 +27,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     configurations.configureEach {
