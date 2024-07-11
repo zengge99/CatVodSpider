@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 import com.github.catvod.utils.ProxyVideo;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 public class Init {
 
