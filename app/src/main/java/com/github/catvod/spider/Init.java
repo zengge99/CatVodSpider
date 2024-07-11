@@ -26,6 +26,7 @@ public class Init {
     private final ExecutorService executor;
     private final Handler handler;
     private Application app;
+    XiaoyaProxyServer xiaoya = new XiaoyaProxyServer(9979);
 
     private static class Loader {
         static volatile Init INSTANCE = new Init();
