@@ -27,14 +27,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
     }
 
     configurations.configureEach {
         resolutionStrategy {
             force 'com.squareup.okhttp3:okhttp:3.12.13'
-            force 'org.nanohttpd:nanohttpd:2.3.1'
         }
     }
 }
