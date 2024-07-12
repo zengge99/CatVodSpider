@@ -181,7 +181,7 @@ public class XiaoyaProxyHandler {
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, "");
+                    return downloadTask(url, headers, "", 0);
                 });
                 this.futureQueue.add(future);
                 return;
@@ -205,19 +205,21 @@ public class XiaoyaProxyHandler {
             }
             Logger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
 
+            int sliceNum = 0;
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
                 Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, ra);
+                    return downloadTask(url, headers, ra, sliceNum);
                 });
                 this.futureQueue.add(future);
                 start = curEnd + 1;
+                sliceNum++;
             }
         }
 
-        private InputStream downloadTask(String url, Map<String, String> headers, String range) {
+        private InputStream downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
             
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
