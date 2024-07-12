@@ -240,12 +240,12 @@ public class XiaoyaProxyHandler {
                 }
                 
                 while(readWaiting() > threadNum){
-                if(Thread.currentThread().isInterrupted()){
-                    Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
-                    return null;
-                }
-                try{
-                    Thread.sleep(100);
+                    if(Thread.currentThread().isInterrupted()){
+                        Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
+                        return null;
+                    }
+                    try{
+                        Thread.sleep(100);
                     } catch (Exception e) {}
                 }
                 InputStream in = _downloadTask(url,headers,range);
