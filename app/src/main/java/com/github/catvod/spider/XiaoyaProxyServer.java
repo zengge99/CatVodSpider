@@ -57,7 +57,6 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         }
     }
 
-    
     @Override
     public void start() throws IOException {
         if(!super.isAlive()) {
