@@ -474,7 +474,7 @@ public class XiaoyaProxyHandler {
                 }
                 int ol = this.is.read(buffer, off, len);
                 //因为是预先下载到内存块，因此0也是读完了
-                if ( ol == -1 || ol == 0 )
+                if ( ol == -1 )
                 {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return 0;
