@@ -49,7 +49,7 @@ public class Init {
         get().app = ((Application) context);
         
         Thread serverThread = new Thread(() -> {
-            XiaoyaProxyServer.start();
+            XiaoyaProxyServer.get().start();
             /*
             XiaoyaProxyServer xiaoya = null;
             try {
