@@ -485,6 +485,10 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
+                this.is = this.futureQueue.remove().get();
+                while(this.is != null) {
+                    this.is.close();
+                }
                 this.is = null;
                 return -1;
             }
