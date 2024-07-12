@@ -231,6 +231,7 @@ public class XiaoyaProxyHandler {
             });
             
             try{
+                /*
                 if(sliceNum!=0) {
                     while(!firstSliceDone) {
                         if(Thread.currentThread().isInterrupted()){
@@ -242,6 +243,7 @@ public class XiaoyaProxyHandler {
                         } catch (Exception e) {}
                     }
                 }
+                */
                 
                 while(readWaiting() > threadNum){
                     if(Thread.currentThread().isInterrupted()){
@@ -256,9 +258,11 @@ public class XiaoyaProxyHandler {
                 return in;   
             } finally {
                 incrementWaiting();
+                /*
                 if(sliceNum==0){
                     firstSliceDone = true;
                 }
+                */
             }
         }
 
