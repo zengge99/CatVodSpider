@@ -489,8 +489,10 @@ public class XiaoyaProxyHandler {
         public void close() throws IOException {
             Logger.log("播放器主动关闭数据流");
             super.close();
-            this.executorService.shutdownNow();
-            this.executorService.shutdown();
+            if(this.executorService != null) {
+                this.executorService.shutdownNow();
+                this.executorService.shutdown();
+            }
         }
     }
 
