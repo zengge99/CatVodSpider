@@ -353,6 +353,10 @@ public class XiaoyaProxyHandler {
                 
                 URL urlObj = new URL(url);
                 String host = urlObj.getProtocol() + "://" + urlObj.getHost();
+                int port = urlObj.getPort();
+                if (port != -1) {
+                    host = host + ":" + port;
+                }
                 String path = "";
                 int index = url.indexOf("/d/");
                 if (index != -1) {
