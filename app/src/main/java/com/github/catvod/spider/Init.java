@@ -49,17 +49,12 @@ public class Init {
         get().app = ((Application) context);
         
         Thread serverThread = new Thread(() -> {
-            XiaoyaProxyServer.get().start();
-            /*
-            XiaoyaProxyServer xiaoya = null;
+
             try {
-                xiaoya = new XiaoyaProxyServer(9979);
-                xiaoya.start();
+                XiaoyaProxyServer.get().start();
                 Logger.log("小雅代理启动成功", true);
             } catch (Exception e) {
                 Logger.log("小雅代理启动失败：" + e.getMessage(), true);
-                xiaoya.stop();
-                xiaoya = null;
                 return;
             }
             */
