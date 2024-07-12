@@ -47,50 +47,11 @@ public class Init {
 
     public static void init(Context context) {
         get().app = ((Application) context);
-
-        /*
-        Thread serverThread = new Thread(() -> {
-            try {
-                Logger.log("小雅代理启动1", true);
-                ProxyVideo.go();
-            } catch (Exception e) {
-                Logger.log("小雅代理启动失败：" + e.getMessage(), true);
-                return;
-            }
-            Logger.log("小雅代理启动成功", true);
-        });
-        serverThread.start();
-        */
         
-        /*
-        Runnable myTask = new Runnable() {
-            @Override
-            public void run() {
-                XiaoyaProxyServer xiaoya = null;
-                try {
-                    Logger.log("小雅代理创建", true);
-                    xiaoya = new XiaoyaProxyServer(9979);
-                    Logger.log("小雅代理启动", true);
-                    xiaoya.start();
-                    Logger.log("小雅代理启动成功", true);
-                } catch (Exception e) {
-                    Logger.log("小雅代理启动失败：" + e.getMessage(), true);
-                    xiaoya.stop();
-                    xiaoya = null;
-                    return;
-                }
-                Logger.log("小雅代理启动成功", true);
-            }
-        };
-        execute(myTask);
-        */
-
         Thread serverThread = new Thread(() -> {
             XiaoyaProxyServer xiaoya = null;
             try {
-                Logger.log("小雅代理创建", true);
                 xiaoya = new XiaoyaProxyServer(9979);
-                Logger.log("小雅代理启动", true);
                 xiaoya.start();
                 Logger.log("小雅代理启动成功", true);
             } catch (Exception e) {
@@ -99,10 +60,8 @@ public class Init {
                 xiaoya = null;
                 return;
             }
-            Logger.log("小雅代理启动成功", true);
         });
 
-        // 设置未捕获异常处理程序
         serverThread.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
             Logger.log("未捕获异常：" + throwable.getMessage(), true);
         });
