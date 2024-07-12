@@ -12,7 +12,6 @@ public class XiaoyaProxyServer extends NanoHTTPD {
     
     public XiaoyaProxyServer(int port) {
         super(port);
-        start();
     }
 
     public static XiaoyaProxyServer get() {
