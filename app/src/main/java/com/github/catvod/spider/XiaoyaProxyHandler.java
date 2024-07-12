@@ -83,7 +83,7 @@ public class XiaoyaProxyHandler {
         int waiting = 0;
         static int curConnId = 0;
         static HttpDownloader preDownloader = null;
-        synchronized bool firstSliceDone = false;
+        synchronized boolean firstSliceDone = false;
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
