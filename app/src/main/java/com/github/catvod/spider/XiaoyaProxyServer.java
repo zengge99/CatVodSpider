@@ -7,9 +7,7 @@ import java.util.Map;
 public class XiaoyaProxyServer extends NanoHTTPD {
     
     public XiaoyaProxyServer(int port) {
-        //Logger.log("小雅代理进入构造函数", true);
         super(port);
-        Logger.log("小雅代理构造函数完成", true);
     }
 
     public static Response success() {
