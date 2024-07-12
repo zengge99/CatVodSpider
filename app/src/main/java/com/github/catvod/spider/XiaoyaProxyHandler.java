@@ -111,7 +111,6 @@ public class XiaoyaProxyHandler {
                     preDownloader.close();
                 }
                 preDownloader = this;
-                Thread.sleep(100);
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
@@ -329,7 +328,7 @@ public class XiaoyaProxyHandler {
             }
             this.header = headersBuilder.build();
             try{
-                Thread.sleep(500);
+                //Thread.sleep(500);
             }catch(Exception e){}
         }
 
