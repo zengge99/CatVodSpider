@@ -57,7 +57,7 @@ public class Init {
         });
 
         serverThread.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
-            Logger.log("未捕获异常：" + throwable.getMessage(), true);
+            //Logger.log("未捕获异常：" + throwable.getMessage(), true);
         });
         
         serverThread.start();
