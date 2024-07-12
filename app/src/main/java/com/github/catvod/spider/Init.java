@@ -49,7 +49,6 @@ public class Init {
         get().app = ((Application) context);
         
         Thread serverThread = new Thread(() -> {
-
             try {
                 XiaoyaProxyServer.get().start();
                 Logger.log("小雅代理启动成功", true);
@@ -57,7 +56,6 @@ public class Init {
                 Logger.log("小雅代理启动失败：" + e.getMessage(), true);
                 return;
             }
-            */
         });
 
         serverThread.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
