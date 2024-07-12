@@ -5,9 +5,17 @@ import java.util.Map;
 //import fi.iki.elonen.NanoHTTPD;
 
 public class XiaoyaProxyServer extends NanoHTTPD {
+
+    private static class Loader {
+        static volatile XiaoyaProxyServer INSTANCE = new XiaoyaProxyServer(9988);
+    }
     
     public XiaoyaProxyServer(int port) {
         super(port);
+    }
+
+    public static XiaoyaProxyServer get() {
+        return Loader.INSTANCE;
     }
 
     public static Response success() {
