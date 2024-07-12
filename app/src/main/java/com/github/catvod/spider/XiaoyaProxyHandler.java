@@ -453,6 +453,15 @@ public class XiaoyaProxyHandler {
                 String location = this.header.get("Location");
                 if(location != null && statusCode == 302){
                     newUrl = location;
+                    URL urlObj = new URL(url);
+                    String host = urlObj.getProtocol() + "://" + urlObj.getHost();
+                    int port = urlObj.getPort();
+                    if (port != -1) {
+                        host = host + ":" + port;
+                    }
+                    if(!newUrl.startWith("http")){
+                        newUrl = host + newUrl;
+                    }
                 } else {
                     newUrl = url;
                 }
