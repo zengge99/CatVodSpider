@@ -231,7 +231,6 @@ public class XiaoyaProxyHandler {
             });
             
             try{
-                /*
                 if(sliceNum!=0) {
                     while(!firstSliceDone) {
                         if(Thread.currentThread().isInterrupted()){
@@ -243,7 +242,6 @@ public class XiaoyaProxyHandler {
                         } catch (Exception e) {}
                     }
                 }
-                */
                 
                 while(readWaiting() > threadNum){
                     if(Thread.currentThread().isInterrupted()){
@@ -258,15 +256,10 @@ public class XiaoyaProxyHandler {
                 return in;   
             } finally {
                 incrementWaiting();
-                /*
-                if(sliceNum==0){
-                    firstSliceDone = true;
-                }
-                */
             }
         }
 
-        private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
+        private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
             Logger.log(connId + "[_downloadTask]：下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -302,8 +295,12 @@ public class XiaoyaProxyHandler {
                         this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                         return response.body().byteStream();
                     }
-  
-                    //return response.body().byteStream();
+
+                    //第一片加速读取
+                    if(sliceNum==0){
+                        return response.body().byteStream();
+                    }
+                    
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
@@ -497,6 +494,7 @@ public class XiaoyaProxyHandler {
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
                 {
+                    firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
