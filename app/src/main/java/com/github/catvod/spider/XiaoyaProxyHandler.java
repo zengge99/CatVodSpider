@@ -268,7 +268,7 @@ public class XiaoyaProxyHandler {
             while (retryCount < maxRetry) {
                 try {
                     //call = Spider.client().newBuilder().build().newCall(request);
-                    call = OkHttp.client().newCall(request);
+                    call = OkHttp.client().newBuilder().responseBufferSize(10*1024*1024).newCall(request);
                     response = call.execute();
                     // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
