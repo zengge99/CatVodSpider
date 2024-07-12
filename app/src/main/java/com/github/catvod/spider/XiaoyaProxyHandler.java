@@ -210,8 +210,9 @@ public class XiaoyaProxyHandler {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
+                final int _sliceNum = sliceNum;
                 Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, ra, sliceNum);
+                    return downloadTask(url, headers, ra, _sliceNum);
                 });
                 this.futureQueue.add(future);
                 start = curEnd + 1;
@@ -243,6 +244,9 @@ public class XiaoyaProxyHandler {
                 return in;   
             } finally {
                 incrementWaiting();
+                if(sliceNum==0){
+                    firstSliceDone = true;
+                }
             }
         }
 
