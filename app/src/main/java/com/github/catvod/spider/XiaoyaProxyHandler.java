@@ -252,7 +252,7 @@ public class XiaoyaProxyHandler {
                         Thread.sleep(100);
                     } catch (Exception e) {}
                 }
-                InputStream in = _downloadTask(url,headers,range);
+                InputStream in = _downloadTask(url,headers,range,sliceNum);
                 return in;   
             } finally {
                 incrementWaiting();
