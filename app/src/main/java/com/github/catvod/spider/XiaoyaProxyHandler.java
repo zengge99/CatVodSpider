@@ -231,6 +231,14 @@ public class XiaoyaProxyHandler {
             });
             
             try{
+                if(sliceNum!=0) {
+                    while(!firstSliceDone) {
+                        try{
+                            Thread.sleep(100);
+                        } catch (Exception e) {}
+                    }
+                }
+                
                 while(readWaiting() > threadNum){
                 if(Thread.currentThread().isInterrupted()){
                     Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
