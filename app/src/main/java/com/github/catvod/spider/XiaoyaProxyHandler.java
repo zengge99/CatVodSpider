@@ -17,6 +17,7 @@ import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import okhttp3.Request;
 import okhttp3.Headers;
 import java.util.concurrent.ExecutorService;
@@ -278,7 +279,7 @@ public class XiaoyaProxyHandler {
                         this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                         return response.body().byteStream();
                     }
-
+  
                     return response.body().byteStream();
                     /* 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
