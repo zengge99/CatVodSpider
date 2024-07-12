@@ -57,6 +57,14 @@ public class XiaoyaProxyServer extends NanoHTTPD {
         }
     }
 
+    
+    @Override
+    public void start() {
+        if(!super.isAlive()) {
+            super.start();
+        }
+    }
+    
     @Override
     public void stop() {
         super.stop();
