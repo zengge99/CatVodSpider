@@ -459,7 +459,7 @@ public class XiaoyaProxyHandler {
                     if (port != -1) {
                         host = host + ":" + port;
                     }
-                    if(!newUrl.startWith("http")){
+                    if(!newUrl.startsWith("http")){
                         newUrl = host + newUrl;
                     }
                 } else {
