@@ -56,14 +56,6 @@ public class Proxy extends Spider {
                 return null;
         }
     }
-
-    public static Object[] genProxy(Map<String, String> params) throws Exception {
-        HttpDownloader httpDownloader = new HttpDownloader(params);
-        NanoHTTPD.Response.IStatus status = NanoHTTPD.Response.Status.lookup(httpDownloader.statusCode);
-        NanoHTTPD.Response resp = newFixedLengthResponse(status, httpDownloader.contentType, httpDownloader, httpDownloader.contentLength);
-        for (String key : httpDownloader.header.names()) resp.addHeader(key, httpDownloader.header.get(key));
-        return new Object[]{resp};
-    }
     
     static void adjustPort() {
         if (Proxy.port > 0) return;
