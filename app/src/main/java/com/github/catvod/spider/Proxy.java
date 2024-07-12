@@ -170,13 +170,9 @@ public class Proxy extends Spider {
             }
             Request request = requestBuilder.build();
             this.futureQueue = new LinkedList<>();
-            //this.executorService = Executors.newFixedThreadPool(threadNum);
             int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);
             totalNum = totalNum < 1 ? 1 : totalNum; 
-            this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
-           0L, TimeUnit.MILLISECONDS,
-           new ArrayBlockingQueue<>(totalNum));
-            //supportRange=false;
+            this.executorService = new ThreadPoolExecutor(threadNum, threadNum, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(totalNum));
             //不支持断点续传，单线程下载
             if(!this.supportRange || threadNum == 1) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
@@ -223,7 +219,6 @@ public class Proxy extends Spider {
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
-        // 在此处处理未捕获的异常
                     Logger.log("未捕获的异常2：" + e.getMessage());
                 }
             });
