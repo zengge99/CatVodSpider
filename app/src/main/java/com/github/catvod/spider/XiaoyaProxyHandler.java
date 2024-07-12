@@ -81,6 +81,7 @@ public class XiaoyaProxyHandler {
         String newUrl = null;
         int waiting = 0;
         static int curConnId = 0;
+        static HttpDownloader preDownloader = null;
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -106,6 +107,10 @@ public class XiaoyaProxyHandler {
             try{
                 curConnId++;
                 connId = curConnId;
+                if(preDownloader!=null) {
+                    preDownloader.close();
+                }
+                preDownloader = this;
                 Thread.sleep(100);
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
