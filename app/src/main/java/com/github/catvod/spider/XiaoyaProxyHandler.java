@@ -233,6 +233,10 @@ public class XiaoyaProxyHandler {
             try{
                 if(sliceNum!=0) {
                     while(!firstSliceDone) {
+                        if(Thread.currentThread().isInterrupted()){
+                            Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
+                            return null;
+                        }
                         try{
                             Thread.sleep(100);
                         } catch (Exception e) {}
