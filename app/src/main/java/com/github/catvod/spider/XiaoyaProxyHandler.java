@@ -491,7 +491,7 @@ public class XiaoyaProxyHandler {
         }
     }
 
-    public static Object[] proxy1(Map<String, String> params) throws Exception {
+    public static Object[] proxy(Map<String, String> params) throws Exception {
         switch (params.get("do")) {
             case "dbg":
                 Logger.dbg = true;
