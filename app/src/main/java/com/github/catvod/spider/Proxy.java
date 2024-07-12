@@ -11,34 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-import okhttp3.Response;
-import static com.github.catvod.spider.NanoHTTPD.Response.Status;
-import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import okhttp3.Request;
-import okhttp3.Headers;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.Queue;
-import java.util.LinkedList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import com.github.catvod.utils.Notify;
-import java.io.PrintStream;
-import java.io.InputStream;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.net.URL;
-import okhttp3.OkHttpClient;
-import org.json.JSONObject;
-import java.util.HashMap;
-import okhttp3.Call;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ArrayBlockingQueue;
-
 public class Proxy extends Spider {
     private static int port = -1;
 
