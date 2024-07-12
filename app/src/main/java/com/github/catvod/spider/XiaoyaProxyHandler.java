@@ -72,8 +72,6 @@ class QurakLinkCacheManager {
 } 
 
 public class XiaoyaProxyHandler {
-    private static int port = -1;
-    private Douban douban;
     private static class HttpDownloader extends PipedInputStream {
         public String contentType = "";
         public long contentLength = -1;
