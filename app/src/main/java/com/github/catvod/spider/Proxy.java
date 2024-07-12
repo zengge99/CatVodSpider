@@ -11,14 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
-//import fi.iki.elonen.NanoHTTPD;
 import okhttp3.Response;
 import static com.github.catvod.spider.NanoHTTPD.Response.Status;
-//import static com.github.catvod.spider.NanoHTTPD.Response;
 import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
-//import static fi.iki.elonen.NanoHTTPD.Response.Status;
-//import static fi.iki.elonen.NanoHTTPD.Response;
-//import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -31,7 +26,6 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-//import java.net.URLDecoder;
 import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
 import java.io.InputStream;
@@ -107,7 +101,6 @@ public class Proxy extends Spider {
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
                 public void uncaughtException(Thread t, Throwable e) {
-        // 在此处处理未捕获的异常
                     Logger.log("未捕获的异常1：" + e.getMessage());
                 }
             });
