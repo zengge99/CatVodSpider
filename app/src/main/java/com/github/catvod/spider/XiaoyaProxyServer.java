@@ -20,10 +20,6 @@ public class XiaoyaProxyServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        return proxy(session);
-    }
-
-    private Response proxy(IHTTPSession session) {
         try {
             Map<String, String> params = session.getParms();
             params.putAll(session.getHeaders());
