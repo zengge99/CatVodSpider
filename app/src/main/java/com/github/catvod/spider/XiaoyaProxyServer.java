@@ -2,7 +2,7 @@ package com.github.catvod.spider;
 
 import java.io.InputStream;
 import java.util.Map;
-//import fi.iki.elonen.NanoHTTPD;
+import java.io.IOException;
 
 public class XiaoyaProxyServer extends NanoHTTPD {
 
