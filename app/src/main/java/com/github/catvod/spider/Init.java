@@ -49,6 +49,8 @@ public class Init {
         get().app = ((Application) context);
         
         Thread serverThread = new Thread(() -> {
+            XiaoyaProxyServer.start();
+            /*
             XiaoyaProxyServer xiaoya = null;
             try {
                 xiaoya = new XiaoyaProxyServer(9979);
@@ -60,6 +62,7 @@ public class Init {
                 xiaoya = null;
                 return;
             }
+            */
         });
 
         serverThread.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
