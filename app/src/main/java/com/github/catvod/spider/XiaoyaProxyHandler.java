@@ -280,7 +280,7 @@ public class XiaoyaProxyHandler {
                     }
 
                     return response.body().byteStream();
-                       /* 
+                    /* 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
