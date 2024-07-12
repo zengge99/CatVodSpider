@@ -278,6 +278,8 @@ public class XiaoyaProxyHandler {
                         this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                         return response.body().byteStream();
                     }
+
+                    return response.body().byteStream();
                         
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
