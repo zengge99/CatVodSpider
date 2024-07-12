@@ -490,7 +490,7 @@ public class XiaoyaProxyHandler {
                     while(this.is != null) {
                         this.is.close();
                     }
-                } catch {}
+                } catch (Exception err) {}
                 this.is = null;
                 return -1;
             }
