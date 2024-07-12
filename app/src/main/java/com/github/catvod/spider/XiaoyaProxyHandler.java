@@ -280,8 +280,7 @@ public class XiaoyaProxyHandler {
                         return response.body().byteStream();
                     }
   
-                    return response.body().byteStream();
-                    /* 
+                    //return response.body().byteStream();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
@@ -297,7 +296,6 @@ public class XiaoyaProxyHandler {
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
-                    */
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry) {
