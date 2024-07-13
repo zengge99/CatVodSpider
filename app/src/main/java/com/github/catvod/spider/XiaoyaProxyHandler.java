@@ -295,7 +295,7 @@ public class XiaoyaProxyHandler {
                     
                     retryCount++;
                     if (retryCount == maxRetry) {
-                        this.close();
+                        this._close();
                         Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
                     }
