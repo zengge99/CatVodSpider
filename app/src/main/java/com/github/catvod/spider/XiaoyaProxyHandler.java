@@ -508,6 +508,7 @@ public class XiaoyaProxyHandler {
             //super.close();
             if(this.executorService != null) {
                 this.executorService.shutdownNow();
+            }
         }
     }
 
