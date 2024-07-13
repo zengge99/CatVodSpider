@@ -497,6 +497,11 @@ public class XiaoyaProxyHandler {
                 return -1;
             }
         }
+        
+        @Override
+        public int read() throws IOException {
+            return -1;
+        }
 
         @Override
         public void close() throws IOException {
