@@ -489,7 +489,7 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
-                this.close();
+                this._close();
                 return -1;
             }
         }
@@ -499,9 +499,13 @@ public class XiaoyaProxyHandler {
             //并不会调用，直接返回-1
             return -1;
         }
-
+        
         @Override
         public void close() throws IOException {
+            _close();
+        }
+        
+        private void _close() {
             closed = true;
             Logger.log("播放器主动关闭数据流");
             try {
