@@ -207,8 +207,7 @@ public class XiaoyaProxyHandler {
             try{
                 if(sliceNum!=0) {
                     while(!firstSliceDone) {
-                        if(Thread.currentThread().isInterrupted()){
-                            Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
+                        if(closed){
                             return null;
                         }
                         try{
@@ -218,8 +217,7 @@ public class XiaoyaProxyHandler {
                 }
                 
                 while(waiting > threadNum){
-                    if(Thread.currentThread().isInterrupted()){
-                        Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
+                    if(closed) {
                         return null;
                     }
                     try{
@@ -271,15 +269,7 @@ public class XiaoyaProxyHandler {
                     
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
-                    while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                        if(Thread.currentThread().isInterrupted()){
-                            if(response!=null){
-                                call.cancel();
-                                response.close();
-                            }
-                            Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
-                            return null;
-                        }
+                    while ((bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1 && !closed) {
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
