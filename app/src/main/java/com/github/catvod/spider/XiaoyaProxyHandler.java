@@ -73,7 +73,7 @@ class QurakLinkCacheManager {
 } 
 
 public class XiaoyaProxyHandler {
-    private static class HttpDownloader extends PipedInputStream {
+    private static class HttpDownloader extends InputStream {
         public String contentType = "";
         public long contentLength = -1;
         long contentEnd;
@@ -465,7 +465,7 @@ public class XiaoyaProxyHandler {
             try {
                 if (curConnId!=connId) return 0;
                 //流如果关闭了会抛异常
-                this.available();
+                //this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return -1;
@@ -501,7 +501,7 @@ public class XiaoyaProxyHandler {
         @Override
         public void close() throws IOException {
             Logger.log("播放器主动关闭数据流");
-            super.close();
+            //super.close();
             if(this.executorService != null) {
                 this.executorService.shutdownNow();
                 this.executorService.shutdown();
