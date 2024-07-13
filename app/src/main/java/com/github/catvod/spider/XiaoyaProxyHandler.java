@@ -80,8 +80,8 @@ public class XiaoyaProxyHandler {
         public Headers header;
         public int statusCode = 200;
         String newUrl = null;
-        int waiting = 0;
-        static int curConnId = 0;
+        volatile int waiting = 0;
+        volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean firstSliceDone = false;
         int connId;
@@ -136,33 +136,6 @@ public class XiaoyaProxyHandler {
                 this.createDownloadTask(newUrl, headers);
             } catch (Exception e) {
                 Logger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
-            }
-        }
-
-        void incrementWaiting() {
-            lock.writeLock().lock();
-            try {
-                waiting++;
-            } finally {
-                lock.writeLock().unlock();
-            }
-        }
-
-        void decrementWaiting() {
-            lock.writeLock().lock();
-            try {
-                waiting--;
-            } finally {
-                lock.writeLock().unlock();
-            }
-        }
-
-        int readWaiting() {
-            lock.readLock().lock();
-            try {
-                return waiting;
-            } finally {
-                lock.readLock().unlock();
             }
         }
 
@@ -243,7 +216,7 @@ public class XiaoyaProxyHandler {
                     }
                 }
                 
-                while(readWaiting() > threadNum){
+                while(waiting > threadNum){
                     if(Thread.currentThread().isInterrupted()){
                         Logger.log(connId + "[downloadTask]：连接提前终止：" + url);
                         return null;
@@ -255,7 +228,7 @@ public class XiaoyaProxyHandler {
                 InputStream in = _downloadTask(url,headers,range,sliceNum);
                 return in;   
             } finally {
-                incrementWaiting();
+                waiting++;
             }
         }
 
@@ -498,7 +471,7 @@ public class XiaoyaProxyHandler {
                     if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
-                    decrementWaiting();
+                    waiting--;
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
@@ -508,7 +481,7 @@ public class XiaoyaProxyHandler {
                     if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
-                    decrementWaiting();
+                    waiting--;
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
