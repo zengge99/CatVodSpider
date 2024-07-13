@@ -256,16 +256,10 @@ public class XiaoyaProxyHandler {
             Call call = null;
             while (retryCount < maxRetry) {
                 try {
-                    //call = Spider.client().newBuilder().build().newCall(request);
                     call = OkHttp.client().newCall(request);
                     response = call.execute();
-                    // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
+                    // 单线程模式
                     if (range.isEmpty()) {
-                        statusCode = response.code();
-                        this.header = response.headers();
-                        this.contentType = this.header.get("Content-Type");
-                        String hContentLength = this.header.get("Content-Length");
-                        this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                         return response.body().byteStream();
                     }
 
