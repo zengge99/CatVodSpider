@@ -491,6 +491,7 @@ public class XiaoyaProxyHandler {
                     this.is = this.futureQueue.remove().get();
                     while(this.is != null) {
                         this.is.close();
+                        this.is = this.futureQueue.remove().get();
                     }
                 } catch (Exception err) {}
                 this.is = null;
