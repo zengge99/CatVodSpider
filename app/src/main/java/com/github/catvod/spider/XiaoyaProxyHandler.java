@@ -473,6 +473,7 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
+                /*
                 try {
                     this.is = this.futureQueue.remove().get();
                     while(this.is != null) {
@@ -480,6 +481,7 @@ public class XiaoyaProxyHandler {
                         this.is = this.futureQueue.remove().get();
                     }
                 } catch (Exception err) {}
+                */
                 this.is = null;
                 return -1;
             }
