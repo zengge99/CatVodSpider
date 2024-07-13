@@ -84,6 +84,7 @@ public class XiaoyaProxyHandler {
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean firstSliceDone = false;
+        volatile boolean closed = false;
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -457,7 +458,12 @@ public class XiaoyaProxyHandler {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                if (curConnId!=connId) return -1;
+                if (closed) {
+                    return -1;
+                }
+                if (curConnId!=connId) {                       return -1;
+                }
+                
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return -1;
@@ -499,7 +505,7 @@ public class XiaoyaProxyHandler {
         @Override
         public void close() throws IOException {
             Logger.log("播放器主动关闭数据流");
-            //super.close();
+            closed = true;
             if(this.executorService != null) {
                 this.executorService.shutdownNow();
             }
