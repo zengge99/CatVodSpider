@@ -84,7 +84,6 @@ public class XiaoyaProxyHandler {
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean firstSliceDone = false;
-        volatile boolean closed = false;
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -464,15 +463,12 @@ public class XiaoyaProxyHandler {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                if(closed) {
-                    return -1;
-                }
-                if (curConnId != connId) {
-                    return -1;
-                }
-                
+                if (curConnId!=connId) return 0;
+                //流如果关闭了会抛异常
+                //this.available();
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
+                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -482,6 +478,7 @@ public class XiaoyaProxyHandler {
                 {
                     firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
+                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -490,32 +487,29 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
-                this.close();
+                try {
+                    this.is = this.futureQueue.remove().get();
+                    while(this.is != null) {
+                        this.is.close();
+                    }
+                } catch (Exception err) {}
+                this.is = null;
                 return -1;
             }
         }
         
         @Override
         public int read() throws IOException {
-            //并不会调用，直接返回-1
             return -1;
         }
 
         @Override
         public void close() throws IOException {
-            closed = true;
             Logger.log("播放器主动关闭数据流");
-            try {
-                if(this.executorService != null) {
-                    this.executorService.shutdownNow();
-                }
-                this.is = this.futureQueue.remove().get();
-                while(this.is != null) {
-                    this.is.close();
-                    this.is = this.futureQueue.remove().get();
-                }
-            } catch (Exception e) {
-                Logger.log(connId + "[close]：发生错误：" + e.getMessage());
+            //super.close();
+            if(this.executorService != null) {
+                this.executorService.shutdownNow();
+                this.executorService.shutdown();
             }
         }
     }
