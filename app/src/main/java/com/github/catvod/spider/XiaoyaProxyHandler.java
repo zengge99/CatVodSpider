@@ -260,8 +260,13 @@ public class XiaoyaProxyHandler {
                     //call = Spider.client().newBuilder().build().newCall(request);
                     call = OkHttp.client().newCall(request);
                     response = call.execute();
-                    //单线程
+                    // 单线程模式，重新获取更准确的响应头。通常发生于服务器不支持HEAD方法，通过HEAD获取的头无效才会用单线程。
                     if (range.isEmpty()) {
+                        statusCode = response.code();
+                        this.header = response.headers();
+                        this.contentType = this.header.get("Content-Type");
+                        String hContentLength = this.header.get("Content-Length");
+                        this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                         return response.body().byteStream();
                     }
 
@@ -283,19 +288,15 @@ public class XiaoyaProxyHandler {
                         }
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
-                    
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
-                    
-                    if(response!=null){
-                        call.cancel();
-                        response.close();
-                    }
-                    
                     retryCount++;
                     if (retryCount == maxRetry) {
-                        this._close();
+                        if(response!=null){
+                            call.cancel();
+                            response.close();
+                        }
                         Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
                     }
@@ -489,7 +490,7 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
-                this._close();
+                this.close();
                 return -1;
             }
         }
@@ -499,13 +500,9 @@ public class XiaoyaProxyHandler {
             //并不会调用，直接返回-1
             return -1;
         }
-        
+
         @Override
         public void close() throws IOException {
-            _close();
-        }
-        
-        private void _close() {
             closed = true;
             Logger.log("播放器主动关闭数据流");
             try {
