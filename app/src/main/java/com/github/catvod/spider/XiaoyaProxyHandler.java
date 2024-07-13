@@ -207,22 +207,20 @@ public class XiaoyaProxyHandler {
             try{
                 if(sliceNum!=0) {
                     while(!firstSliceDone) {
-                        if(closed){
-                            return null;
-                        }
                         try{
                             Thread.sleep(100);
-                        } catch (Exception e) {}
+                        } catch (Exception e) {
+                            return null;
+                        }
                     }
                 }
                 
                 while(waiting > threadNum){
-                    if(closed) {
-                        return null;
-                    }
                     try{
                         Thread.sleep(100);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        return null;
+                    }
                 }
                 InputStream in = _downloadTask(url,headers,range,sliceNum);
                 return in;   
