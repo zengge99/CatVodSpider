@@ -463,9 +463,7 @@ public class XiaoyaProxyHandler {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                if (curConnId!=connId) return 0;
-                //流如果关闭了会抛异常
-                //this.available();
+                if (curConnId!=connId) return -1;
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
                     if (curConnId!=connId) return -1;
