@@ -84,6 +84,7 @@ public class XiaoyaProxyHandler {
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean firstSliceDone = false;
+        volatile boolean closed = false;
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
@@ -463,10 +464,15 @@ public class XiaoyaProxyHandler {
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
-                if (curConnId!=connId) return -1;
+                if(closed) {
+                    return -1;
+                }
+                if (curConnId != connId) {
+                    return -1;
+                }
+                
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
-                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -476,7 +482,6 @@ public class XiaoyaProxyHandler {
                 {
                     firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
-                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -485,13 +490,7 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
-                try {
-                    this.is = this.futureQueue.remove().get();
-                    while(this.is != null) {
-                        this.is.close();
-                    }
-                } catch (Exception err) {}
-                this.is = null;
+                this.close();
                 return -1;
             }
         }
@@ -504,9 +503,19 @@ public class XiaoyaProxyHandler {
 
         @Override
         public void close() throws IOException {
+            closed = true;
             Logger.log("播放器主动关闭数据流");
-            if(this.executorService != null) {
-                this.executorService.shutdownNow();
+            try {
+                if(this.executorService != null) {
+                    this.executorService.shutdownNow();
+                }
+                this.is = this.futureQueue.remove().get();
+                while(this.is != null) {
+                    this.is.close();
+                    this.is = this.futureQueue.remove().get();
+                }
+            } catch (Exception e) {
+                Logger.log(connId + "[close]：发生错误：" + e.getMessage());
             }
         }
     }
