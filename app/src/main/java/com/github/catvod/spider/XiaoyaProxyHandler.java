@@ -199,7 +199,6 @@ public class XiaoyaProxyHandler {
             });
             
             try{
-                /*
                 if(sliceNum!=0) {
                     while(!firstSliceDone && !closed) {
                         try{
@@ -209,7 +208,6 @@ public class XiaoyaProxyHandler {
                         }
                     }
                 }
-                */
                 
                 while(waiting > threadNum && !closed){
                     try{
