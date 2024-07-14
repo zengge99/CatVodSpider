@@ -200,7 +200,7 @@ public class XiaoyaProxyHandler {
             
             try{
                 if(sliceNum!=0) {
-                    while(!firstSliceDone) {
+                    while(!firstSliceDone && !closed) {
                         try{
                             Thread.sleep(100);
                         } catch (Exception e) {
@@ -209,7 +209,7 @@ public class XiaoyaProxyHandler {
                     }
                 }
                 
-                while(waiting > threadNum){
+                while(waiting > threadNum && !closed){
                     try{
                         Thread.sleep(100);
                     } catch (Exception e) {
