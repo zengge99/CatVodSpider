@@ -1,7 +1,6 @@
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
-import com.github.catvod.crawler.SpiderDebug;
 import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
@@ -16,8 +15,6 @@ import static com.github.catvod.spider.NanoHTTPD.Response.Status;
 import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import okhttp3.Request;
 import okhttp3.Headers;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +27,6 @@ import java.util.regex.Matcher;
 import com.github.catvod.utils.Notify;
 import java.io.PrintStream;
 import java.io.InputStream;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.net.URL;
 import okhttp3.OkHttpClient;
 import org.json.JSONObject;
@@ -95,7 +91,6 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -108,8 +103,7 @@ public class XiaoyaProxyHandler {
             });
 
             try{
-                curConnId++;
-                connId = curConnId;
+                connId = curConnId++;
                 if(preDownloader!=null) {
                     preDownloader.close();
                 }
@@ -305,9 +299,6 @@ public class XiaoyaProxyHandler {
                 }
             }
             this.header = headersBuilder.build();
-            try{
-                //Thread.sleep(500);
-            }catch(Exception e){}
         }
 
         private void getQuarkLink(String url, Map<String, String> headers) {
@@ -398,7 +389,6 @@ public class XiaoyaProxyHandler {
                 if (referer != null) {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
-                //requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
                 Request request = requestBuilder.build();
                 call = OkHttp.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
                 response = call.execute();
@@ -449,12 +439,9 @@ public class XiaoyaProxyHandler {
                 if (closed) {
                     return -1;
                 }
-                if (curConnId!=connId) {                       return -1;
-                }
                 
                 if (this.is == null ) {
                     this.is = this.futureQueue.remove().get();
-                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -464,7 +451,6 @@ public class XiaoyaProxyHandler {
                 {
                     firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
-                    if (curConnId!=connId) return -1;
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -473,16 +459,6 @@ public class XiaoyaProxyHandler {
                 return ol;
             } catch (Exception e) {
                 Logger.log(connId + "[read]：发生错误：" + e.getMessage());
-                /*
-                try {
-                    this.is = this.futureQueue.remove().get();
-                    while(this.is != null) {
-                        this.is.close();
-                        this.is = this.futureQueue.remove().get();
-                    }
-                } catch (Exception err) {}
-                */
-                this.is = null;
                 return -1;
             }
         }
