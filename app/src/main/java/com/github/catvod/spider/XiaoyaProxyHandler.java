@@ -86,7 +86,7 @@ public class XiaoyaProxyHandler {
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
-        ExecutorService executorService = Executors.newFixedLengthResponse(128);
+        ExecutorService executorService = Executors.newFixedThreadPool(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
@@ -456,7 +456,9 @@ public class XiaoyaProxyHandler {
                 }
                 
                 if (this.is == null ) {
-                    this.is = this.futureQueue.remove().get();
+                    //this.is = this.futureQueue.remove().get();
+                    Future<InputStream> future = this.executorService.submit(callableList.get(0));
+                    this.is = future.get();
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
