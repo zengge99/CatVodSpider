@@ -78,7 +78,6 @@ public class XiaoyaProxyHandler {
         public Headers header;
         public int statusCode = 200;
         String newUrl = null;
-        volatile int waiting = 0;
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean firstSliceDone = false;
@@ -151,12 +150,6 @@ public class XiaoyaProxyHandler {
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
-                /*
-                Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, "", 0);
-                });
-                this.futureQueue.add(future);
-                */
                 Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, "", 0);
                 };
@@ -188,12 +181,6 @@ public class XiaoyaProxyHandler {
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
                 final int _sliceNum = sliceNum;
-                /*
-                Future<InputStream> future = this.executorService.submit(() -> {
-                    return downloadTask(url, headers, ra, _sliceNum);
-                });
-                this.futureQueue.add(future);
-                */
                 Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, ra, _sliceNum);
                 };
@@ -204,7 +191,6 @@ public class XiaoyaProxyHandler {
         }
 
         private InputStream downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
-            
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
@@ -212,30 +198,7 @@ public class XiaoyaProxyHandler {
                     Logger.log("未捕获的异常2：" + e.getMessage(), true);
                 }
             });
-            
-            try{
-                if(sliceNum!=0) {
-                    while(!firstSliceDone && !closed) {
-                        try{
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    }
-                }
-                
-                while(waiting > threadNum && !closed){
-                    try{
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                InputStream in = _downloadTask(url,headers,range,sliceNum);
-                return in;   
-            } finally {
-                waiting++;
-            }
+            return _downloadTask(url,headers,range,sliceNum);
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
@@ -468,7 +431,6 @@ public class XiaoyaProxyHandler {
                     runTask(5);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
-                    waiting--;
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 )
@@ -478,7 +440,6 @@ public class XiaoyaProxyHandler {
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
-                    waiting--;
                     return this.is.read(buffer, off, len);
                 } 
                 return ol;
