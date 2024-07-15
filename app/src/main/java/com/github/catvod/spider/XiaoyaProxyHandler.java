@@ -85,7 +85,7 @@ public class XiaoyaProxyHandler {
         volatile boolean closed = false;
         int connId;
         InputStream is = null;
-        Queue<Future<InputStream>> futureQueue;
+        Queue<Future<InputStream>> futureQueue = new LinkedList<>();
         ExecutorService executorService = Executors.newFixedThreadPool(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
@@ -93,7 +93,7 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        List<Callable<InputStream>> callableList = new ArrayList<>();
+        Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -144,7 +144,7 @@ public class XiaoyaProxyHandler {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
             Request request = requestBuilder.build();
-            this.futureQueue = new LinkedList<>();
+            //this.futureQueue = new LinkedList<>();
             int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);
             totalNum = totalNum < 1 ? 1 : totalNum; 
             //this.executorService = new ThreadPoolExecutor(threadNum, threadNum, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(totalNum));
@@ -160,7 +160,7 @@ public class XiaoyaProxyHandler {
                 Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, "", 0);
                 };
-                callableList.add(callable);
+                callableQueue.add(callable);
                 return;
             }
             
@@ -197,7 +197,7 @@ public class XiaoyaProxyHandler {
                 Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, ra, _sliceNum);
                 };
-                callableList.add(callable);
+                callableQueue.add(callable);
                 start = curEnd + 1;
                 sliceNum++;
             }
@@ -448,6 +448,9 @@ public class XiaoyaProxyHandler {
             }
         }
 
+        private void startTask(int begin, int end) {
+        }
+
         @Override
         public synchronized int read(byte[] buffer, int off, int len) throws IOException {
             try {
@@ -456,8 +459,7 @@ public class XiaoyaProxyHandler {
                 }
                 
                 if (this.is == null ) {
-                    //this.is = this.futureQueue.remove().get();
-                    Future<InputStream> future = this.executorService.submit(callableList.get(0));
+                    Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
