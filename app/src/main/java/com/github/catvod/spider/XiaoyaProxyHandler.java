@@ -448,7 +448,11 @@ public class XiaoyaProxyHandler {
             }
         }
 
-        private void startTask(int begin, int end) {
+        private void runTask(int num) {
+            while(num-- > 0 && callableQueue.size() > 0) {
+                Future<InputStream> future = this.executorService.submit(callableQueue.remove());
+                this.futureQueue.add(future);
+            }
         }
 
         @Override
@@ -461,6 +465,7 @@ public class XiaoyaProxyHandler {
                 if (this.is == null ) {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
+                    runTask(5);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
@@ -470,6 +475,7 @@ public class XiaoyaProxyHandler {
                 {
                     firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
+                    runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                     waiting--;
