@@ -210,7 +210,6 @@ public class XiaoyaProxyHandler {
             if (referer != null) {
                 requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
             }
-            //requestBuilder.removeHeader("Connection").addHeader("Connection", "Close");
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
