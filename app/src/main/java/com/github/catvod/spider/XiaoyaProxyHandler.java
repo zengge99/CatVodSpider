@@ -143,10 +143,6 @@ public class XiaoyaProxyHandler {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
             Request request = requestBuilder.build();
-            //this.futureQueue = new LinkedList<>();
-            int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);
-            totalNum = totalNum < 1 ? 1 : totalNum; 
-            //this.executorService = new ThreadPoolExecutor(threadNum, threadNum, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(totalNum));
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
@@ -428,7 +424,7 @@ public class XiaoyaProxyHandler {
                 if (this.is == null ) {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
-                    runTask(5);
+                    runTask(threadNum);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                 }
