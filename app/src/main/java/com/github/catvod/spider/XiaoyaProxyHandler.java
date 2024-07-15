@@ -35,6 +35,7 @@ import okhttp3.Call;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.lang.Runnable;
 
 class QurakLinkCacheInfo {
     long cacheTime;
@@ -91,6 +92,7 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
+        List<Runnable> runnableList = new ArrayList<>();
         
         private HttpDownloader(Map<String, String> params) {
             
