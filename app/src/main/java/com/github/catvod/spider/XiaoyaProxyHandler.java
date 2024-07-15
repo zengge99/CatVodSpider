@@ -93,7 +93,7 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        List<Callable> callableList = new ArrayList<>();
+        List<Callable<InputStream>> callableList = new ArrayList<>();
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -157,7 +157,7 @@ public class XiaoyaProxyHandler {
                 });
                 this.futureQueue.add(future);
                 */
-                Callable callable = () -> {
+                Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, "", 0);
                 };
                 callableList.add(callable);
@@ -194,7 +194,7 @@ public class XiaoyaProxyHandler {
                 });
                 this.futureQueue.add(future);
                 */
-                Callable callable = () -> {
+                Callable<InputStream> callable = () -> {
                     return downloadTask(url, headers, ra, _sliceNum);
                 };
                 callableList.add(callable);
