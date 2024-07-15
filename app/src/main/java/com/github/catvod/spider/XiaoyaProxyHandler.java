@@ -36,7 +36,7 @@ import okhttp3.Call;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.lang.Runnable;
+import java.util.concurrent.Callable;
 
 class QurakLinkCacheInfo {
     long cacheTime;
@@ -93,7 +93,7 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        List<Runnable> runnableList = new ArrayList<>();
+        List<Callable> callableList = new ArrayList<>();
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -157,10 +157,10 @@ public class XiaoyaProxyHandler {
                 });
                 this.futureQueue.add(future);
                 */
-                Runnable runnable = () -> {
+                Callable callable = () -> {
                     return downloadTask(url, headers, "", 0);
                 };
-                runnableList.add(runnable);
+                callableList.add(callable);
                 return;
             }
             
@@ -188,10 +188,16 @@ public class XiaoyaProxyHandler {
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
                 final int _sliceNum = sliceNum;
+                /*
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, ra, _sliceNum);
                 });
                 this.futureQueue.add(future);
+                */
+                Callable callable = () -> {
+                    return downloadTask(url, headers, ra, _sliceNum);
+                };
+                callableList.add(callable);
                 start = curEnd + 1;
                 sliceNum++;
             }
