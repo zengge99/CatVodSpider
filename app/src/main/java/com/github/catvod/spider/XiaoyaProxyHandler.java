@@ -429,8 +429,7 @@ public class XiaoyaProxyHandler {
                     blockCounter++;
                 }
                 int ol = this.is.read(buffer, off, len);
-                if ( ol == -1 )
-                {
+                if ( ol == -1 ) {
                     firstSliceDone = true;
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
