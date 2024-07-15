@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import okhttp3.Response;
@@ -150,10 +151,16 @@ public class XiaoyaProxyHandler {
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
+                /*
                 Future<InputStream> future = this.executorService.submit(() -> {
                     return downloadTask(url, headers, "", 0);
                 });
                 this.futureQueue.add(future);
+                */
+                Runnable runnable = () -> {
+                    return downloadTask(url, headers, "", 0);
+                };
+                runnableList.add(runnable);
                 return;
             }
             
