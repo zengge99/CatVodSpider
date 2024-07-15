@@ -78,7 +78,6 @@ public class XiaoyaProxyHandler {
         String newUrl = null;
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
-        volatile boolean firstSliceDone = false;
         volatile boolean closed = false;
         int connId;
         InputStream is = null;
@@ -424,13 +423,14 @@ public class XiaoyaProxyHandler {
                 if (this.is == null ) {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
-                    runTask(threadNum);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 ) {
-                    firstSliceDone = true;
+                    if (blockCounter == 1) {
+                        runTask(threadNum);
+                    }
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
