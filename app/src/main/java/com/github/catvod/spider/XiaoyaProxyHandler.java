@@ -86,7 +86,7 @@ public class XiaoyaProxyHandler {
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
-        ExecutorService executorService = new ThreadPoolExecutor(128);
+        ExecutorService executorService = new Executors.newFixedLengthResponse(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
