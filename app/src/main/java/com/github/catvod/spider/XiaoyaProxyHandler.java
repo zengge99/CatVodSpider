@@ -196,6 +196,9 @@ public class XiaoyaProxyHandler {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
+            if(closed){
+                return null;
+            }
             Logger.log(connId + "[_downloadTask]：下载分片：" + range);
             Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
