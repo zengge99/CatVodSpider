@@ -86,7 +86,7 @@ public class XiaoyaProxyHandler {
         int connId;
         InputStream is = null;
         Queue<Future<InputStream>> futureQueue;
-        ExecutorService executorService;
+        ExecutorService executorService = new ThreadPoolExecutor(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
@@ -147,7 +147,7 @@ public class XiaoyaProxyHandler {
             this.futureQueue = new LinkedList<>();
             int totalNum = (int) (this.contentLength / (long) this.blockSize + 1);
             totalNum = totalNum < 1 ? 1 : totalNum; 
-            this.executorService = new ThreadPoolExecutor(threadNum, threadNum, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(totalNum));
+            //this.executorService = new ThreadPoolExecutor(threadNum, threadNum, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(totalNum));
             //不支持断点续传，单线程下载
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
