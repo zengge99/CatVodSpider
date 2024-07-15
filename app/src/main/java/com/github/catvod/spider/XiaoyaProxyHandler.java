@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 import okhttp3.Response;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import okhttp3.Call;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 
 class QurakLinkCacheInfo {
