@@ -90,6 +90,7 @@ public class XiaoyaProxyHandler {
         String referer = null;
         int blockCounter = 0;
         Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
+        OkHttpClient downloadClient = OkHttp.client().newBuilder().dns(safeDns()).connectTimeout(5, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS).writeTimeout(5, TimeUnit.SECONDS).hostnameVerifier((hostname, session) -> true).sslSocketFactory(new SSLCompat(), SSLCompat.TM);
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -220,7 +221,7 @@ public class XiaoyaProxyHandler {
             Call call = null;
             while (retryCount < maxRetry) {
                 try {
-                    call = OkHttp.client().newCall(request);
+                    call = downloadClient.newCall(request);
                     response = call.execute();
                     // 单线程模式
                     if (range.isEmpty()) {
