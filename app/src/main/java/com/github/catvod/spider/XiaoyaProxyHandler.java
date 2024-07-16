@@ -105,7 +105,7 @@ public class XiaoyaProxyHandler {
             try{
                 connId = curConnId++;
                 if(preDownloader!=null) {
-                    preDownloader.close();
+                    //preDownloader.close();
                 }
                 preDownloader = this;
                 if(params.get("thread") != null){
