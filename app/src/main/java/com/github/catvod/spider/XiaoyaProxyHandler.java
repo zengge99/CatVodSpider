@@ -76,6 +76,7 @@ public class XiaoyaProxyHandler {
         public Headers header;
         public int statusCode = 200;
         String newUrl = null;
+        String oldUrl = null;
         volatile static int curConnId = 0;
         static HttpDownloader preDownloader = null;
         volatile boolean closed = false;
@@ -105,7 +106,8 @@ public class XiaoyaProxyHandler {
             try{
                 connId = curConnId++;
                 String url = params.get("url");
-                if(preDownloader!=null && preDownloader.newUrl != null && preDownloader.newUrl.equals(url)) {
+                oldUrl = url;
+                if(preDownloader!=null && preDownloader.oldUrl != null && preDownloader.oldUrl.equals(url)) {
                     preDownloader.close();
                 }
                 preDownloader = this;
