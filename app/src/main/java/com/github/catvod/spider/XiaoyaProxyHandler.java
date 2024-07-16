@@ -104,8 +104,9 @@ public class XiaoyaProxyHandler {
 
             try{
                 connId = curConnId++;
-                if(preDownloader!=null) {
-                    //preDownloader.close();
+                String url = params.get("url");
+                if(preDownloader!=null && preDownloader.newUrl != null && preDownloader.newUrl.equals(url)) {
+                    preDownloader.close();
                 }
                 preDownloader = this;
                 if(params.get("thread") != null){
@@ -121,7 +122,6 @@ public class XiaoyaProxyHandler {
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
-                String url = params.get("url");
                 String range = "";
                 if (params.get("range") != null) {
                     range = params.get("range");
