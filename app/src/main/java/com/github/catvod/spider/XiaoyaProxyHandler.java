@@ -90,7 +90,7 @@ public class XiaoyaProxyHandler {
         String referer = null;
         int blockCounter = 0;
         Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
-        OkHttpClient downloadClient = OkHttp.client().newBuilder().connectTimeout(5, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS).writeTimeout(5, TimeUnit.SECONDS).build();
+        OkHttpClient downloadClient = OkHttp.client().newBuilder().connectTimeout(3, TimeUnit.SECONDS).readTimeout(3, TimeUnit.SECONDS).writeTimeout(3, TimeUnit.SECONDS).build();
         
         private HttpDownloader(Map<String, String> params) {
             
