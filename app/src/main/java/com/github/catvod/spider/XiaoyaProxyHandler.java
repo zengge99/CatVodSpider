@@ -226,15 +226,18 @@ public class XiaoyaProxyHandler {
             Call call = null;
             while (retryCount < maxRetry) {
                 try {
+                    boolean directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
                     // 单线程模式
                     if (range.isEmpty()) {
+                        directResp = true;
                         return response.body().byteStream();
                     }
 
                     //第一片加速读取
                     if(sliceNum==0){
+                        directResp = true;
                         return response.body().byteStream();
                     }
                     
@@ -252,7 +255,7 @@ public class XiaoyaProxyHandler {
                         return null;
                     }
                 } finally {
-                    if(response!=null){
+                    if(response != null && !directResp){
                         call.cancel();
                         response.close();
                     }
