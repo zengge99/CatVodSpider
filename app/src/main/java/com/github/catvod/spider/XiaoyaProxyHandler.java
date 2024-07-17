@@ -240,6 +240,8 @@ public class XiaoyaProxyHandler {
                     pullDataFromNet(request, outputStream, range);
                 });
                 thread.start();
+                dmmyBuffer = new byte[0];
+                bufferedInputStream.read(dmmyBuffer);
                 return bufferedInputStream;
             } catch (Exception e) {
                 Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
