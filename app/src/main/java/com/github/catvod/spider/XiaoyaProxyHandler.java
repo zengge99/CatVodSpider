@@ -1,4 +1,3 @@
-
 package com.github.catvod.spider;
 
 import com.github.catvod.crawler.Spider;
@@ -154,7 +153,7 @@ public class XiaoyaProxyHandler {
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Callable<InputStream> callable = () -> {
-                    return downloadTask(url, headers, "", 0);
+                    return downloadTask(url, headers, "");
                 };
                 callableQueue.add(callable);
                 return;
