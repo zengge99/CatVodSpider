@@ -78,9 +78,7 @@ public class XiaoyaProxyHandler {
         public Headers header;
         public int statusCode = 200;
         String newUrl = null;
-        String oldUrl = null;
         volatile static int curConnId = 0;
-        static HttpDownloader preDownloader = null;
         volatile boolean closed = false;
         int connId;
         InputStream is = null;
@@ -108,18 +106,11 @@ public class XiaoyaProxyHandler {
             try{
                 connId = curConnId++;
                 String url = params.get("url");
-                oldUrl = url;
-                /*
-                if(preDownloader!=null && preDownloader.oldUrl != null && preDownloader.oldUrl.equals(url)) {
-                    preDownloader.close();
-                }
-                */
-                //只支持单线程，关闭同一个链接的已有的下载器
+                //播放初始阶段，播放器会多次请求不同的range，快速关闭同一个链接的已有的下载器
                 QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
                 if(info != null) {
                     info.downloader.close();
                 }
-                preDownloader = this;
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
@@ -464,6 +455,9 @@ public class XiaoyaProxyHandler {
 
         @Override
         public void close() throws IOException {
+            if (closed) {
+                return;
+            }
             Logger.log("播放器主动关闭数据流");
             closed = true;
             if(this.executorService != null) {
