@@ -38,13 +38,13 @@ import java.util.concurrent.Callable;
 
 public class XiaoyaProxyHandler {
 
-    private static QurakLinkCacheInfo {
+    private static class QurakLinkCacheInfo {
         long cacheTime;
         String cacheLink;
         String cookie;
     }
 
-    private static QurakLinkCacheManager {
+    private static class QurakLinkCacheManager {
         static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
         public static QurakLinkCacheInfo getLinkCache(String url) {
             QurakLinkCacheInfo cacheInfo = map.get(url);
@@ -69,7 +69,7 @@ public class XiaoyaProxyHandler {
             map.entrySet().removeIf(entry -> currentTime - entry.getValue().cacheTime > 10 * 60 * 1000);
         }
     }
-    
+
     private static class HttpDownloader extends InputStream {
         public String contentType = "";
         public long contentLength = -1;
