@@ -257,22 +257,23 @@ public class XiaoyaProxyHandler {
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
-            while (retryCount < maxRetry) {
+            boolean clean = true;
+            while (retryCount < maxRetry && clean) {
                 try {
                     call = downloadClient.newCall(request);
                     response = call.execute();
                     while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         outputStream.write(downloadbBuffer, 0, bytesRead);
+                        clean = false;
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry || closed) {
                         Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
-                        return null;
                     }
                 } finally {
-                    if(response != null && !directResp){
+                    if(response != null){
                         call.cancel();
                         response.close();
                     }
