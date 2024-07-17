@@ -203,50 +203,54 @@ public class XiaoyaProxyHandler {
         }
 
         private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
-            if(closed){
-                return null;
-            }
-            Logger.log(connId + "[_downloadTask]：下载分片：" + range);
-            Request.Builder requestBuilder = new Request.Builder().url(url);
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                requestBuilder.addHeader(entry.getKey(), entry.getValue());
-            }
-            if (!range.isEmpty()) {
-                requestBuilder.removeHeader("Range").addHeader("Range", range);
-            }
-            if (cookie != null) {
-                requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
-            }
-            if (referer != null) {
-                requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
-            }
-            Request request = requestBuilder.build();
-            int retryCount = 0;
-            int maxRetry = 5;
-            Response response = null;
-            Call call = null;
-            // 单线程模式，让播放器拉取数据
-            if (range.isEmpty()) {
-                call = downloadClient.newCall(request);
-                response = call.execute();
-                return response.body().byteStream();
-            }
+            try {
+                if(closed){
+                    return null;
+                }
+                Logger.log(connId + "[_downloadTask]：下载分片：" + range);
+                Request.Builder requestBuilder = new Request.Builder().url(url);
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    requestBuilder.addHeader(entry.getKey(), entry.getValue());
+                }
+                if (!range.isEmpty()) {
+                    requestBuilder.removeHeader("Range").addHeader("Range", range);
+                }
+                if (cookie != null) {
+                    requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+                }
+                if (referer != null) {
+                    requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
+                }
+                Request request = requestBuilder.build();
+                int retryCount = 0;
+                int maxRetry = 5;
+                Response response = null;
+                Call call = null;
+                // 单线程模式，让播放器拉取数据
+                if (range.isEmpty()) {
+                    call = downloadClient.newCall(request);
+                    response = call.execute();
+                    return response.body().byteStream();
+                }
 
-            //第一片加速读取，让播放器拉取数据
-            if(sliceNum==0){
-                call = downloadClient.newCall(request);
-                response = call.execute();
-                return response.body().byteStream();
-            }
+                //第一片加速读取，让播放器拉取数据
+                if(sliceNum==0){
+                    call = downloadClient.newCall(request);
+                    response = call.execute();
+                    return response.body().byteStream();
+                }
 
-            //其情况，启新线程拉取数据
-            PipedInputStream inputStream = new PipedInputStream();
-            PipedOutputStream outputStream = new PipedOutputStream();
-            inputStream.connect(outputStream);
-            Thread producer = new Thread(() -> {
-                pullDataFromNet(request, outputStream, range);
-            });
-            return inputStream;
+                //其情况，启新线程拉取数据
+                PipedInputStream inputStream = new PipedInputStream();
+                PipedOutputStream outputStream = new PipedOutputStream();
+                inputStream.connect(outputStream);
+                Thread producer = new Thread(() -> {
+                    pullDataFromNet(request, outputStream, range);
+                });
+                return inputStream;
+            } catch (Exception e) {
+                Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
+            }
         }
 
         private void pullDataFromNet(Request request, PipedOutputStream outputStream, String range)
