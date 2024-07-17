@@ -244,13 +244,13 @@ public class XiaoyaProxyHandler {
                 //其情况，启新线程拉取数据
                 PipedInputStream inputStream = new PipedInputStream();
                 PipedOutputStream outputStream = new PipedOutputStream();
-                //BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
                 inputStream.connect(outputStream);
                 Thread thread = new Thread(() -> {
                     pullDataFromNet(request, outputStream, range);
                 });
                 thread.start();
-                return inputStream;
+                return bufferedInputStream;
             } catch (Exception e) {
                 Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
             }
@@ -274,17 +274,18 @@ public class XiaoyaProxyHandler {
                         outputStream.write(downloadbBuffer, 0, bytesRead);
                         clean = false;
                     }
-                    Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+                    Logger.log(connId + "[pullDataFromNet]：分片完成：" + range);
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry || closed) {
-                        Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
+                        Logger.log(connId + "[pullDataFromNet]：连接异常终止，下载分片：" + range);
                     }
                 } finally {
                     if(response != null){
                         call.cancel();
                         response.close();
                     }
+                    outputStream.close();
                 }
             }
         }
