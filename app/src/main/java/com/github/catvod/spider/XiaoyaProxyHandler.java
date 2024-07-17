@@ -224,9 +224,10 @@ public class XiaoyaProxyHandler {
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
+            boolean directResp = false;
             while (retryCount < maxRetry) {
                 try {
-                    boolean directResp = false;
+                    directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
                     // 单线程模式
