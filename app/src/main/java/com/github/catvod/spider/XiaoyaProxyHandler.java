@@ -178,22 +178,19 @@ public class XiaoyaProxyHandler {
             }
             Logger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
 
-            int sliceNum = 0;
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
-                final int _sliceNum = sliceNum;
                 Callable<InputStream> callable = () -> {
-                    return downloadTask(url, headers, ra, _sliceNum);
+                    return downloadTask(url, headers, ra);
                 };
                 callableQueue.add(callable);
                 start = curEnd + 1;
-                sliceNum++;
             }
         }
 
-        private InputStream downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
+        private InputStream downloadTask(String url, Map<String, String> headers, String range) {
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
@@ -201,10 +198,10 @@ public class XiaoyaProxyHandler {
                     Logger.log("未捕获的异常2：" + e.getMessage(), true);
                 }
             });
-            return _downloadTask(url,headers,range,sliceNum);
+            return _downloadTask(url,headers,range);
         }
 
-        private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
+        private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
             try {
                 if(closed){
                     return null;
@@ -235,14 +232,7 @@ public class XiaoyaProxyHandler {
                     return response.body().byteStream();
                 }
 
-                //第一片加速读取，让播放器拉取数据
-                if(sliceNum==0){
-                    call = downloadClient.newCall(request);
-                    response = call.execute();
-                    return response.body().byteStream();
-                }
-
-                //其情况，启新线程拉取数据
+                //多线程模式，启新线程拉取数据
                 PipedInputStream inputStream = new PipedInputStream();
                 PipedOutputStream outputStream = new PipedOutputStream();
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
