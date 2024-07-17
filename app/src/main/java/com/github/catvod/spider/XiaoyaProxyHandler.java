@@ -242,10 +242,14 @@ public class XiaoyaProxyHandler {
                 thread.start();
                 
                 thread = new Thread(() -> {
-                    byte[] dmmyBuffer = new byte[0];
-                    bufferedInputStream.read(dmmyBuffer);
+                    try {
+                        byte[] dmmyBuffer = new byte[0];
+                        bufferedInputStream.read(dmmyBuffer);
+                    } catch (Exception e) {}
                 });
                 thread.start();
+
+                
                 return bufferedInputStream;
             } catch (Exception e) {
                 Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
