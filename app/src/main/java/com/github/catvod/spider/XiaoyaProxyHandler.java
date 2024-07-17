@@ -266,6 +266,13 @@ public class XiaoyaProxyHandler {
             Response response = null;
             Call call = null;
             boolean clean = true;
+            
+            try {} finally {
+                try {
+                    outputStream.close();
+                } catch (Exception e) {}
+            }
+
             while (retryCount < maxRetry && clean) {
                 try {
                     call = downloadClient.newCall(request);
@@ -285,9 +292,6 @@ public class XiaoyaProxyHandler {
                         call.cancel();
                         response.close();
                     }
-                    try {
-                        outputStream.close();
-                    } catch (Exception err) {}
                 }
             }
         }
