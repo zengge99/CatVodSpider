@@ -244,13 +244,13 @@ public class XiaoyaProxyHandler {
                 //其情况，启新线程拉取数据
                 PipedInputStream inputStream = new PipedInputStream();
                 PipedOutputStream outputStream = new PipedOutputStream();
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
+                //BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
                 inputStream.connect(outputStream);
                 Thread thread = new Thread(() -> {
                     pullDataFromNet(request, outputStream, range);
                 });
                 thread.start();
-                return bufferedInputStream;
+                return inputStream;
             } catch (Exception e) {
                 Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
             }
