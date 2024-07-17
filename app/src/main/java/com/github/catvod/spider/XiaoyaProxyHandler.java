@@ -239,20 +239,21 @@ public class XiaoyaProxyHandler {
                 return response.body().byteStream();
             }
 
-            //其情况，启多线程预先拉取数据
+            //其情况，启新线程拉取数据
             PipedInputStream inputStream = new PipedInputStream();
             PipedOutputStream outputStream = new PipedOutputStream();
             inputStream.connect(outputStream);
             Thread producer = new Thread(() -> {
-                pullDataFromNet(request, outputStream);
+                pullDataFromNet(request, outputStream, range);
             });
             return inputStream;
         }
 
-        private void pullDataFromNet(Request request, PipedOutputStream outputStream)
+        private void pullDataFromNet(Request request, PipedOutputStream outputStream, String range)
         {
             int retryCount = 0;
             int maxRetry = 5;
+            int bytesRead = 0;
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
