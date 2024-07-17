@@ -240,7 +240,7 @@ public class XiaoyaProxyHandler {
                     pullDataFromNet(request, outputStream, range);
                 });
                 thread.start();
-                byte dmmyBuffer[] = new byte[0];
+                byte[] dmmyBuffer = new byte[0];
                 bufferedInputStream.read(dmmyBuffer);
                 return bufferedInputStream;
             } catch (Exception e) {
