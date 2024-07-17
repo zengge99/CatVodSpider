@@ -5,10 +5,6 @@ import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.BufferedInputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +13,7 @@ import java.util.TreeMap;
 import okhttp3.Response;
 import static com.github.catvod.spider.NanoHTTPD.Response.Status;
 import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import okhttp3.Request;
 import okhttp3.Headers;
@@ -153,7 +150,7 @@ public class XiaoyaProxyHandler {
             if(!this.supportRange) {
                 Logger.log(connId + "[createDownloadTask]：单线程模式下载，配置线程数：" + threadNum);
                 Callable<InputStream> callable = () -> {
-                    return downloadTask(url, headers, "");
+                    return downloadTask(url, headers, "", 0);
                 };
                 callableQueue.add(callable);
                 return;
@@ -177,19 +174,22 @@ public class XiaoyaProxyHandler {
             }
             Logger.log(connId + "[createDownloadTask]：多线程模式下载，配置线程数：" + threadNum + "播放器指定的范围：" + range);
 
+            int sliceNum = 0;
             while (start <= end) {
                 long curEnd = start + blockSize - 1;
                 curEnd = curEnd > end ? end : curEnd;
                 String ra = "bytes=" + start + "-" + curEnd;
+                final int _sliceNum = sliceNum;
                 Callable<InputStream> callable = () -> {
-                    return downloadTask(url, headers, ra);
+                    return downloadTask(url, headers, ra, _sliceNum);
                 };
                 callableQueue.add(callable);
                 start = curEnd + 1;
+                sliceNum++;
             }
         }
 
-        private InputStream downloadTask(String url, Map<String, String> headers, String range) {
+        private InputStream downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
@@ -197,94 +197,73 @@ public class XiaoyaProxyHandler {
                     Logger.log("未捕获的异常2：" + e.getMessage(), true);
                 }
             });
-            return _downloadTask(url,headers,range);
+            return _downloadTask(url,headers,range,sliceNum);
         }
 
-        private InputStream _downloadTask(String url, Map<String, String> headers, String range) {
-            try {
-                if(closed){
-                    return null;
-                }
-                Logger.log(connId + "[_downloadTask]：下载分片：" + range);
-                Request.Builder requestBuilder = new Request.Builder().url(url);
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    requestBuilder.addHeader(entry.getKey(), entry.getValue());
-                }
-                if (!range.isEmpty()) {
-                    requestBuilder.removeHeader("Range").addHeader("Range", range);
-                }
-                if (cookie != null) {
-                    requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
-                }
-                if (referer != null) {
-                    requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
-                }
-                Request request = requestBuilder.build();
-                int retryCount = 0;
-                int maxRetry = 5;
-                Response response = null;
-                Call call = null;
-                // 单线程模式，让播放器拉取数据
-                if (range.isEmpty()) {
-                    call = downloadClient.newCall(request);
-                    response = call.execute();
-                    return response.body().byteStream();
-                }
-
-                //多线程模式，启新线程拉取数据
-                PipedInputStream inputStream = new PipedInputStream();
-                PipedOutputStream outputStream = new PipedOutputStream();
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
-                inputStream.connect(outputStream);
-                Thread thread = new Thread(() -> {
-                    pullDataFromNet(request, outputStream, range);
-                });
-                thread.start();
-                byte[] dmmyBuffer = new byte[0];
-                bufferedInputStream.read(dmmyBuffer);
-                return bufferedInputStream;
-            } catch (Exception e) {
-                Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
+        private InputStream _downloadTask(String url, Map<String, String> headers, String range, int sliceNum) {
+            if(closed){
+                return null;
             }
-            return null;
-        }
-
-        private void pullDataFromNet(Request request, PipedOutputStream outputStream, String range)
-        {
+            Logger.log(connId + "[_downloadTask]：下载分片：" + range);
+            Request.Builder requestBuilder = new Request.Builder().url(url);
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                requestBuilder.addHeader(entry.getKey(), entry.getValue());
+            }
+            if (!range.isEmpty()) {
+                requestBuilder.removeHeader("Range").addHeader("Range", range);
+            }
+            if (cookie != null) {
+                requestBuilder.removeHeader("Cookie").addHeader("Cookie", cookie);
+            }
+            if (referer != null) {
+                requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
+            }
+            Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
-            int bytesRead = 0;
-            byte[] downloadbBuffer = new byte[1024];
+            byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
-            boolean clean = true;
-            
+            boolean directResp = false;
             while (retryCount < maxRetry) {
                 try {
+                    directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
-                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                        outputStream.write(downloadbBuffer, 0, bytesRead);
-                        clean = false;
+                    // 单线程模式
+                    if (range.isEmpty()) {
+                        directResp = true;
+                        return response.body().byteStream();
                     }
-                    Logger.log(connId + "[pullDataFromNet]：分片完成：" + range);
-                    break;
+
+                    //第一片加速读取
+                    if(sliceNum==0){
+                        directResp = true;
+                        return response.body().byteStream();
+                    }
+                    
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    int bytesRead;
+                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                        baos.write(downloadbBuffer, 0, bytesRead);
+                    }
+                    Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+                    return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
-                    if (retryCount == maxRetry || closed || !clean) {
-                        Logger.log(connId + "[pullDataFromNet]：连接异常终止，下载分片：" + range);
-                        break;
+                    if (retryCount == maxRetry || closed) {
+                        Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
+                        return null;
                     }
                 } finally {
-                    if(response != null){
+                    if(response != null && !directResp){
                         call.cancel();
                         response.close();
                     }
                 }
             }
-            try {
-                outputStream.close();
-            } catch (Exception e) {}
+            //其实不可能走到这里， 避免编译报错。
+            return null;
         }
         
         private void getHeader(String url, Map<String, String> headers) {
