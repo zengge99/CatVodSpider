@@ -268,7 +268,7 @@ public class XiaoyaProxyHandler {
             Call call = null;
             boolean clean = true;
             
-            while (retryCount < maxRetry && clean) {
+            while (retryCount < maxRetry) {
                 try {
                     call = downloadClient.newCall(request);
                     response = call.execute();
@@ -279,8 +279,9 @@ public class XiaoyaProxyHandler {
                     Logger.log(connId + "[pullDataFromNet]：分片完成：" + range);
                 } catch (Exception e) {
                     retryCount++;
-                    if (retryCount == maxRetry || closed) {
+                    if (retryCount == maxRetry || closed || !clean) {
                         Logger.log(connId + "[pullDataFromNet]：连接异常终止，下载分片：" + range);
+                        break;
                     }
                 } finally {
                     if(response != null){
