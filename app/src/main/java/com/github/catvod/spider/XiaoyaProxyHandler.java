@@ -5,6 +5,9 @@ import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +16,6 @@ import java.util.TreeMap;
 import okhttp3.Response;
 import static com.github.catvod.spider.NanoHTTPD.Response.Status;
 import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import okhttp3.Request;
 import okhttp3.Headers;
@@ -241,7 +243,26 @@ public class XiaoyaProxyHandler {
                         directResp = true;
                         return response.body().byteStream();
                     }
+
+
+                    PipedInputStream inputStream = new PipedInputStream();
+                    PipedOutputStream outputStream = new PipedOutputStream();
+                    inputStream.connect(outputStream);
+
+                    Thread producer = new Thread(() -> {
+                        try {
+                            int bytesRead;
+                            while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                                outputStream.write(downloadbBuffer, 0, bytesRead);
+                            }
+                            Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+                        } catch (IOException e) {
+                            Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
+                        }
+                    });
+                    return inputStream;
                     
+                    /*
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
                     while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
@@ -249,10 +270,11 @@ public class XiaoyaProxyHandler {
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
+                    */
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry || closed) {
-                        Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
+                        Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
                         return null;
                     }
                 } finally {
