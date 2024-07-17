@@ -223,46 +223,47 @@ public class XiaoyaProxyHandler {
             Request request = requestBuilder.build();
             int retryCount = 0;
             int maxRetry = 5;
+            Response response = null;
+            Call call = null;
+            // 单线程模式，让播放器拉取数据
+            if (range.isEmpty()) {
+                call = downloadClient.newCall(request);
+                response = call.execute();
+                return response.body().byteStream();
+            }
+
+            //第一片加速读取，让播放器拉取数据
+            if(sliceNum==0){
+                call = downloadClient.newCall(request);
+                response = call.execute();
+                return response.body().byteStream();
+            }
+
+            //其情况，启多线程预先拉取数据
+            PipedInputStream inputStream = new PipedInputStream();
+            PipedOutputStream outputStream = new PipedOutputStream();
+            inputStream.connect(outputStream);
+            Thread producer = new Thread(() -> {
+                pullDataFromNet(request, outputStream);
+            });
+            return inputStream;
+        }
+
+        private void pullDataFromNet(Request request, PipedOutputStream outputStream)
+        {
+            int retryCount = 0;
+            int maxRetry = 5;
             byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
-            boolean directResp = false;
             while (retryCount < maxRetry) {
                 try {
-                    directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
-                    // 单线程模式
-                    if (range.isEmpty()) {
-                        directResp = true;
-                        return response.body().byteStream();
-                    }
-
-                    //第一片加速读取
-                    if(sliceNum==0){
-                        directResp = true;
-                        return response.body().byteStream();
-                    }
-
-
-                    PipedInputStream inputStream = new PipedInputStream();
-                    PipedOutputStream outputStream = new PipedOutputStream();
-                    inputStream.connect(outputStream);
-                    InputStream responseInputStream = response.body().byteStream();
-                    Thread producer = new Thread(() -> {
-                        responseTransform(responseInputStream, range);
-                    });
-                    return inputStream;
-                    
-                    /*
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    int bytesRead;
                     while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                        baos.write(downloadbBuffer, 0, bytesRead);
+                        outputStream.write(downloadbBuffer, 0, bytesRead);
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
-                    return new ByteArrayInputStream(baos.toByteArray());
-                    */
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry || closed) {
@@ -275,21 +276,6 @@ public class XiaoyaProxyHandler {
                         response.close();
                     }
                 }
-            }
-            //其实不可能走到这里， 避免编译报错。
-            return null;
-        }
-
-        private void responseTransform(InputStream inputStream, String range)
-        {
-            try {
-                int bytesRead;
-                while (!closed && (bytesRead = inputStream.read(downloadbBuffer)) != -1) {
-                    outputStream.write(downloadbBuffer, 0, bytesRead);
-                }
-                Logger.log(connId + "[_downloadTask]：分片完成：" + range);
-            } catch (IOException e) {
-                Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
             }
         }
         
