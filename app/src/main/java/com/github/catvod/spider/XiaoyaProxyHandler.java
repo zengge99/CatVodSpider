@@ -247,13 +247,14 @@ public class XiaoyaProxyHandler {
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
-                    if(response!=null){
-                        call.cancel();
-                        response.close();
-                    }
                     if (retryCount == maxRetry || closed) {
                         Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
                         return null;
+                    }
+                } finally {
+                    if(response!=null){
+                        call.cancel();
+                        response.close();
                     }
                 }
             }
