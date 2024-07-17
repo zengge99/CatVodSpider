@@ -6,6 +6,7 @@ import android.content.Context;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Map;
@@ -243,14 +244,16 @@ public class XiaoyaProxyHandler {
                 //其情况，启新线程拉取数据
                 PipedInputStream inputStream = new PipedInputStream();
                 PipedOutputStream outputStream = new PipedOutputStream();
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, blockSize);
                 inputStream.connect(outputStream);
                 Thread producer = new Thread(() -> {
                     pullDataFromNet(request, outputStream, range);
                 });
-                return inputStream;
+                return bufferedInputStream;
             } catch (Exception e) {
                 Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
             }
+            return null;
         }
 
         private void pullDataFromNet(Request request, PipedOutputStream outputStream, String range)
