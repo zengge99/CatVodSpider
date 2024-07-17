@@ -285,7 +285,9 @@ public class XiaoyaProxyHandler {
                         call.cancel();
                         response.close();
                     }
-                    outputStream.close();
+                    try {
+                        outputStream.close();
+                    } catch (Except e) {}
                 }
             }
         }
