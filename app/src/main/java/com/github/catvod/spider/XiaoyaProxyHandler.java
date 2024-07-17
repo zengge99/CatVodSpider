@@ -42,6 +42,7 @@ public class XiaoyaProxyHandler {
         long cacheTime;
         String cacheLink;
         String cookie;
+        HttpDownloader downloader = null;
     }
 
     private static class QurakLinkCacheManager {
