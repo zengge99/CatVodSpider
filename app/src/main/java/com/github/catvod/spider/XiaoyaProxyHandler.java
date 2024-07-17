@@ -108,7 +108,7 @@ public class XiaoyaProxyHandler {
                 String url = params.get("url");
                 //播放初始阶段，播放器会多次请求不同的range，快速关闭同一个链接的已有的下载器
                 downloaderMap.entrySet().removeIf(entry -> entry.getValue().closed);
-                HttpDownloader cacheDownloader = downloaderMap.get(url)
+                HttpDownloader cacheDownloader = downloaderMap.get(url);
                 if (cacheDownloader != null) {
                     cacheDownloader.close();
                 }
