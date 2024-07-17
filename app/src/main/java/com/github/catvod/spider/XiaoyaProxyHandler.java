@@ -277,6 +277,7 @@ public class XiaoyaProxyHandler {
                         clean = false;
                     }
                     Logger.log(connId + "[pullDataFromNet]：分片完成：" + range);
+                    break;
                 } catch (Exception e) {
                     retryCount++;
                     if (retryCount == maxRetry || closed || !clean) {
