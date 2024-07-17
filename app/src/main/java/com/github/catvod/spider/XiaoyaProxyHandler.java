@@ -267,12 +267,6 @@ public class XiaoyaProxyHandler {
             Call call = null;
             boolean clean = true;
             
-            try {} finally {
-                try {
-                    outputStream.close();
-                } catch (Exception e) {}
-            }
-
             while (retryCount < maxRetry && clean) {
                 try {
                     call = downloadClient.newCall(request);
@@ -294,6 +288,9 @@ public class XiaoyaProxyHandler {
                     }
                 }
             }
+            try {
+                outputStream.close();
+            } catch (Exception e) {}
         }
         
         private void getHeader(String url, Map<String, String> headers) {
