@@ -34,41 +34,42 @@ import java.util.HashMap;
 import okhttp3.Call;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Callable;
-
-class QurakLinkCacheInfo {
-    long cacheTime;
-    String cacheLink;
-    String cookie;
-}
-
-class QurakLinkCacheManager {
-    static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
-    public static QurakLinkCacheInfo getLinkCache(String url) {
-        QurakLinkCacheInfo cacheInfo = map.get(url);
-        if (cacheInfo != null) {
-            long currentTime = System.currentTimeMillis();
-            long cacheTime = cacheInfo.cacheTime;
-            if (currentTime - cacheTime <= 10 * 60 * 1000) {
-                return cacheInfo;
-            } else {
-                map.remove(url);
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static void putLinkCache(String url, QurakLinkCacheInfo value) {
-        long currentTime = System.currentTimeMillis();
-        value.cacheTime = currentTime;
-        map.put(url, value);
-        map.entrySet().removeIf(entry -> currentTime - entry.getValue().cacheTime > 10 * 60 * 1000);
-    }
-} 
+import java.util.concurrent.Callable; 
 
 public class XiaoyaProxyHandler {
+
+    private static QurakLinkCacheInfo {
+        long cacheTime;
+        String cacheLink;
+        String cookie;
+    }
+
+    private static QurakLinkCacheManager {
+        static HashMap<String, QurakLinkCacheInfo> map = new HashMap<>();
+        public static QurakLinkCacheInfo getLinkCache(String url) {
+            QurakLinkCacheInfo cacheInfo = map.get(url);
+            if (cacheInfo != null) {
+                long currentTime = System.currentTimeMillis();
+                long cacheTime = cacheInfo.cacheTime;
+                if (currentTime - cacheTime <= 10 * 60 * 1000) {
+                    return cacheInfo;
+                } else {
+                    map.remove(url);
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+
+        public static void putLinkCache(String url, QurakLinkCacheInfo value) {
+            long currentTime = System.currentTimeMillis();
+            value.cacheTime = currentTime;
+            map.put(url, value);
+            map.entrySet().removeIf(entry -> currentTime - entry.getValue().cacheTime > 10 * 60 * 1000);
+        }
+    }
+    
     private static class HttpDownloader extends InputStream {
         public String contentType = "";
         public long contentLength = -1;
@@ -459,6 +460,8 @@ public class XiaoyaProxyHandler {
             if(this.executorService != null) {
                 this.executorService.shutdownNow();
             }
+            futureQueue.clear();
+            callableQueue.clear();
         }
     }
 
