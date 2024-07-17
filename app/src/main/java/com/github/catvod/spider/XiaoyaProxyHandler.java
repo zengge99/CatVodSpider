@@ -42,7 +42,6 @@ public class XiaoyaProxyHandler {
         long cacheTime;
         String cacheLink;
         String cookie;
-        HttpDownloader downloader = null;
     }
 
     private static class QurakLinkCacheManager {
@@ -82,7 +81,9 @@ public class XiaoyaProxyHandler {
         volatile boolean closed = false;
         int connId;
         InputStream is = null;
+        Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
         Queue<Future<InputStream>> futureQueue = new LinkedList<>();
+        static HashMap<String, HttpDownloader> downloaderMap = new HashMap<>();
         ExecutorService executorService = Executors.newFixedThreadPool(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
@@ -90,7 +91,6 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
         OkHttpClient downloadClient = OkHttp.client().newBuilder().connectTimeout(3, TimeUnit.SECONDS).readTimeout(3, TimeUnit.SECONDS).writeTimeout(3, TimeUnit.SECONDS).build();
         
         private HttpDownloader(Map<String, String> params) {
@@ -107,10 +107,13 @@ public class XiaoyaProxyHandler {
                 connId = curConnId++;
                 String url = params.get("url");
                 //播放初始阶段，播放器会多次请求不同的range，快速关闭同一个链接的已有的下载器
-                QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
-                if(info != null) {
-                    info.downloader.close();
+                downloaderMap.entrySet().removeIf(entry -> entry.getValue().closed);
+                HttpDownloader cacheDownloader = downloaderMap.get(url)
+                if (cacheDownloader != null) {
+                    cacheDownloader.close();
                 }
+                downloaderMap.put(url, this);
+
                 if(params.get("thread") != null){
                     threadNum = Integer.parseInt(params.get("thread"));
                 }
@@ -322,7 +325,6 @@ public class XiaoyaProxyHandler {
                     QurakLinkCacheInfo var = new QurakLinkCacheInfo();
                     var.cacheLink = location;
                     var.cookie = cookie;
-                    var.downloader = this;
                     QurakLinkCacheManager.putLinkCache(url, var);
                 }
                 referer = "https://pan.quark.cn";
