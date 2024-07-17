@@ -76,7 +76,7 @@ public class XiaoyaProxyHandler {
         long contentEnd;
         public Headers header;
         public int statusCode = 200;
-        String newUrl = null;
+        String directUrl = null;
         volatile static int curConnId = 0;
         volatile boolean closed = false;
         int connId;
@@ -133,7 +133,7 @@ public class XiaoyaProxyHandler {
                 }
                 Logger.log(connId + "[HttpDownloader]：播放器携带的下载链接：" + url + "播放器指定的range：" + range);
                 this.getHeader(url, headers);
-                this.createDownloadTask(newUrl, headers);
+                this.createDownloadTask(directUrl, headers);
             } catch (Exception e) {
                 Logger.log(connId + "[HttpDownloader]：发生错误：" + e.getMessage());
             }
@@ -265,7 +265,7 @@ public class XiaoyaProxyHandler {
             getQuarkLink(url, headers);
             int count = 0;
             while (statusCode == 302 && count < 3){
-                _getHeader(newUrl, headers);
+                _getHeader(directUrl, headers);
                 count++;
             }
             Headers originalHeaders = this.header;
@@ -284,7 +284,7 @@ public class XiaoyaProxyHandler {
             try {
                 //先假装自己重定向到自己
                 statusCode = 302;
-                newUrl = url;
+                directUrl = url;
                 if (!(url.contains("/d/") && url.contains("夸克"))) {
                     return;
                 }
@@ -293,9 +293,9 @@ public class XiaoyaProxyHandler {
                 QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
                 if(info != null){
                     cookie = info.cookie;
-                    newUrl = info.cacheLink;
+                    directUrl = info.cacheLink;
                     referer = "https://pan.quark.cn";
-                    Logger.log(connId + "[getQuarkLink]获取到夸克下载直链缓存：" + newUrl);
+                    Logger.log(connId + "[getQuarkLink]获取到夸克下载直链缓存：" + directUrl);
                     return;
                 }
                 
@@ -329,7 +329,7 @@ public class XiaoyaProxyHandler {
                 }
                 referer = "https://pan.quark.cn";
                 Logger.log(connId + "[getQuarkLink]获取到夸克下载直链：" + location);
-                newUrl = location == null ? url : location;
+                directUrl = location == null ? url : location;
             } catch (Exception e) {
                 Logger.log(connId + "[getQuarkLink]获取夸克发生错误：" + e.getMessage());
             }
@@ -377,18 +377,18 @@ public class XiaoyaProxyHandler {
                 hContentLength = this.header.get("Content-Length");
                 String location = this.header.get("Location");
                 if(location != null && statusCode == 302){
-                    newUrl = location;
+                    directUrl = location;
                     URL urlObj = new URL(url);
                     String host = urlObj.getProtocol() + "://" + urlObj.getHost();
                     int port = urlObj.getPort();
                     if (port != -1) {
                         host = host + ":" + port;
                     }
-                    if(!newUrl.startsWith("http")){
-                        newUrl = host + newUrl;
+                    if(!directUrl.startsWith("http")){
+                        directUrl = host + directUrl;
                     }
                 } else {
-                    newUrl = url;
+                    directUrl = url;
                 }
                 this.contentLength = hContentLength != null ? Long.parseLong(hContentLength) : -1;
                 this.contentEnd = this.contentLength - 1;
