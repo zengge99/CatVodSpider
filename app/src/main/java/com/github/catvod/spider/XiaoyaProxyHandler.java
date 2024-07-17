@@ -248,17 +248,9 @@ public class XiaoyaProxyHandler {
                     PipedInputStream inputStream = new PipedInputStream();
                     PipedOutputStream outputStream = new PipedOutputStream();
                     inputStream.connect(outputStream);
-
+                    InputStream responseInputStream = response.body().byteStream();
                     Thread producer = new Thread(() -> {
-                        try {
-                            int bytesRead;
-                            while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                                outputStream.write(downloadbBuffer, 0, bytesRead);
-                            }
-                            Logger.log(connId + "[_downloadTask]：分片完成：" + range);
-                        } catch (IOException e) {
-                            Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
-                        }
+                        responseTransform(responseInputStream, range);
                     });
                     return inputStream;
                     
@@ -286,6 +278,19 @@ public class XiaoyaProxyHandler {
             }
             //其实不可能走到这里， 避免编译报错。
             return null;
+        }
+
+        private void responseTransform(InputStream inputStream, String range)
+        {
+            try {
+                int bytesRead;
+                while (!closed && (bytesRead = inputStream.read(downloadbBuffer)) != -1) {
+                    outputStream.write(downloadbBuffer, 0, bytesRead);
+                }
+                Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+            } catch (IOException e) {
+                Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
+            }
         }
         
         private void getHeader(String url, Map<String, String> headers) {
