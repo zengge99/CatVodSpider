@@ -109,8 +109,15 @@ public class XiaoyaProxyHandler {
                 connId = curConnId++;
                 String url = params.get("url");
                 oldUrl = url;
+                /*
                 if(preDownloader!=null && preDownloader.oldUrl != null && preDownloader.oldUrl.equals(url)) {
                     preDownloader.close();
+                }
+                */
+                //只支持单线程，关闭同一个链接的已有的下载器
+                QurakLinkCacheInfo info = QurakLinkCacheManager.getLinkCache(url);
+                if(info != null) {
+                    info.downloader.close();
                 }
                 preDownloader = this;
                 if(params.get("thread") != null){
@@ -324,6 +331,7 @@ public class XiaoyaProxyHandler {
                     QurakLinkCacheInfo var = new QurakLinkCacheInfo();
                     var.cacheLink = location;
                     var.cookie = cookie;
+                    var.downloader = this;
                     QurakLinkCacheManager.putLinkCache(url, var);
                 }
                 referer = "https://pan.quark.cn";
