@@ -343,6 +343,7 @@ public class XiaoyaProxyHandler {
             while (retryCount < maxRetry) {
                 try {
                     call = downloadClient.newCall(request);
+                    Logger.log(connId + "[pullDataFromNet]：下载数据：" + range);
                     response = call.execute();
                     while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         Logger.log(connId + "[pullDataFromNet]：写入数据：" + range);
