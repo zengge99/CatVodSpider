@@ -55,12 +55,9 @@ public class XiaoyaProxyHandler {
 
     @Override
     public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-        Logger.log("[BidirectInputStream.read]进入函数1");
         if (endOfStream && this.buffer.isEmpty() && remainingData == null) {
             return -1; 
         }
-
-        Logger.log("[BidirectInputStream.read]进入函数2");
 
         int totalBytesRead = 0; 
         int bytesRead; 
@@ -78,10 +75,7 @@ public class XiaoyaProxyHandler {
             off += bytesRead; 
         }
 
-        Logger.log("[BidirectInputStream.read]进入函数3");
-
         while (totalBytesRead < len) {
-            Logger.log("[BidirectInputStream.read]进入函数4：" + totalBytesRead);
             byte[] data = null; 
             try {
                 data = this.buffer.poll(3, TimeUnit.SECONDS); 
@@ -89,7 +83,6 @@ public class XiaoyaProxyHandler {
                 throw new IOException("No Data", e);
             }
             if (data == null) {
-                Logger.log("[BidirectInputStream.read]进入函数5：" + totalBytesRead);
                 return totalBytesRead;
             }
             int remainingBytes = len - totalBytesRead; 
@@ -103,9 +96,6 @@ public class XiaoyaProxyHandler {
             }
             off += bytesRead; 
         }
-
-        Logger.log("[BidirectInputStream.read]：获取数据：" + totalBytesRead);
-
         return totalBytesRead; 
     }
     
@@ -116,7 +106,6 @@ public class XiaoyaProxyHandler {
 
     @Override
     public void close() throws IOException {
-        Logger.log("[BidirectInputStream.close]进入函数1");
         endOfStream = true;
     }
 
@@ -124,7 +113,6 @@ public class XiaoyaProxyHandler {
         try {
             byte[] newData = new byte[len];
             System.arraycopy(data, off, newData, 0, len);
-            Logger.log("[BidirectInputStream.write]进入函数1");
             buffer.put(newData);
         } catch (InterruptedException e) {
             throw new IOException("Write interrupted", e);
@@ -348,10 +336,8 @@ public class XiaoyaProxyHandler {
             while (retryCount < maxRetry) {
                 try {
                     call = downloadClient.newCall(request);
-                    Logger.log(connId + "[pullDataFromNet]：下载数据：" + closed);
                     response = call.execute();
                     while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
-                        Logger.log(connId + "[pullDataFromNet]：写入数据：" + bytesRead);
                         inputStream.write(downloadbBuffer, 0, bytesRead);
                         clean = false;
                     }
