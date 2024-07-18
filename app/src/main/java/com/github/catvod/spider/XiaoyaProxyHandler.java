@@ -85,7 +85,7 @@ public class XiaoyaProxyHandler {
         Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
         Queue<Future<InputStream>> futureQueue = new LinkedList<>();
         static HashMap<String, HttpDownloader> downloaderMap = new HashMap<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
+        ExecutorService executorService = Executors.newFixedThreadPool(128);
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
@@ -447,8 +447,6 @@ public class XiaoyaProxyHandler {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
                     */
-                    //int preReadBlockNum = 100000000/blockSize;
-                    //preReadBlockNum = preReadBlockNum < threadNum ? threadNum : preReadBlockNum;
                     runTask(threadNum);
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
