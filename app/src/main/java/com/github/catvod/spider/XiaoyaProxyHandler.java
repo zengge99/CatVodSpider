@@ -260,7 +260,7 @@ public class XiaoyaProxyHandler {
                     retryCount++;
                 }
             }
-            Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
+            Logger.log(connId + "[_downloadTask]：连接异常终止，下载分片：" + range);
             return null;
         }
         
