@@ -45,7 +45,7 @@ public class XiaoyaProxyHandler {
 
     private static class BidirectInputStream extends InputStream {
     private BlockingQueue<byte[]> buffer;
-    private boolean endOfStream;
+    volatile private boolean endOfStream;
     private byte[] remainingData;
 
     public BidirectInputStream(int bufferSize) {
@@ -353,7 +353,7 @@ public class XiaoyaProxyHandler {
                 }
             }
             try {
-                outputStream.close();
+                inputStream.close();
             } catch (Exception e) {}
         }
         
