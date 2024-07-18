@@ -225,13 +225,12 @@ public class XiaoyaProxyHandler {
             Response response = null;
             Call call = null;
             boolean directResp = false;
-            while (retryCount < maxRetry) {
+            while (retryCount < maxRetry && !closed) {
                 try {
                     directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
                     if (!response.isSuccessful()) {
-                        retryCount++;
                         continue;
                     }
                     // 单线程模式
@@ -253,20 +252,15 @@ public class XiaoyaProxyHandler {
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
                     return new ByteArrayInputStream(baos.toByteArray());
-                } catch (Exception e) {
-                    retryCount++;
-                    if (retryCount == maxRetry || closed) {
-                        Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
-                        return null;
-                    }
-                } finally {
+                } catch (Exception e) {} finally {
                     if(response != null && !directResp){
                         call.cancel();
                         response.close();
                     }
+                    retryCount++;
                 }
             }
-            //其实不可能走到这里， 避免编译报错。
+            Logger.log(connId + "[_downloadTask]：连接提前终止，下载分片：" + range);
             return null;
         }
         
