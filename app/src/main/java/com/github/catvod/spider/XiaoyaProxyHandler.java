@@ -436,6 +436,7 @@ public class XiaoyaProxyHandler {
                     */
                     runTask(threadNum);
                     this.is = this.futureQueue.remove().get();
+                    runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                 }
