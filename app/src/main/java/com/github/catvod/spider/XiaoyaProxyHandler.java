@@ -82,7 +82,7 @@ public class XiaoyaProxyHandler {
 
         while (totalBytesRead < len) {
             Logger.log("[BidirectInputStream.read]进入函数4：" + totalBytesRead);
-            byte[] data = this.buffer.poll(); 
+            byte[] data = this.buffer.poll(3, TimeUnit.SECONDS); 
             if (data == null) {
                 Logger.log("[BidirectInputStream.read]进入函数5：" + totalBytesRead);
                 return totalBytesRead;
@@ -345,7 +345,7 @@ public class XiaoyaProxyHandler {
                     call = downloadClient.newCall(request);
                     Logger.log(connId + "[pullDataFromNet]：下载数据：" + closed);
                     response = call.execute();
-                    while (/*!closed && */(bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         Logger.log(connId + "[pullDataFromNet]：写入数据：" + bytesRead);
                         inputStream.write(downloadbBuffer, 0, bytesRead);
                         clean = false;
