@@ -102,12 +102,12 @@ public class XiaoyaProxyHandler {
 
     @Override
     public void close() throws IOException {
-        endOfStream = true; // 将是否到达流的末尾标志设置为 true
+        endOfStream = true;
     }
 
     public void write(byte[] data) throws IOException {
         try {
-            buffer.put(data); // 将数据放入缓冲区
+            buffer.put(data);
         } catch (InterruptedException e) {
             throw new IOException("Write interrupted", e);
         }
@@ -305,7 +305,7 @@ public class XiaoyaProxyHandler {
                 }
 
                 //多线程模式，启新线程拉取数据
-                BidirectInputStream inputStream = new BidirectInputStream()
+                BidirectInputStream inputStream = new BidirectInputStream();
                 Thread thread = new Thread(() -> {
                     pullDataFromNet(request, inputStream, range);
                 });
