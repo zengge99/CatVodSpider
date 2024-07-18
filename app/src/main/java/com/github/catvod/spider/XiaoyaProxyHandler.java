@@ -80,7 +80,7 @@ public class XiaoyaProxyHandler {
             try {
                 data = this.buffer.poll(3, TimeUnit.SECONDS); 
             } catch (InterruptedException e) {
-                throw new IOException("No Data", e);
+                data = null;
             }
             if (data == null) {
                 return totalBytesRead;
