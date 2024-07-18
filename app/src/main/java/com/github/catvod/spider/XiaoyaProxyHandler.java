@@ -85,7 +85,7 @@ public class XiaoyaProxyHandler {
         Queue<Callable<InputStream>> callableQueue = new LinkedList<>();
         Queue<Future<InputStream>> futureQueue = new LinkedList<>();
         static HashMap<String, HttpDownloader> downloaderMap = new HashMap<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(128);
+        ExecutorService executorService = null;
         boolean supportRange = true;
         int blockSize = 10 * 1024 * 1024; //默认10MB
         int threadNum = 2; //默认2线程
@@ -133,6 +133,9 @@ public class XiaoyaProxyHandler {
                     //如果发送是EncodeURIComponet过的，get会自动转码，不需要手工转，坑啊
                     cookie = params.get("cookie");
                 }
+
+                ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
+
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
                 for (String key : params.keySet()) if (keys.contains(key)) headers.put(key, params.get(key));
@@ -446,7 +449,7 @@ public class XiaoyaProxyHandler {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
                     */
-                    runTask(threadNum);
+                    runTask(100000000/blockSize + 1);
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
