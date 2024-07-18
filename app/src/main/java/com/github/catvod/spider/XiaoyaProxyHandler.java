@@ -82,7 +82,12 @@ public class XiaoyaProxyHandler {
 
         while (totalBytesRead < len) {
             Logger.log("[BidirectInputStream.read]进入函数4：" + totalBytesRead);
-            byte[] data = this.buffer.poll(3, TimeUnit.SECONDS); 
+            byte[] data = null; 
+            try {
+                data = this.buffer.poll(3, TimeUnit.SECONDS); 
+            } catch (InterruptedException e) {
+                throw new IOException("No Data", e);
+            }
             if (data == null) {
                 Logger.log("[BidirectInputStream.read]进入函数5：" + totalBytesRead);
                 return totalBytesRead;
