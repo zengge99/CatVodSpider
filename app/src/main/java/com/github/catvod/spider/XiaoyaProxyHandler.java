@@ -97,6 +97,7 @@ public class XiaoyaProxyHandler {
     
     @Override
     public int read() throws IOException {
+        throw new IOException("read method not implemented");
         return -1;
     }
 
@@ -548,6 +549,7 @@ public class XiaoyaProxyHandler {
         
         @Override
         public int read() throws IOException {
+            throw new IOException("read method not implemented");
             return -1;
         }
 
