@@ -134,7 +134,7 @@ public class XiaoyaProxyHandler {
                     cookie = params.get("cookie");
                 }
 
-                ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
+                executorService = Executors.newFixedThreadPool(threadNum);
 
                 Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 List<String> keys = Arrays.asList("referer", "icy-metadata", "range", "connection", "accept-encoding", "user-agent", "cookie");
@@ -449,7 +449,7 @@ public class XiaoyaProxyHandler {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
                     this.is = future.get();
                     */
-                    runTask(50 + 1);
+                    runTask(100000000/blockSize + 1);
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
