@@ -5,6 +5,9 @@ import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
 import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
@@ -13,8 +16,6 @@ import java.util.TreeMap;
 import okhttp3.Response;
 import static com.github.catvod.spider.NanoHTTPD.Response.Status;
 import static com.github.catvod.spider.NanoHTTPD.newFixedLengthResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import okhttp3.Request;
 import okhttp3.Headers;
 import java.util.concurrent.ExecutorService;
@@ -244,10 +245,12 @@ public class XiaoyaProxyHandler {
                     
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
-                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(response.body().byteStream());
+                    while (!closed && (bytesRead = bufferedInputStream.read(downloadbBuffer)) != -1) {
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
+                    bufferedInputStream.close();
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
