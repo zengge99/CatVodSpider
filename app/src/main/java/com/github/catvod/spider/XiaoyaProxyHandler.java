@@ -337,10 +337,12 @@ public class XiaoyaProxyHandler {
                 try {
                     call = downloadClient.newCall(request);
                     response = call.execute();
-                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(response.body().byteStream());
+                    while (!closed && (bytesRead = bufferedInputStream.read(downloadbBuffer)) != -1) {
                         inputStream.write(downloadbBuffer, 0, bytesRead);
                         clean = false;
                     }
+                    bufferedInputStream.close();
                     Logger.log(connId + "[pullDataFromNet]：分片完成：" + range);
                     break;
                 } catch (Exception e) {
