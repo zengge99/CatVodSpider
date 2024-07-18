@@ -44,9 +44,9 @@ import java.util.concurrent.BlockingQueue;
 public class XiaoyaProxyHandler {
 
     private static class BidirectInputStream extends InputStream {
-    private BlockingQueue<byte[]> buffer; // 缓冲区
-    private boolean endOfStream; // 是否到达流的末尾
-    private byte[] remainingData; // 上次未读取完的数据块
+    private BlockingQueue<byte[]> buffer;
+    private boolean endOfStream;
+    private byte[] remainingData;
 
     public BidirectInputStream(int bufferSize) {
         buffer = new ArrayBlockingQueue<>(bufferSize);
@@ -107,7 +107,9 @@ public class XiaoyaProxyHandler {
 
     public void write(byte[] data) throws IOException {
         try {
-            buffer.put(data);
+            byte[] newData = new byte[len];
+            System.arraycopy(data, off, newData, 0, len);
+            buffer.put(newData);
         } catch (InterruptedException e) {
             throw new IOException("Write interrupted", e);
         }
@@ -305,7 +307,7 @@ public class XiaoyaProxyHandler {
                 }
 
                 //多线程模式，启新线程拉取数据
-                BidirectInputStream inputStream = new BidirectInputStream();
+                BidirectInputStream inputStream = new BidirectInputStream(blockSize);
                 Thread thread = new Thread(() -> {
                     pullDataFromNet(request, inputStream, range);
                 });
