@@ -328,7 +328,7 @@ public class XiaoyaProxyHandler {
             int retryCount = 0;
             int maxRetry = 5;
             int bytesRead = 0;
-            byte[] downloadbBuffer = new byte[1024];
+            byte[] downloadbBuffer = new byte[1024*1024];
             Response response = null;
             Call call = null;
             boolean clean = true;
