@@ -55,9 +55,12 @@ public class XiaoyaProxyHandler {
 
     @Override
     public synchronized int read(byte[] buffer, int off, int len) throws IOException {
+        Logger.log(connId + "[BidirectInputStream.read]进入函数1");
         if (endOfStream && this.buffer.isEmpty() && remainingData == null) {
             return -1; 
         }
+
+        Logger.log(connId + "[BidirectInputStream.read]进入函数2");
 
         int totalBytesRead = 0; 
         int bytesRead; 
@@ -75,6 +78,8 @@ public class XiaoyaProxyHandler {
             off += bytesRead; 
         }
 
+        Logger.log(connId + "[BidirectInputStream.read]进入函数3");
+
         while (totalBytesRead < len) {
             byte[] data = this.buffer.poll(); 
             if (data == null) {
@@ -91,6 +96,8 @@ public class XiaoyaProxyHandler {
             }
             off += bytesRead; 
         }
+
+        Logger.log(connId + "[BidirectInputStream.read]：获取数据：" + totalBytesRead);
 
         return totalBytesRead; 
     }
