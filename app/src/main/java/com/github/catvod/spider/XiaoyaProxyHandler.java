@@ -431,15 +431,18 @@ public class XiaoyaProxyHandler {
                 
                 if (this.is == null ) {
                     Future<InputStream> future = this.executorService.submit(callableQueue.remove());
+                    runTask(threadNum);
                     this.is = future.get();
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
                     blockCounter++;
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 ) {
+                    /*
                     if (blockCounter == 1) {
                         runTask(threadNum);
                     }
+                    */
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
