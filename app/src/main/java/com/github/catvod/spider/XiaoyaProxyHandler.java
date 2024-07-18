@@ -230,6 +230,10 @@ public class XiaoyaProxyHandler {
                     directResp = false;
                     call = downloadClient.newCall(request);
                     response = call.execute();
+                    if (!response.isSuccessful()) {
+                        retryCount++;
+                        continue;
+                    }
                     // 单线程模式
                     if (range.isEmpty()) {
                         directResp = true;
