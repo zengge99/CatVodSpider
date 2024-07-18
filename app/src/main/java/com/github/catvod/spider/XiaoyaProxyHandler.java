@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.io.InputStream;
 import java.net.URL;
 import okhttp3.OkHttpClient;
+import okhttp3.Dispatcher;
 import org.json.JSONObject;
 import java.util.HashMap;
 import okhttp3.Call;
@@ -91,10 +92,18 @@ public class XiaoyaProxyHandler {
         String cookie = null;
         String referer = null;
         int blockCounter = 0;
-        OkHttpClient downloadClient = OkHttp.client().newBuilder().connectTimeout(3, TimeUnit.SECONDS).readTimeout(3, TimeUnit.SECONDS).writeTimeout(3, TimeUnit.SECONDS).build();
+        OkHttpClient downloadClient = null;
         
         private HttpDownloader(Map<String, String> params) {
             
+            Dispatcher dispatcher = new Dispatcher();
+            dispatcher.setMaxRequests(3000000);
+            dispatcher.setMaxRequestsPerHost(1000000);
+            downloadClient = OkHttp.client().newBuilder().dispatcher(dispatcher)
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .build();
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
