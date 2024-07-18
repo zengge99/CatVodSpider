@@ -5,7 +5,7 @@ import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
 import java.io.ByteArrayInputStream;
-import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Arrays;
