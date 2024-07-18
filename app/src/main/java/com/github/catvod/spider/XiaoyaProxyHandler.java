@@ -105,7 +105,7 @@ public class XiaoyaProxyHandler {
         endOfStream = true;
     }
 
-    public void write(byte[] data) throws IOException {
+    public void write(byte[] data, int off, int len) throws IOException {
         try {
             byte[] newData = new byte[len];
             System.arraycopy(data, off, newData, 0, len);
