@@ -84,6 +84,7 @@ public class XiaoyaProxyHandler {
             Logger.log("[BidirectInputStream.read]进入函数4：" + totalBytesRead);
             byte[] data = this.buffer.poll(); 
             if (data == null) {
+                Logger.log("[BidirectInputStream.read]进入函数5：" + totalBytesRead);
                 return totalBytesRead;
             }
             int remainingBytes = len - totalBytesRead; 
@@ -110,6 +111,7 @@ public class XiaoyaProxyHandler {
 
     @Override
     public void close() throws IOException {
+        Logger.log("[BidirectInputStream.close]进入函数1");
         endOfStream = true;
     }
 
@@ -117,6 +119,7 @@ public class XiaoyaProxyHandler {
         try {
             byte[] newData = new byte[len];
             System.arraycopy(data, off, newData, 0, len);
+            Logger.log("[BidirectInputStream.write]进入函数1");
             buffer.put(newData);
         } catch (InterruptedException e) {
             throw new IOException("Write interrupted", e);
