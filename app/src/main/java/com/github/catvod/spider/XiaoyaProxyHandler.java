@@ -6,7 +6,6 @@ import android.content.Context;
 
 import java.io.ByteArrayInputStream;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Arrays;
@@ -245,12 +244,10 @@ public class XiaoyaProxyHandler {
                     
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     int bytesRead;
-                    BufferedInputStream bufferedInputStream = new BufferedInputStream(response.body().byteStream());
-                    while (!closed && (bytesRead = bufferedInputStream.read(downloadbBuffer)) != -1) {
+                    while (!closed && (bytesRead = response.body().byteStream().read(downloadbBuffer)) != -1) {
                         baos.write(downloadbBuffer, 0, bytesRead);
                     }
                     Logger.log(connId + "[_downloadTask]：分片完成：" + range);
-                    bufferedInputStream.close();
                     return new ByteArrayInputStream(baos.toByteArray());
                 } catch (Exception e) {
                     retryCount++;
