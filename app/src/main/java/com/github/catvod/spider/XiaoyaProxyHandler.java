@@ -93,6 +93,7 @@ public class XiaoyaProxyHandler {
         String referer = null;
         int blockCounter = 0;
         OkHttpClient downloadClient = null;
+        OkHttpClient defaultClient = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).hostnameVerifier((hostname, session) -> true).sslSocketFactory(new MySSLCompat(), MySSLCompat.TM);
         
         private HttpDownloader(Map<String, String> params) {
             
@@ -108,7 +109,7 @@ public class XiaoyaProxyHandler {
                 Dispatcher dispatcher = new Dispatcher();
                 dispatcher.setMaxRequests(3000000);
                 dispatcher.setMaxRequestsPerHost(1000000);
-                downloadClient = new OkHttpClient.Builder().dispatcher(dispatcher)
+                downloadClient = defaultClient.newBuilder().dispatcher(dispatcher)
                 .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(3, TimeUnit.SECONDS)
                 .writeTimeout(3, TimeUnit.SECONDS)
@@ -218,7 +219,7 @@ public class XiaoyaProxyHandler {
                 return null;
             }
             Logger.log(connId + "[_downloadTask]：下载分片：" + range);
-            Request.Builder requestBuilder = new Request.Builder().url(url);
+            Request.Builder requestBuilder = defaultClient.newBuilder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
@@ -334,7 +335,7 @@ public class XiaoyaProxyHandler {
                 if (params != null) for (String key : params.keySet()) formBody.add(key, params.get(key));
                 RequestBody requestBody = formBody.build();
                 Request request = new Request.Builder().post(requestBody).url(alistApi).build();
-                Response response = new OkHttpClient.Builder().build().newCall(request).execute();
+                Response response = defaultClient.newCall(request).execute();
                 JSONObject object = new JSONObject(response.body().string());
                 String data = object.getString("data");
                 object = new JSONObject(data);
@@ -389,7 +390,7 @@ public class XiaoyaProxyHandler {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
                 Request request = requestBuilder.build();
-                call = new OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).build().newCall(request);
+                call = defaultClient.newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
                 response = call.execute();
                 this.header = response.headers();
                 statusCode = response.code();
