@@ -219,7 +219,7 @@ public class XiaoyaProxyHandler {
                 return null;
             }
             Logger.log(connId + "[_downloadTask]：下载分片：" + range);
-            Request.Builder requestBuilder = defaultClient.newBuilder().url(url);
+            Request.Builder requestBuilder = new Request.Builder().url(url);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
