@@ -96,14 +96,6 @@ public class XiaoyaProxyHandler {
         
         private HttpDownloader(Map<String, String> params) {
             
-            Dispatcher dispatcher = new Dispatcher();
-            dispatcher.setMaxRequests(3000000);
-            dispatcher.setMaxRequestsPerHost(1000000);
-            downloadClient = OkHttp.client().newBuilder().dispatcher(dispatcher)
-            .connectTimeout(3, TimeUnit.SECONDS)
-            .readTimeout(3, TimeUnit.SECONDS)
-            .writeTimeout(3, TimeUnit.SECONDS)
-            .build();
             Thread currentThread = Thread.currentThread();
             currentThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
@@ -113,6 +105,14 @@ public class XiaoyaProxyHandler {
             });
 
             try{
+                Dispatcher dispatcher = new Dispatcher();
+                dispatcher.setMaxRequests(3000000);
+                dispatcher.setMaxRequestsPerHost(1000000);
+                downloadClient = OkHttp.client().newBuilder().dispatcher(dispatcher)
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .readTimeout(3, TimeUnit.SECONDS)
+                .writeTimeout(3, TimeUnit.SECONDS)
+                .build();
                 connId = curConnId++;
                 String url = params.get("url");
                 //播放初始阶段，播放器会多次请求不同的range，快速关闭同一个链接的已有的下载器
@@ -443,10 +443,6 @@ public class XiaoyaProxyHandler {
                 }
                 
                 if (this.is == null ) {
-                    /*
-                    Future<InputStream> future = this.executorService.submit(callableQueue.remove());
-                    this.is = future.get();
-                    */
                     runTask(threadNum);
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
@@ -455,11 +451,6 @@ public class XiaoyaProxyHandler {
                 }
                 int ol = this.is.read(buffer, off, len);
                 if ( ol == -1 ) {
-                    /*
-                    if (blockCounter == 1) {
-                        runTask(threadNum);
-                    }
-                    */
                     this.is = this.futureQueue.remove().get();
                     runTask(1);
                     Logger.log(connId + "[read]：读取数据块：" + blockCounter);
