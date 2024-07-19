@@ -107,7 +107,7 @@ public class XiaoyaProxyHandler {
                 Dispatcher dispatcher = new Dispatcher();
                 dispatcher.setMaxRequests(3000000);
                 dispatcher.setMaxRequestsPerHost(1000000);
-                downloadClient = OkHttp.client().newBuilder().dispatcher(dispatcher)
+                downloadClient = OkHttpClient.Builder().dispatcher(dispatcher)
                 .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(3, TimeUnit.SECONDS)
                 .writeTimeout(3, TimeUnit.SECONDS)
