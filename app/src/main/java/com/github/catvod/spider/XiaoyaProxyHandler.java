@@ -107,7 +107,7 @@ public class XiaoyaProxyHandler {
                 Dispatcher dispatcher = new Dispatcher();
                 dispatcher.setMaxRequests(3000000);
                 dispatcher.setMaxRequestsPerHost(1000000);
-                downloadClient = (new OkHttpClient.Builder()).dispatcher(dispatcher)
+                downloadClient = new OkHttpClient.Builder().dispatcher(dispatcher)
                 .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(3, TimeUnit.SECONDS)
                 .writeTimeout(3, TimeUnit.SECONDS)
@@ -329,8 +329,12 @@ public class XiaoyaProxyHandler {
                 Map<String, String> params = new HashMap<>();
                 params.put("path", path);
                 params.put("method", "video_download");
-                String rsp = OkHttp.post(alistApi, params);
-                JSONObject object = new JSONObject(rsp);
+                FormBody.Builder formBody = new FormBody.Builder();
+                if (params != null) for (String key : params.keySet()) formBody.add(key, params.get(key));
+                RequestBody requestBody = formBody.build();
+                Request request = new Request.Builder().post(requestBody).url(alistApi).build();
+                Response response = new OkHttpClient.Builder().build().newCall(request).execute();
+                JSONObject object = new JSONObject(response.body().text());
                 String data = object.getString("data");
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
@@ -384,7 +388,7 @@ public class XiaoyaProxyHandler {
                     requestBuilder.removeHeader("Referer").addHeader("Referer", referer);
                 }
                 Request request = requestBuilder.build();
-                call = OkHttp.client().newBuilder().followRedirects(false).followSslRedirects(false).build().newCall(request);
+                call = new OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).build().newCall(request);
                 response = call.execute();
                 this.header = response.headers();
                 statusCode = response.code();
