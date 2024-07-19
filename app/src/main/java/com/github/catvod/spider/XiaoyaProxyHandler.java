@@ -466,7 +466,7 @@ public class XiaoyaProxyHandler {
         
         @Override
         public int read() throws IOException {
-            return -1;
+            throw new IOException("方法未实现，不能调用！");
         }
 
         @Override
