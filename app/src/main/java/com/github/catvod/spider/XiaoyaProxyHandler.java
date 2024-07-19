@@ -1,6 +1,5 @@
 package com.github.catvod.spider; 
 
-import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
 import java.io.ByteArrayInputStream;
@@ -29,6 +28,8 @@ import java.io.InputStream;
 import java.net.URL;
 import okhttp3.OkHttpClient;
 import okhttp3.Dispatcher;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import org.json.JSONObject;
 import java.util.HashMap;
 import okhttp3.Call;
@@ -334,7 +335,7 @@ public class XiaoyaProxyHandler {
                 RequestBody requestBody = formBody.build();
                 Request request = new Request.Builder().post(requestBody).url(alistApi).build();
                 Response response = new OkHttpClient.Builder().build().newCall(request).execute();
-                JSONObject object = new JSONObject(response.body().text());
+                JSONObject object = new JSONObject(response.body().string());
                 String data = object.getString("data");
                 object = new JSONObject(data);
                 cookie = object.getString("cookie");
