@@ -1,6 +1,5 @@
 package com.github.catvod.spider; 
 
-import com.github.catvod.crawler.Spider;
 import com.github.catvod.net.OkHttp;
 import android.content.Context;
 
