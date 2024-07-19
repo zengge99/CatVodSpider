@@ -20,7 +20,7 @@ public class OkHttpWraper {
     private OkHttpClient client;
 
     private static class Loader {
-        static volatile OkHttpWraper INSTANCE = new OkHttp();
+        static volatile OkHttpWraper INSTANCE = new OkHttpWraper();
     }
 
     private static OkHttpWraper get() {
@@ -88,18 +88,6 @@ public class OkHttpWraper {
     }
 
     public static OkHttpClient client() {
-        try {
-            return Objects.requireNonNull(Spider.client());
-        } catch (Throwable e) {
-            return build();
-        }
-    }
-
-    private static Dns safeDns() {
-        try {
-            return Objects.requireNonNull(Spider.safeDns());
-        } catch (Throwable e) {
-            return Dns.SYSTEM;
-        }
+        return build();
     }
 }
