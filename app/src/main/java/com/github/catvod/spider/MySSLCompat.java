@@ -1,6 +1,6 @@
 package com.github.catvod.spider;
 
-import android.annotation.SuppressLint;
+//import android.annotation.SuppressLint;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -93,7 +93,7 @@ public class MySSLCompat extends SSLSocketFactory {
         if (cipherSuites != null) ssl.setEnabledCipherSuites(cipherSuites);
     }
 
-    @SuppressLint({"TrustAllX509TrustManager", "CustomX509TrustManager"})
+    //@SuppressLint({"TrustAllX509TrustManager", "CustomX509TrustManager"})
     public static final X509TrustManager TM = new X509TrustManager() {
 
         @Override
