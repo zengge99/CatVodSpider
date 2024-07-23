@@ -1,7 +1,5 @@
 package com.github.catvod.spider; 
 
-import android.content.Context;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
